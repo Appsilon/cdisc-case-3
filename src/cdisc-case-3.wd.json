@@ -18,15 +18,15 @@
       "name": "Provide inputs",
       "type": "creation",
       "executor": "human",
-      "description": "Upload an ARS v1.0 Reporting Event JSON and the ADaM datasets (CSV / Dataset-JSON / XPT). Leave empty to run on the bundled CDISCPILOT01 reference (ARS + ADaM).",
-      "ui": {
-        "component": "file-upload",
-        "config": {
-          "acceptedTypes": ["application/json", ".json", ".csv", ".xpt", ".sas7bdat"],
-          "minFiles": 0,
-          "maxFiles": 200
+      "description": "Confirm the inputs for this run. By default it executes the bundled CDISCPILOT01 reference (the ARS v1.0 Reporting Event from Case 2 + its ADaM). Note any run context here; leave blank to use the reference.",
+      "params": [
+        {
+          "name": "inputNote",
+          "type": "string",
+          "required": false,
+          "description": "Optional note (e.g. which study / ARS this run uses). Blank = bundled CDISCPILOT01 reference."
         }
-      }
+      ]
     },
     {
       "id": "stage-inputs",
