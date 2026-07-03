@@ -1,0 +1,119 @@
+{
+  "name": "Use Case 3: AI-Driven Tables, Figures, and Listings (TFL) Generation",
+  "title": "CDISC Case 3 — ARS Reporting Event + ADaM to traceable TFLs",
+  "description": "Execute a CDISC ARS v1.0 Reporting Event against ADaM datasets to produce Tables, Figures, Listings and Analysis Results Datasets (ARD) with end-to-end objective-to-result traceability. Standard safety outputs run through deterministic validated recipes; the AI drafts programs for the custom efficacy outputs; a human reviews before packaging. Artifacts land in /output.",
+  "triggers": [{ "name": "manual", "type": "manual" }],
+  "env": {
+    "GITHUB_TOKEN": "{{GITHUB_TOKEN}}",
+    "OPENROUTER_API_KEY": "{{OPENROUTER_API_KEY}}"
+  },
+  "externalSkillsRepo": {
+    "url": "https://github.com/vedhav/cdisc-case-3",
+    "commit": "REPLACE_WITH_SHA",
+    "auth": "GITHUB_TOKEN"
+  },
+  "steps": [
+    {
+      "id": "provide-inputs",
+      "name": "Provide inputs",
+      "type": "creation",
+      "executor": "human",
+      "description": "Upload an ARS v1.0 Reporting Event JSON and the ADaM datasets (CSV / Dataset-JSON / XPT). Leave empty to run on the bundled CDISCPILOT01 reference (ARS + ADaM).",
+      "ui": {
+        "component": "file-upload",
+        "config": {
+          "acceptedTypes": ["application/json", ".json", ".csv", ".xpt", ".sas7bdat"],
+          "minFiles": 0,
+          "maxFiles": 200
+        }
+      }
+    },
+    {
+      "id": "stage-inputs",
+      "name": "Stage inputs",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Resolve the Reporting Event + ADaM from the upload, or fall back to the bundled CDISCPILOT01 reference. Writes /workspace/reporting_event.json and /workspace/adam/.",
+      "script": {
+        "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "REPLACE_WITH_SHA",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
+        "timeoutMinutes": 10,
+        "command": "python3 /app/container/stage_inputs.py"
+      }
+    },
+    {
+      "id": "generate-tfl",
+      "name": "Generate TFLs from ARS",
+      "type": "creation",
+      "executor": "agent",
+      "plugin": "claude-code-agent",
+      "description": "AI. Bind the ARS to the ADaM; classify each Output as standard (recipe library covers it) or custom; run recipes / draft + repair programs -> cards/cardx ARD -> render. Writes /workspace/{ard,tfl,code,coverage.json,review.md}.",
+      "env": {
+        "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
+        "ANTHROPIC_API_KEY": "",
+        "ANTHROPIC_BASE_URL": "https://openrouter.ai/api"
+      },
+      "agent": {
+        "skill": "ars-to-tfl",
+        "skillsDir": "plugins/cdisc-case-3/skills",
+        "model": "~anthropic/claude-sonnet-latest",
+        "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "REPLACE_WITH_SHA",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
+        "timeoutMinutes": 40
+      }
+    },
+    {
+      "id": "review-programs",
+      "name": "Review drafted programs",
+      "type": "review",
+      "executor": "human",
+      "description": "Review the draft TFLs and, for the custom efficacy outputs, the AI-drafted R. Approve to package, or revise to send the run back with feedback.",
+      "params": [
+        {
+          "name": "comment",
+          "type": "string",
+          "required": false,
+          "requiredForVerdicts": ["revise"],
+          "description": "What to change (required when revising)."
+        }
+      ],
+      "verdicts": {
+        "approve": { "target": "package-tfl", "label": "Approve", "intent": "success" },
+        "revise": { "target": "generate-tfl", "label": "Request Changes", "intent": "warning", "requiresComment": true }
+      }
+    },
+    {
+      "id": "package-tfl",
+      "name": "Package TFLs + Traceability",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Coverage gate (every ARS Output -> a rendered file + an ARD); consolidate the ARD into one long-skinny ard.csv; write results back into the Reporting Event (Analysis.results[]); build traceability.html; write manifest.json. All to /output.",
+      "script": {
+        "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "REPLACE_WITH_SHA",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
+        "timeoutMinutes": 15,
+        "command": "Rscript /app/container/package.R --ars /workspace/reporting_event.json --work /workspace --out /output"
+      }
+    },
+    { "id": "done", "name": "Done", "type": "terminal", "executor": "human" }
+  ],
+  "transitions": [
+    { "from": "provide-inputs", "to": "stage-inputs" },
+    { "from": "stage-inputs", "to": "generate-tfl" },
+    { "from": "generate-tfl", "to": "review-programs" },
+    { "from": "review-programs", "to": "package-tfl" },
+    { "from": "review-programs", "to": "generate-tfl" },
+    { "from": "package-tfl", "to": "done" }
+  ]
+}

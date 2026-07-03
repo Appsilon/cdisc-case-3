@@ -1,0 +1,13 @@
+version: "1.0"
+standard: "agentskills.io/specification"
+total_skills: 1
+
+domains:
+  cdisc-case-3:
+    description: Execute a CDISC ARS Reporting Event against ADaM into TFLs + ARD
+    skills:
+      - id: ars-to-tfl
+        path: ars-to-tfl/SKILL.md
+        complexity: advanced
+        language: multi
+        description: Bind an ARS v1.0 Reporting Event to ADaM, run recipes for standard outputs and draft programs for custom outputs, produce ARD + rendered TFLs

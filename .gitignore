@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+
+# Secrets / local
+.env
+*.key
+.DS_Store
+
+# Run artifacts
+runs/
+work/

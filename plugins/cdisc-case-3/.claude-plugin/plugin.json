@@ -1,0 +1,7 @@
+{
+  "name": "cdisc-case-3",
+  "description": "Skill for the CDISC Case 3 workflow. ars-to-tfl executes a CDISC ARS v1.0 Reporting Event against ADaM datasets into TFLs + ARD, using deterministic recipes for standard safety outputs and drafting programs for custom efficacy outputs.",
+  "author": {
+    "name": "vedha"
+  }
+}

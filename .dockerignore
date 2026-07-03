@@ -1,0 +1,12 @@
+# Image needs: container/ (scripts + recipes) + fixtures/ (bundled reference +
+# schema). Skills live in the repo (read via skillsDir), not the image.
+.git
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.Rproj.user
+.DS_Store
+
+plugins
+src
+README.md
