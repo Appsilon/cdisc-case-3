@@ -30,12 +30,12 @@
    "layer": 1,
    "kind": "endpoint",
    "label": "Primary Endpoint",
-   "sublabel": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Week 24",
+   "sublabel": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Week 24",
    "mode": null,
    "meta": {
     "USDM id": "Endpoint_2",
     "Level": "Primary Endpoint",
-    "Text": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Week 24",
+    "Text": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Week 24",
     "Objective": "Objective_1"
    },
    "id": "Endpoint_2"
@@ -124,12 +124,12 @@
    "layer": 1,
    "kind": "endpoint",
    "label": "Secondary Endpoint",
-   "sublabel": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
+   "sublabel": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
    "mode": null,
    "meta": {
     "USDM id": "Endpoint_7",
     "Level": "Secondary Endpoint",
-    "Text": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
+    "Text": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
     "Objective": "Objective_3"
    },
    "id": "Endpoint_7"

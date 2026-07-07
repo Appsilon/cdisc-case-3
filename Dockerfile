@@ -37,7 +37,13 @@ RUN install2.r --error --skipinstalled \
 # --- Deterministic step scripts + the standard-output recipe library ---
 COPY container/ /app/container/
 
-# --- Bundled CDISCPILOT01 reference (offline default) + pinned ARS schema ---
+# --- Interactive traceability visualization (template + shared graph builder).
+#     package.R -> build_trace.py injects the run's graph into the template to
+#     emit /output/traceability.html. ---
+COPY viz/ /app/viz/
+
+# --- Bundled CDISCPILOT01 reference (offline default) + pinned ARS schema +
+#     the USDM objective/endpoint fixture the traceability graph needs ---
 COPY fixtures/ /app/fixtures/
 
 WORKDIR /workspace

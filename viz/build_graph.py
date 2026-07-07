@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Derive trace_graph.json from the ARS Reporting Event + the study USDM.
+"""Derive the trace-graph model (nodes + edges) rendered by the visualization.
 
-Produces the node/edge model the visualization renders, across six CDISC layers:
+Six CDISC layers, left->right from intent to provenance:
 
     Objective (USDM) -> Endpoint (USDM) -> Output/TFL (ARS)
       -> Analysis (ARS) -> Method (ARS) -> ADaM dataset
 
 The ARS half (Output -> Analysis -> Method -> dataset) is extracted verbatim from
 the Reporting Event. The USDM half (Objective -> Endpoint) comes from the study
-definition; Endpoint -> Output is a curated semantic mapping (EP2OUT below),
-because this ARS instance is the Common Safety Displays subset and does not carry
-USDM endpoint ids. Endpoints with no matching output surface as traceability gaps.
+definition; Endpoint -> Output is a curated semantic mapping, because this ARS
+instance (Common Safety Displays) carries no USDM endpoint ids. Endpoints with no
+matching output surface as traceability gaps.
 
-Usage:
-    python build_graph.py \
-        --ars ../fixtures/reporting_event.json \
-        --usdm /path/to/CDISC_Pilot_Study.json \
-        --out trace_graph.json
+`graph()` is the shared builder used by both this standalone script and the
+container's build_trace.py (which passes run status to annotate each output).
+
+Usage (standalone, regenerate trace_graph.json from source):
+    python build_graph.py --usdm /path/to/CDISC_Pilot_Study.json
 """
 from __future__ import annotations
 
@@ -26,40 +26,60 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 
-# Curated endpoint -> ARS output links (semantic; see module docstring).
+# Curated endpoint -> ARS output links for the bundled CDISCPILOT01 reference.
 EP2OUT = {
     "Endpoint_1": ["Out14-3-01"],                                  # ADAS-Cog Wk24 -> ANCOVA
     "Endpoint_3": ["Out14-3-1-1", "Out14-3-2-1", "Out14-KM-01"],   # AE -> overall, SOC/PT, TTE
     "Endpoint_4": ["Out14-3-3-1a", "Out14-3-3-1b"],                # Vital signs
 }
-POP_CONTEXT_OUT = "Out14-1-1"  # demographics = population context for the AE endpoint
+POP_CONTEXT = {"Endpoint_3": "Out14-1-1"}  # demographics = population context for the AE endpoint
 STANDARD = {"Out14-1-1", "Out14-3-1-1", "Out14-3-2-1", "Out14-3-3-1a", "Out14-3-3-1b"}
 DSLABEL = {"ADSL": "Subject-Level Analysis", "ADAE": "Adverse Events Analysis",
            "ADVS": "Vital Signs Analysis", "ADQSADAS": "ADAS-Cog Questionnaire",
            "ADTTE": "Time-to-Event Analysis"}
 SDTM = {"ADSL": "DM", "ADAE": "AE", "ADVS": "VS", "ADQSADAS": "QS", "ADTTE": "AE / DS (derived)"}
-BAD, APOS = "�", "’"
+def _txt(o):
+    # normalise the U+FFFD replacement char that the source USDM uses for apostrophes
+    return (o.get("text") or o.get("description") or o.get("name") or "").replace("�", "’")
 
 
-def txt(o):
-    return (o.get("text") or o.get("description") or o.get("name") or "").replace(BAD, APOS)
-
-
-def walk(node, cur, acc):
+def _walk(node, cur, acc):
     if isinstance(node, dict):
         if "outputId" in node:
             cur = node["outputId"]
         if "analysisId" in node and cur:
             acc.setdefault(cur, []).append(node["analysisId"])
         for v in node.values():
-            walk(v, cur, acc)
+            _walk(v, cur, acc)
     elif isinstance(node, list):
         for v in node:
-            walk(v, cur, acc)
+            _walk(v, cur, acc)
 
 
-def build(ars, usdm):
+def objectives_from_usdm(usdm):
+    """Flatten a full USDM study into the simplified objective/endpoint shape."""
     dd = usdm["study"]["versions"][0]["studyDesigns"][0]
+    objs = []
+    for o in dd.get("objectives", []):
+        eps = [{"id": e["id"], "level": e.get("level", {}).get("decode", ""), "text": _txt(e)}
+               for e in o.get("endpoints", [])]
+        objs.append({"id": o["id"], "level": o.get("level", {}).get("decode", ""),
+                     "text": _txt(o), "endpoints": eps})
+    return objs
+
+
+def graph(ars, objectives=None, ep2out=None, pop_context=None, run=None):
+    """Build {nodes, edges, meta}.
+
+    objectives  simplified [{id, level, text, endpoints:[{id, level, text}]}] (USDM half; may be [])
+    ep2out      {endpointId: [outputId, ...]} curated links
+    run         optional {outputId: {mode, rendered, ardRows, repairs}} run annotations
+    """
+    objectives = objectives or []
+    ep2out = ep2out or {}
+    pop_context = pop_context or {}
+    run = run or {}
+
     methods = {m["id"]: m for m in ars.get("methods", [])}
     sets = {s["id"]: s for s in ars.get("analysisSets", [])}
     subsets = {s["id"]: s for s in ars.get("dataSubsets", [])}
@@ -68,10 +88,11 @@ def build(ars, usdm):
     outputs = {o["id"]: o for o in ars.get("outputs", [])}
 
     out2an = {}
-    walk(ars["mainListOfContents"], None, out2an)
+    _walk(ars.get("mainListOfContents", {}), None, out2an)
     for k in out2an:
         seen = set()
         out2an[k] = [x for x in out2an[k] if not (x in seen or seen.add(x))]
+    # efficacy outputs are not in the LOPA tree; link them to their authored analyses
     out2an.setdefault("Out14-3-01", ["AnEff01_ADAS_Wk24_ANCOVA"])
     out2an.setdefault("Out14-KM-01", ["AnEff02_TTE_KM"])
 
@@ -87,38 +108,42 @@ def build(ars, usdm):
     def link(a, b, rel):
         edges.append({"from": a, "to": b, "rel": rel})
 
-    for o in dd.get("objectives", []):
-        oid = o["id"]
-        lvl = o.get("level", {}).get("decode", "")
-        add(oid, layer=0, kind="objective", label=lvl, sublabel=txt(o)[:150],
-            meta={"USDM id": oid, "Level": lvl, "Text": txt(o)})
+    for o in objectives:
+        add(o["id"], layer=0, kind="objective", label=o.get("level", ""), sublabel=o.get("text", "")[:150],
+            meta={"USDM id": o["id"], "Level": o.get("level", ""), "Text": o.get("text", "")})
         for e in o.get("endpoints", []):
-            eid = e["id"]
-            et = txt(e)
+            et = e.get("text", "")
             tbd = "To be determined" in et or "*** To be" in et
-            add(eid, layer=1, kind="endpoint", label=e.get("level", {}).get("decode", ""),
+            add(e["id"], layer=1, kind="endpoint", label=e.get("level", ""),
                 sublabel=("endpoint not defined in protocol" if tbd else et[:150]),
                 mode=("gap" if tbd else None),
-                meta={"USDM id": eid, "Level": e.get("level", {}).get("decode", ""),
-                      "Text": et, "Objective": oid})
-            link(oid, eid, "has endpoint")
+                meta={"USDM id": e["id"], "Level": e.get("level", ""), "Text": et, "Objective": o["id"]})
+            link(o["id"], e["id"], "has endpoint")
 
     for oid, ans in out2an.items():
         o = outputs.get(oid, {})
-        mode = "standard" if oid in STANDARD else "custom"
+        r = run.get(oid, {})
+        mode = r.get("mode") or ("standard" if oid in STANDARD else "custom")
         dsset = sorted({analyses[a]["dataset"] for a in ans if a in analyses})
-        add(oid, layer=2, kind="output", label=oid, sublabel=(o.get("name") or oid), mode=mode,
-            meta={"ARS Output id": oid, "Title": o.get("name", ""),
-                  "Mode": ("Standard - validated recipe" if mode == "standard"
-                           else "Custom - AI-drafted program, human-reviewed"),
-                  "Analyses": len(ans), "Datasets": ", ".join(dsset)})
+        meta = {"ARS Output id": oid, "Title": o.get("name", ""),
+                "Mode": ("Standard - validated recipe" if mode == "standard"
+                         else "Custom - AI-drafted program, human-reviewed"),
+                "Analyses": len(ans), "Datasets": ", ".join(dsset)}
+        if r:
+            meta["Run status"] = "rendered" if r.get("rendered") else "not rendered"
+            if r.get("ardRows") is not None:
+                meta["ARD result rows"] = r["ardRows"]
+            if r.get("repairs"):
+                meta["Repairs"] = "; ".join(r["repairs"]) if isinstance(r["repairs"], list) else str(r["repairs"])
+        add(oid, layer=2, kind="output", label=oid, sublabel=(o.get("name") or oid), mode=mode, meta=meta)
 
-    for ep, outs in EP2OUT.items():
+    for ep, outs in ep2out.items():
         for oid in outs:
-            if oid in seen:
+            if oid in seen and ep in seen:
                 link(ep, oid, "evaluated by")
-    if POP_CONTEXT_OUT in seen:
-        link("Endpoint_3", POP_CONTEXT_OUT, "population context")
+    for ep, oid in pop_context.items():
+        if oid in seen and ep in seen:
+            link(ep, oid, "population context")
 
     for oid, ans in out2an.items():
         for aid in ans:
@@ -142,7 +167,8 @@ def build(ars, usdm):
             mid = a["methodId"]
             if mid not in seen:
                 ops = [op["label"] + " (" + op["name"] + ")" for op in m.get("operations", [])]
-                add(mid, layer=4, kind="method", label=mid, sublabel=(m.get("label") or m.get("name", ""))[:80],
+                add(mid, layer=4, kind="method", label=mid,
+                    sublabel=(m.get("label") or m.get("name", ""))[:80],
                     meta={"ARS Method id": mid, "Name": m.get("name", ""),
                           "Operations": "; ".join(ops) or "-",
                           "Has SAS codeTemplate": "yes" if m.get("codeTemplate") else "no"})
@@ -168,9 +194,9 @@ def main() -> None:
     a = ap.parse_args()
     ars = json.loads(Path(a.ars).read_text(encoding="utf-8"))
     usdm = json.loads(Path(a.usdm).read_text(encoding="utf-8"))
-    graph = build(ars, usdm)
-    Path(a.out).write_text(json.dumps(graph, indent=1, ensure_ascii=False), encoding="utf-8")
-    print(f"wrote {a.out}: {len(graph['nodes'])} nodes, {len(graph['edges'])} edges")
+    g = graph(ars, objectives_from_usdm(usdm), EP2OUT, POP_CONTEXT)
+    Path(a.out).write_text(json.dumps(g, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(f"wrote {a.out}: {len(g['nodes'])} nodes, {len(g['edges'])} edges")
 
 
 if __name__ == "__main__":

@@ -10,10 +10,12 @@
 #                       results-by-row frame (the reusable results artifact).
 #   3. reporting_event_with_results.json — results written back into each
 #                       Analysis.results[] (spec in, completed spec out).
-#   4. traceability.html — clickable Output -> Analysis -> dataset.variable ->
-#                       population -> SAP reference chain; links [direct] and
-#                       stamped with ARS ids (lineage by construction, not
-#                       inferred — see PLAN-3 §7).
+#   4. traceability.html — the interactive Objective -> Endpoint -> Output ->
+#                       Analysis -> Method -> ADaM graph (built by build_trace.py
+#                       from this run's artifacts). traceability_table.html is the
+#                       detailed row view: Output -> Analysis -> dataset.variable
+#                       -> population -> SAP reference, stamped with ARS ids
+#                       (lineage by construction, not inferred — see PLAN-3 §7).
 #   5. manifest.json  — study id, counts, standard/custom split, repairs,
 #                       pass/fail, per-output lineage.
 #
@@ -182,7 +184,7 @@ for (oid in output_ids) {
 }
 
 study_id <- ars$id %||% "(reporting event)"
-html <- sprintf("<!doctype html><html><head><meta charset='utf-8'><title>Traceability — %s</title>
+html <- sprintf("<!doctype html><html><head><meta charset='utf-8'><title>Traceability table — %s</title>
 <style>
 body{font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:2rem;color:#1a1a2e}
 h1{font-size:1.4rem} .sub{color:#666;margin-bottom:1.5rem}
@@ -201,7 +203,9 @@ code{background:#eef2f7;padding:1px 4px;border-radius:3px;font-size:12px} small{
 <tbody>%s</tbody></table>
 </body></html>",
   esc(study_id), esc(ars$name %||% study_id), esc(ars$name %||% ""), paste(rows_html, collapse = "\n"))
-writeLines(html, file.path(out, "traceability.html"))
+# The detailed row table is the secondary view; the interactive graph (built
+# below by build_trace.py) is the headline traceability.html.
+writeLines(html, file.path(out, "traceability_table.html"))
 
 # --- copy tfl + ard dirs to /output ------------------------------------------
 if (dir.exists(tfl_dir)) file.copy(tfl_dir, out, recursive = TRUE)
@@ -230,6 +234,28 @@ manifest <- list(
 )
 write_json(manifest, file.path(out, "manifest.json"), auto_unbox = TRUE, pretty = TRUE, null = "null")
 
+# --- 6. interactive traceability graph (headline traceability.html) ----------
+# Best-effort: build_trace.py never fails the run; the coverage gate below is the
+# conformance test. It consumes the artifacts written above (results-written-back
+# ARS, coverage, manifest, ard.csv) + the bundled USDM objective/endpoint fixture.
+trace_rc <- tryCatch(
+  system2("python3", c("/app/container/build_trace.py",
+    "--ars", file.path(out, "reporting_event_with_results.json"),
+    "--ars-fallback", ars_path,
+    "--usdm", "/app/fixtures/usdm_trace.json",
+    "--coverage", file.path(work, "coverage.json"),
+    "--manifest", file.path(out, "manifest.json"),
+    "--ard", file.path(out, "ard.csv"),
+    "--template", "/app/viz/traceability.template.html",
+    "--out", file.path(out, "traceability.html")),
+    stdout = TRUE, stderr = TRUE),
+  error = function(e) { message("build_trace.py skipped: ", conditionMessage(e)); NULL })
+if (!is.null(trace_rc)) cat(paste(trace_rc, collapse = "\n"), "\n")
+if (!file.exists(file.path(out, "traceability.html"))) {
+  # fall back to the row table as traceability.html so the output always exists
+  file.copy(file.path(out, "traceability_table.html"), file.path(out, "traceability.html"), overwrite = TRUE)
+}
+
 cat(sprintf("Coverage: %d/%d outputs (%d standard, %d custom) | %d ARD rows | %d operation results written\n",
             manifest$outputsCovered, manifest$outputsExpected, n_std, length(output_ids) - n_std,
             nrow(all_ard), n_results))
@@ -238,4 +264,4 @@ if (length(missing) > 0) {
   for (oid in names(missing)) cat(sprintf("  %s (ard=%s, tfl=%s)\n", oid, missing[[oid]]$ard, missing[[oid]]$tfl))
   quit(status = 1)
 }
-cat("Coverage gate passed. Wrote ard.csv, reporting_event_with_results.json, traceability.html, manifest.json\n")
+cat("Coverage gate passed. Wrote ard.csv, reporting_event_with_results.json, traceability.html (interactive) + traceability_table.html, manifest.json\n")

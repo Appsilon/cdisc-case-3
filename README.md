@@ -53,20 +53,35 @@ loadable results-by-row frame) and writes each value back into the matching
 `Analysis.results[]` of `reporting_event_with_results.json` — spec in, completed
 spec out, one CDISC artifact.
 
+## Run outputs (`/output`)
+
+| File | What it is |
+|------|-----------|
+| `traceability.html` | **interactive** Objective → Endpoint → Output → Analysis → Method → ADaM graph, built by `build_trace.py` from this run's artifacts (click-to-trace lineage, standard/custom modes, gap detection). Open standalone at `viz/traceability.html`. |
+| `traceability_table.html` | the detailed row view: every output cell → analysis → ADaM variable → population → SAP reference, stamped with ARS ids |
+| `ard.csv` | all per-output ARDs consolidated into one long-skinny results-by-row frame |
+| `reporting_event_with_results.json` | the ARS spec with results written back into `Analysis.results[]` |
+| `manifest.json` | study id, counts, standard/custom split, repairs, coverage pass/fail, per-output lineage |
+| `tfl/`, `ard/` | the rendered displays and per-output ARDs |
+
 ## Layout
 
 ```
 container/stage_inputs.py          step 2 (resolve uploaded-or-bundled inputs)
 container/recipes/recipes.R        the validated standard-output recipe library
 container/recipes/example_driver.R WORKING reference driver for the agent (all 7 outputs)
-container/package.R                step 5 (coverage gate + ard.csv + write-back + traceability)
+container/package.R                package step (coverage gate + ard.csv + write-back + traceability)
+container/build_trace.py           builds the interactive /output/traceability.html from run artifacts
 plugins/cdisc-case-3/skills/ars-to-tfl/SKILL.md   step 3 skill (the AI value-add)
+viz/                               interactive traceability graph (template + shared graph builder); see viz/README.md
 fixtures/reporting_event.json      bundled CDISCPILOT01 ARS (5 safety + 2 efficacy outputs)
 fixtures/adam/*.csv                bundled CDISCPILOT01 ADaM
+fixtures/usdm_trace.json           bundled USDM objectives/endpoints + endpoint->output map (the traceability graph's USDM half)
 fixtures/ars_ldm.schema.json       pinned ARS v1.0 JSON schema
 fixtures/curate_fixture.py         how the bundled Reporting Event was curated (provenance)
-Dockerfile                         golden image + cards/cardx/gtsummary/survival/emmeans
+Dockerfile                         golden image + cards/cardx/gtsummary/survival/emmeans (+ COPY viz/)
 src/cdisc-case-3.wd.json           the workflow definition
+src/cdisc-case-3.decomposed.wd.json  proposed multi-step decomposition of the single agent step
 ```
 
 The bundled Reporting Event is the official CDISC ARS v1 **Common Safety
