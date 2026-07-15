@@ -14,35 +14,18 @@
   },
   "steps": [
     {
-      "id": "provide-inputs",
-      "name": "Provide inputs",
+      "id": "upload-usdm",
+      "name": "Upload USDM",
       "type": "creation",
       "executor": "human",
-      "description": "Upload the study's USDM study-definition JSON and its SDTM datasets (and, optionally, reference CSR outputs to enable the numeric diff in generate-tlfs). An upload is required — nothing is bundled.",
-      "params": [
-        {
-          "name": "inputNote",
-          "type": "string",
-          "required": false,
-          "description": "Optional note (e.g. which study / USDM this run uses)."
+      "description": "Upload the study's USDM v3+ study-definition JSON. This is the only input needed to start the run — the SDTM datasets are uploaded later, just before ADaM derivation. Nothing is bundled; an upload is required. The uploaded JSON is made available to the next step (plan-tlfs) read-only under /data/.",
+      "ui": {
+        "component": "file-upload",
+        "config": {
+          "acceptedTypes": ["application/json", ".json"],
+          "minFiles": 1,
+          "maxFiles": 1
         }
-      ]
-    },
-    {
-      "id": "stage-inputs",
-      "name": "Stage inputs",
-      "type": "creation",
-      "executor": "script",
-      "plugin": "script-container",
-      "description": "Deterministic. Resolve the uploaded USDM JSON + SDTM datasets (fails if none uploaded). Writes /workspace/usdm.json, /workspace/sdtm/, and (when uploaded) /workspace/ground_truth/ (the CSR outputs used for the numeric diff in generate-tlfs).",
-      "script": {
-        "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "a3839e6580c2082b1d20c5e9bfc9dfb83325fff1",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
-        "timeoutMinutes": 10,
-        "command": "python3 /app/container/stage_inputs.py"
       }
     },
     {
@@ -51,7 +34,7 @@
       "type": "creation",
       "executor": "agent",
       "plugin": "claude-code-agent",
-      "description": "AI. Run the tlf-planner skill on /workspace/usdm.json: interpret objectives/endpoints, add ICH E3 regulatory scaffolding, fan out statistical analyses (imputation/subgroup/timepoint), check data feasibility, and number the outputs. Writes study-model.json, tlf-plan.json, and the human-readable tlf-index.md to both /workspace and /output, and a /output/result.json summary. On a revise re-entry, read the reviewer comment from the review-plan step and append it to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-planner\",\"iteration\":N,\"comment\":\"...\"}, then correct only the flagged items.",
+      "description": "AI. Run the tlf-planner skill on the uploaded USDM study-definition JSON (read-only under /data/ — there is exactly one .json there): interpret objectives/endpoints, add ICH E3 regulatory scaffolding, fan out statistical analyses (imputation/subgroup/timepoint), check data feasibility, and number the outputs. Writes study-model.json, tlf-plan.json, and the human-readable tlf-index.md to both /workspace and /output, and a /output/result.json summary. On a revise re-entry, read the reviewer comment from the review-plan step and append it to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-planner\",\"iteration\":N,\"comment\":\"...\"}, then correct only the flagged items.",
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
         "ANTHROPIC_API_KEY": "",
@@ -153,8 +136,23 @@
         }
       ],
       "verdicts": {
-        "approve": { "target": "derive-adam", "label": "Approve specs", "intent": "success" },
+        "approve": { "target": "upload-sdtm", "label": "Approve specs", "intent": "success" },
         "revise": { "target": "build-specs", "label": "Request Changes", "intent": "warning", "requiresComment": true }
+      }
+    },
+    {
+      "id": "upload-sdtm",
+      "name": "Upload SDTM",
+      "type": "creation",
+      "executor": "human",
+      "description": "Upload the study's SDTM datasets (.xpt, Dataset-JSON, .csv, or .sas7bdat) to derive ADaM from. Now that the analysis + ADaM specs are approved, provide the data they will be derived against. The uploaded files are made available to the next step (derive-adam) read-only under /data/.",
+      "ui": {
+        "component": "file-upload",
+        "config": {
+          "acceptedTypes": ["application/octet-stream", "text/csv", "application/json", ".xpt", ".sas7bdat", ".csv", ".json"],
+          "minFiles": 1,
+          "maxFiles": 200
+        }
       }
     },
     {
@@ -163,7 +161,7 @@
       "type": "creation",
       "executor": "agent",
       "plugin": "claude-code-agent",
-      "description": "AI. Run the sdtm-to-adam skill: derive the BDS/OCCDS/TTE ADaM datasets that /workspace/adam-spec.json demands from /workspace/sdtm/ using admiral. ENFORCE the 3 mandatory rules (day-based visit windowing that keeps unscheduled/ET visits; LOCF endpoint records; SITEGR1 pooling on randomized counts) and the data-quality N-gate (assert each analysis-set N against its population flag, fail on shortfall). Writes /workspace/adam/*.csv (+ derivation code + a conformance report) and /output/result.json.",
+      "description": "AI. Run the sdtm-to-adam skill: derive the BDS/OCCDS/TTE ADaM datasets that /workspace/adam-spec.json demands from the uploaded SDTM datasets (read-only under /data/) using admiral. ENFORCE the 3 mandatory rules (day-based visit windowing that keeps unscheduled/ET visits; LOCF endpoint records; SITEGR1 pooling on randomized counts) and the data-quality N-gate (assert each analysis-set N against its population flag, fail on shortfall). Writes /workspace/adam/*.csv (+ derivation code + a conformance report) and /output/result.json.",
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
         "ANTHROPIC_API_KEY": "",
@@ -187,7 +185,7 @@
       "type": "creation",
       "executor": "agent",
       "plugin": "claude-code-agent",
-      "description": "AI. Run the tlf-generator skill: for each TLF, compute the ARD (numbers) from ADaM per the analysis-spec using cards/cardx + emmeans directly (explicit contrast signs; MMRM via mmrm + custom ARD), then render the display (gtsummary tables, ggsurvfit figures) applying SAS rounding at display precision. Keep numbers and formatting as separate phases. When /workspace/ground_truth/ is present, cell-diff each table and write per-table match rates. Writes /workspace/{ard,tfl,code}/<id>.* and /output/ (rendered TLFs, ard, diff reports) + /output/result.json. On a revise re-entry, append the reviewer comment to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-generator\",...} and fix only the flagged outputs.",
+      "description": "AI. Run the tlf-generator skill: for each TLF, compute the ARD (numbers) from ADaM per the analysis-spec using cards/cardx + emmeans directly (explicit contrast signs; MMRM via mmrm + custom ARD), then render the display (gtsummary tables, ggsurvfit figures) applying SAS rounding at display precision. Keep numbers and formatting as separate phases. Writes /workspace/{ard,tfl,code}/<id>.* and /output/ (rendered TLFs, ard) + /output/result.json. On a revise re-entry, append the reviewer comment to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-generator\",...} and fix only the flagged outputs.",
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
         "ANTHROPIC_API_KEY": "",
@@ -210,7 +208,7 @@
       "name": "Review generated TLFs",
       "type": "review",
       "executor": "human",
-      "description": "Review the rendered TLFs and, when ground truth was supplied, the numeric-diff report in /output. Approve to assemble traceability, or request changes to send the run back to Generate ARD + TLFs with your comment.",
+      "description": "Review the rendered TLFs in /output. Approve to assemble traceability, or request changes to send the run back to Generate ARD + TLFs with your comment.",
       "params": [
         {
           "name": "comment",
@@ -231,7 +229,7 @@
       "type": "creation",
       "executor": "agent",
       "plugin": "claude-code-agent",
-      "description": "AI. Run the traceability-builder skill: assemble the objective -> endpoint -> SDTM -> ADaM -> TLF graph (linked by the ARD) from study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json, and the per-TLF ard/diff artifacts, and render a self-contained interactive node-graph HTML explorer with lineage highlighting, per-node detail panels (rendered TLF + status), and validation-status badges. Writes /output/traceability.html, /output/trace_graph.json, and /output/manifest.json, plus /output/result.json.",
+      "description": "AI. Run the traceability-builder skill: assemble the objective -> endpoint -> SDTM -> ADaM -> TLF graph (linked by the ARD) from study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json, and the per-TLF ard artifacts, and render a self-contained interactive node-graph HTML explorer with lineage highlighting, per-node detail panels (rendered TLF + status), and status badges. Writes /output/traceability.html, /output/trace_graph.json, and /output/manifest.json, plus /output/result.json.",
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
         "ANTHROPIC_API_KEY": "",
@@ -296,15 +294,15 @@
     { "id": "done", "name": "Done", "type": "terminal", "executor": "human" }
   ],
   "transitions": [
-    { "from": "provide-inputs", "to": "stage-inputs" },
-    { "from": "stage-inputs", "to": "plan-tlfs" },
+    { "from": "upload-usdm", "to": "plan-tlfs" },
     { "from": "plan-tlfs", "to": "audit-plan" },
     { "from": "audit-plan", "to": "review-plan" },
     { "from": "review-plan", "to": "build-specs" },
     { "from": "review-plan", "to": "plan-tlfs" },
     { "from": "build-specs", "to": "review-specs" },
-    { "from": "review-specs", "to": "derive-adam" },
+    { "from": "review-specs", "to": "upload-sdtm" },
     { "from": "review-specs", "to": "build-specs" },
+    { "from": "upload-sdtm", "to": "derive-adam" },
     { "from": "derive-adam", "to": "generate-tlfs" },
     { "from": "generate-tlfs", "to": "review-tlfs" },
     { "from": "review-tlfs", "to": "build-traceability" },

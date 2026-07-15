@@ -63,9 +63,10 @@ The generation knowledge packs and both shared schemas live together in
 `tlf-planner/references/`, so they reference each other by bare filename. `tlf-plan-critic`
 reaches the two schemas at `../../tlf-planner/references/`.
 
-## Ground truth for validation (CDISCPILOT01)
+## Worked-example expected output (CDISCPILOT01)
 
-The real CSR outputs in `csr-outputs-md/` are the gold standard: **30 tables + 1 figure**.
-`objective-endpoint-tlf-mapping.md` (repo root) is the authoritative expected mapping. A correct
-run reproduces that set (25 objective/endpoint-driven + 6 scaffolding) and flags
-END9/END10/END11 as `needs-clarification`.
+For the CDISCPILOT01 development study, `objective-endpoint-tlf-mapping.md` (repo root) is the
+authoritative expected mapping: a correct run produces **31 outputs** (25 objective/endpoint-driven
++ 6 scaffolding) and flags END9/END10/END11 as `needs-clarification`. This is a sanity-check on a
+known study — a real run plans from the study's own USDM objectives/endpoints, not from any
+pre-existing reference outputs.

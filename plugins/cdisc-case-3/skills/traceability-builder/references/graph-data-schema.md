@@ -11,7 +11,7 @@ embeds it verbatim in `<script id="graph-data" type="application/json">…</scri
   "study":  { "id", "name", "title", "phase" },
   "counts": { "objectives", "endpoints", "endpoints_unresolved",
               "sdtm", "sdtm_absent", "adam", "tlf", "tlf_producible" },
-  "status": { "match", "partial", "blocked", "needs-clarification" },  // TLF tallies
+  "status": { "generated", "blocked", "needs-clarification" },  // TLF tallies
   "nodes":  [ Node, … ],
   "edges":  [ Edge, … ]
 }
@@ -27,7 +27,7 @@ embeds it verbatim in `<script id="graph-data" type="application/json">…</scri
   "label":    "OBJ1",                  // short id shown in the node (mono)
   "sublabel": "Primary",               // small uppercase caption
   "title":    "To determine if …",     // full human title (panel + search)
-  "status":   "match",                 // TLF only: match|partial|blocked|needs-clarification
+  "status":   "generated",             // TLF only: generated|blocked|needs-clarification
   "unresolved": false,                  // endpoint with placeholder text, or unplanned TLF
   "absent":   false,                    // SDTM domain required but not in inventory
   "isFigure": false,                    // TLF that is a Figure (e.g. Kaplan-Meier)
@@ -46,9 +46,8 @@ embeds it verbatim in `<script id="graph-data" type="application/json">…</scri
 - **TLF** — `candidate_id`, `final_id`, `dir_id`, `type`, `category`, `cat_label`, `title`, `status`,
   `status_reason`, `priority`, `produced_by`, `notes[]`, `method`, `population`, `timepoint`,
   `imputation`, `subgroup`, `comparison`, `objectives[]`, `endpoints[]`, `regulatory_rule`, `adam[]`,
-  `sdtm[]`, `analysisSet`, `analysisSetCond`, `dataSubset`, `purpose`,
-  `match:{klass,label,cause,rate}`, and embedded raw content
-  `generatedMd`, `diffReport`, `ardJson`, `generateR`, `generateRPath`, `isFigure`.
+  `sdtm[]`, `analysisSet`, `analysisSetCond`, `dataSubset`, `purpose`, and embedded raw content
+  `generatedMd`, `ardJson`, `generateR`, `generateRPath`, `isFigure`.
 - **ADaM** — `klass`, `sdtm_source[]`, `used_by_tables[]`, `parameters[]`, `variables[]`,
   `derivation_requirements[]`.
 - **SDTM** — `domain`, `label`, `absent`.
@@ -86,12 +85,12 @@ draggable; pan/zoom is a single `translate()+scale()` transform on the root `<g>
 
 ## Status model
 
-Badges come from the **T9 scorecard** (authoritative), not from re-diffing:
-`✅ match` (100% / effectively matching) · `⚠ partial` (specific ADaM-derivation gaps) ·
-`⛔ blocked` (a required derivation/domain is absent) · `❓ needs-clarification` (traces to an
-unresolved endpoint). Parse the numeric `match rate : NN%` from each `diff-report.txt` for the
-detail panel; keep the scorecard's klass for the badge. Non-TLF nodes carry no status; a status
-**filter** hides non-matching TLFs and dims upstream/data nodes that lose all visible connections.
+Badges come from the **plan** (`status` / `status_reason` in `tlf-plan.json`) and whether the TLF's
+outputs exist — never from re-diffing or a scorecard:
+`✅ generated` (a `.generated.md` was produced) · `⛔ blocked` (a required derivation/domain is
+absent) · `❓ needs-clarification` (traces to an unresolved endpoint). Non-TLF nodes carry no status;
+a status **filter** hides TLFs of a given status and dims upstream/data nodes that lose all visible
+connections.
 
 ## Lineage traversal (highlight rule)
 

@@ -72,7 +72,7 @@ them and assert them.
 ## Data-quality gate (required)
 After derivation, assert each analysis set's N against its population flag (e.g. Week-24 efficacy N
 == `EFFFL='Y'` count = 79/81/74 for CDISCPILOT01) and **warn loudly on a shortfall** — the visit-
-window bug above would otherwise pass silently and tank the numeric match.
+window bug above would otherwise pass silently and corrupt every downstream number.
 
 ## Gotchas (CDISCPILOT01)
 ADAS-Cog(11) total is `ACTOT11` (not `ACTOT`); treatment factor `TRTP` (character); numeric dose

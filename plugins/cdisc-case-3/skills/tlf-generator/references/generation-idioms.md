@@ -1,14 +1,14 @@
 # Generation Idioms — cards / cardx / emmeans (validated)
 
-Reusable R patterns distilled from the `T-14-3.01` spike that reproduced the CSR at **100%**
+Reusable R patterns distilled from the `T-14-3.01` spike
 (`testing-tlf-planner/spike-T-14-3.01/generate.R`). These are the battle-tested idioms the
 **tlf-generator** skill should emit. Package versions on this machine: cards 0.7.1.9008,
 cardx 0.3.2.9001, gtsummary 2.5.0.9003, emmeans 2.0.3, R 4.4.2.
 
 ## Golden rules
 1. **Numbers → ARD → display, in that order.** Compute every statistic into a tidy ARD, persist it
-   (`ard.csv`/`ard.json`), then render. Never compute inside the renderer; never copy CSR values.
-2. **SAS rounding at display time.** R's `round()` is banker's (half-to-even); the CSR is
+   (`ard.csv`/`ard.json`), then render. Never compute inside the renderer; never hand-enter values.
+2. **SAS rounding at display time.** R's `round()` is banker's (half-to-even); SAS output is
    half-away-from-zero. Apply `sas_round()` when formatting, not in the stats.
 3. **Assert the population N** against the population flag before rendering (data-quality gate).
 
@@ -50,11 +50,10 @@ Long format, one row per statistic: `group1, variable_level, context, stat_name,
 descriptive rows (flattened from `ard_continuous`) with the emmeans/contrast rows, then
 `write.csv` + `jsonlite::write_json(..., auto_unbox = TRUE)`.
 
-## Render & validate
-- Render to the CSR's row/column shape (gtsummary, or direct markdown for exact-match control).
-  Column order and reference level come from `groupingFactor.levels`.
-- Score with the harness: `evals/tlf_numeric/diff.py` `compare(...)` (or its markdown CLI) vs
-  `csr-outputs-md/<file>.md`, using SAS-rounding-aware compare at each stat's display precision.
+## Render
+- Render to the target row/column shape (gtsummary, or direct markdown for exact-layout control),
+  driven by the analysis-spec. Column order and reference level come from `groupingFactor.levels`.
+- Apply `fmt()` (SAS rounding) at each statistic's display precision from the method's `display` block.
 
 ## Method coverage reminders (from `adam-to-tlf-design.md` §5)
 Turnkey: `cards::ard_continuous`/`ard_categorical`, `cardx::ard_stats_fisher_test`,

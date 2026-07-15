@@ -158,7 +158,7 @@ The ANCOVA seed expands into **four** candidates; MMRM and descriptive pass thro
 | `eff-END1-descriptive-wk24` | none | null | Efficacy | supportive | **T-14-3.10** | leaf — unchanged |
 
 So the single END1 ANCOVA base produces **LOCF + OC-completers-windowed + Male-LOCF +
-Female-LOCF**, exactly matching the CSR ground truth (T-14-3.01 / .07 / .08 / .09). MMRM
+Female-LOCF**, exactly matching the CDISCPILOT01 output set (T-14-3.01 / .07 / .08 / .09). MMRM
 (T-14-3.11) and descriptive-over-time (T-14-3.10) survive as-is — they are NOT re-expanded.
 
 Region subgroups are **not** emitted because `needs_subgroup_by_region = false`. If a SAP were

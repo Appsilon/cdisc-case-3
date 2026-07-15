@@ -1,9 +1,9 @@
 # Analysis-Spec Schema (`analysis-spec.json`, per TLF)
 
 The ARS-*aligned* (not full CDISC ARS JSON) analysis recipe for one TLF. Produced by
-**tlf-analysis-spec**, consumed by **tlf-generator**. Generalized from the validated
-`T-14-3.01` spike (`testing-tlf-planner/spike-T-14-3.01/analysis-spec.json`), which reproduced the
-CSR at 100%. One file per TLF (or an array keyed by `table_id`).
+**tlf-analysis-spec**, consumed by **tlf-generator**. Generalized from the
+`T-14-3.01` spike (`testing-tlf-planner/spike-T-14-3.01/analysis-spec.json`).
+One file per TLF (or an array keyed by `table_id`).
 
 ```jsonc
 {
@@ -55,8 +55,7 @@ CSR at 100%. One file per TLF (or an array keyed by `table_id`).
 
   "output": {
     "ard": "ard.json",
-    "display": "<table_id>.generated.md",
-    "validation": "evals/tlf_numeric/diff.py vs csr-outputs-md/<file>.md"
+    "display": "<table_id>.generated.md"
   }
 }
 ```

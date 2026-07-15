@@ -1,6 +1,6 @@
 ---
 name: traceability-builder
-description: "Build an interactive, self-contained HTML traceability explorer that links the full clinical-deliverable chain Objective -> Endpoint -> SDTM domain -> ADaM dataset -> TLF, with the Analysis Results Data (ARD) as the connective data layer. Assembles a node/edge graph from the pipeline artifacts (study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json) and per-table outputs (generated.md, diff-report.txt, ard.json, generate.R, the T9 scorecard), then emits ONE standalone .html file (vanilla JS + SVG, zero external libraries/CDN/fonts) with an interactive node graph, click-to-highlight lineage, per-node detail panels, status badges, filters and search. Use this skill when the user wants to SEE how outputs trace back to objectives/endpoints and forward to their data — phrases like 'traceability', 'traceability matrix', 'lineage', 'objective-to-TLF', 'end-to-end trace', 'where does this table come from', 'ARD explorer', 'deliverables dashboard', 'traceability explorer', 'link objectives to tables', 'coverage of endpoints', 'which endpoints have no output'. This is a reporting/visualization layer over an already-run Protocol->TLF pipeline; it reads existing artifacts and never recomputes statistics."
+description: "Build an interactive, self-contained HTML traceability explorer that links the full clinical-deliverable chain Objective -> Endpoint -> SDTM domain -> ADaM dataset -> TLF, with the Analysis Results Data (ARD) as the connective data layer. Assembles a node/edge graph from the pipeline artifacts (study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json) and per-table outputs (generated.md, ard.json, generate.R), then emits ONE standalone .html file (vanilla JS + SVG, zero external libraries/CDN/fonts) with an interactive node graph, click-to-highlight lineage, per-node detail panels, status badges, filters and search. Use this skill when the user wants to SEE how outputs trace back to objectives/endpoints and forward to their data — phrases like 'traceability', 'traceability matrix', 'lineage', 'objective-to-TLF', 'end-to-end trace', 'where does this table come from', 'ARD explorer', 'deliverables dashboard', 'traceability explorer', 'link objectives to tables', 'coverage of endpoints', 'which endpoints have no output'. This is a reporting/visualization layer over an already-run Protocol->TLF pipeline; it reads existing artifacts and never recomputes statistics."
 ---
 
 # Traceability Builder
@@ -15,20 +15,20 @@ for any study:
   **objective or a regulatory rule**?
 - What is the **data lineage** of a given table — which **ADaM** datasets and **SDTM** domains feed
   it, with the **ARD** as the connective layer?
-- Where is the chain **solid vs broken** — which outputs match the reference, which are partial,
-  **blocked**, or waiting on an **unresolved endpoint**?
+- Where is the chain **solid vs broken** — which deliverables were **generated**, which are
+  **blocked**, need **clarification**, or are waiting on an **unresolved endpoint**?
 
 The hero is an **interactive node graph** laid out as a convergent pipeline
 (Plan -> Deliverable -> Data): objectives and endpoints on the left, the TLF deliverables in the
 center, and the ADaM/SDTM data provenance on the right. Clicking any node lights its **full directed
 lineage** across every tier and opens a **detail panel**; for a TLF the panel embeds the rendered
-table, the match %/status, the method, and collapsible ARD + generation code.
+table, its status, the method, and collapsible ARD + generation code.
 
 This is a **read-only reporting layer**. It never recomputes a statistic — every number shown is the
 one already produced by `tlf-generator`.
 
 ```
-study-model + tlf-plan + analysis-spec + adam-spec + per-table outputs (md/diff/ard/R) + T9 scorecard
+study-model + tlf-plan + analysis-spec + adam-spec + per-table outputs (md/ard/R)
         │
         ▼
  [traceability-builder]  ──►  assemble graph JSON (nodes + edges + status)  ──►  ONE self-contained .html
@@ -50,8 +50,7 @@ derive ADaM (`sdtm-to-adam`). If those artifacts are missing, build them first, 
 | TLF plan | `testing-tlf-planner/tlf-plan.json` | TLF candidates: `traces_to` (objective_ids / endpoint_ids / regulatory_rule), `category`, `type`, `final_id`, `status`, `status_reason`, `data_requirements` |
 | Analysis spec | `testing-tlf-planner/analysis-spec.json` | Per-TLF `method`, `analysisSet`, `dataSubset` (dataset), `purpose` |
 | ADaM spec | `testing-tlf-planner/adam-spec.json` | `datasets[]` with `sdtm_source` (ADaM->SDTM) and `used_by_tables` (ADaM->TLF); variables, parameters, derivation requirements |
-| Per-table outputs | `outputs/<study>-outputs/tlf/<id>/` | `<id>.generated.md` (rendered TLF, embedded), `diff-report.txt` (match rate), `ard.json` (ARD), `generate.R` (code) |
-| Scorecard | `outputs/<study>-outputs/tlf/T9-scorecard.md` | Per-table match % and status classification -> badges |
+| Per-table outputs | `outputs/<study>-outputs/tlf/<id>/` | `<id>.generated.md` (rendered TLF, embedded), `ard.json` (ARD), `generate.R` (code) |
 
 Paths are conventions, not hard-coded: the assembler locates artifacts by the study's output layout.
 Every field is optional at the leaf level — a missing `generate.R`, a blocked table with only a
@@ -70,11 +69,12 @@ A single file: `outputs/<study>-outputs/traceability/<study>-traceability.html`.
 
 ## Workflow
 
-1. **Read** the four spec JSONs, the scorecard, and walk the `tlf/<id>/` tree for each table's
-   `generated.md`, `diff-report.txt`, `ard.json`, and `generate.R` (code may also live in a shared
+1. **Read** the four spec JSONs and walk the `tlf/<id>/` tree for each table's
+   `generated.md`, `ard.json`, and `generate.R` (code may also live in a shared
    `tlf/code/` runner — resolve by a small candidate list).
-2. **Classify status** per TLF from the T9 scorecard (`match` / `partial` / `blocked` /
-   `needs-clarification`); parse the numeric match rate from `diff-report.txt` where present.
+2. **Classify status** per TLF from the **plan** (`status` / `status_reason`) and whether its outputs
+   exist: `generated` (a `.generated.md` was produced), `blocked`, or `needs-clarification`. Endpoint
+   nodes carry their resolution status from the study model (`resolved` / `unresolved_endpoints`).
 3. **Assemble the graph** — nodes and edges per the model in
    `references/graph-data-schema.md`. Six node types (Objective, Endpoint, Regulatory, TLF, ADaM,
    SDTM); edges: `obj-end`, `end-tlf`, `reg-tlf`, `tlf-adam`, `adam-sdtm`, plus dashed `tlf-sdtm`

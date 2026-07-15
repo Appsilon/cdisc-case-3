@@ -1,6 +1,6 @@
 ---
 name: tlf-generator
-description: "Generate the actual Tables, Listings, and Figures (TLFs) from an ARS-aligned analysis spec + ADaM data, ARD-first: compute every statistic into Analysis Results Data (ARD) with {cards}/{cardx}/emmeans, then render the ARD to the CSR's shape with {gtsummary} (tables) and {ggsurvfit} (Kaplan-Meier figures), applying SAS rounding at display time. Use this skill when the user has an analysis-spec.json (from tlf-analysis-spec) plus ADaM datasets and wants to produce the numbers and the displays. Also trigger on: 'generate TLFs/tables/figures', 'produce ARD', 'analysis results data', 'cards/cardx tables', 'gtsummary tables from ADaM', 'ANCOVA LS-means table', 'Kaplan-Meier figure', 'ADaM to tables', 'compute the CSR numbers', or 'validate tables against the CSR'. This is Stage-3 of the Protocol->TLF pipeline and REPLACES/UPGRADES the older adam-to-tlg skill with an ARD-native numbers-then-format approach; prefer this skill over adam-to-tlg when an analysis spec exists."
+description: "Generate the actual Tables, Listings, and Figures (TLFs) from an ARS-aligned analysis spec + ADaM data, ARD-first: compute every statistic into Analysis Results Data (ARD) with {cards}/{cardx}/emmeans, then render the ARD to the target display shape with {gtsummary} (tables) and {ggsurvfit} (Kaplan-Meier figures), applying SAS rounding at display time. Use this skill when the user has an analysis-spec.json (from tlf-analysis-spec) plus ADaM datasets and wants to produce the numbers and the displays. Also trigger on: 'generate TLFs/tables/figures', 'produce ARD', 'analysis results data', 'cards/cardx tables', 'gtsummary tables from ADaM', 'ANCOVA LS-means table', 'Kaplan-Meier figure', 'ADaM to tables', or 'compute the numbers for the tables'. This is Stage-3 of the Protocol->TLF pipeline and REPLACES/UPGRADES the older adam-to-tlg skill with an ARD-native numbers-then-format approach; prefer this skill over adam-to-tlg when an analysis spec exists."
 ---
 
 # TLF Generator
@@ -9,8 +9,8 @@ description: "Generate the actual Tables, Listings, and Figures (TLFs) from an A
 
 Turn a **human-reviewed analysis spec** (from `tlf-analysis-spec`) plus **ADaM datasets** (from
 `sdtm-to-adam`) into the two artifacts that matter: the **numbers** (ARD) and the **display**
-(rendered TLF). Accuracy against the reference CSR is the top metric — every displayed value is
-**computed from ADaM, never copied from a CSR**.
+(rendered TLF). Every displayed value is **computed from ADaM, never hand-entered** — the ARD is the
+single source of truth for every cell.
 
 This is **Step 3** of the automated TLF workflow:
 
@@ -19,7 +19,7 @@ USDM ─▶ [tlf-planner]+[tlf-plan-critic] ─▶ tlf-plan ─▶ [tlf-analysis
                                                                                     │
                                                         [sdtm-to-adam] ─▶ ADaM datasets
                                                                                     │
-                                              analysis-spec.json + ADaM ─▶ [tlf-generator] ─▶ ARD ─▶ rendered TLF ─▶ VALIDATE
+                                              analysis-spec.json + ADaM ─▶ [tlf-generator] ─▶ ARD ─▶ rendered TLF
 ```
 
 ## Relationship to `adam-to-tlg` (what this replaces)
@@ -36,9 +36,9 @@ for the older mock-shell-driven path, but new work should go through this skill.
 Keep the two phases strictly separate (from `references/generation-idioms.md` "Golden rules"):
 
 1. **Compute** every statistic into a tidy **ARD** and persist it (`ard.csv` / `ard.json`).
-2. **Render** the ARD to the CSR's row/column shape.
-3. **Never compute inside the renderer; never copy a CSR value.**
-4. Apply **SAS rounding at display time only** — R's `round()` is banker's (half-to-even); the CSR
+2. **Render** the ARD to the target row/column shape (from the analysis-spec + standard CSR conventions).
+3. **Never compute inside the renderer; never hand-enter a value** — every cell reads from the ARD.
+4. Apply **SAS rounding at display time only** — R's `round()` is banker's (half-to-even); SAS output
    is half-away-from-zero. Round in the formatting layer, not in the stats.
 
 ## Inputs
@@ -49,8 +49,8 @@ Keep the two phases strictly separate (from `references/generation-idioms.md` "G
 - **Required:** the ADaM data directory — `outputs/{study}/adam/data/` (CSV/JSON; also `.xpt`/
   `.sas7bdat`). For **CDISCPILOT01** the concrete study folder is `cdiscpilot01-outputs`, so ADaM
   lives at `outputs/cdiscpilot01-outputs/adam/data/` (e.g. `adqsadas.csv`, `adsl.csv`, `adtte.csv`).
-- **Ground truth (for validation only):** `csr-outputs-md/cdiscpilot01-tlf-<id>.md`. Used for
-  *shape and scoring only* — never as a source of numbers.
+- **Optional (display layout):** a mock TLG shell for a TLF, if one was produced upstream. Use it as
+  the target row/column layout; when absent, derive the layout from the analysis-spec (see Phase B).
 
 ## Outputs
 
@@ -65,11 +65,10 @@ outputs/{study}/tlf/
 ├── <id>/
 │   ├── ard.csv                    # tidy ARD (long: one row per statistic)  ← the NUMBERS
 │   ├── ard.json                   # same, jsonlite auto_unbox
-│   ├── <id>.generated.md          # rendered display (CSR row/column shape)  ← the DISPLAY
+│   ├── <id>.generated.md          # rendered display (target row/column shape)  ← the DISPLAY
 │   ├── <id>.html                  # optional gt/gtsummary HTML render
-│   ├── <id>.png                   # figures only (KM curve, 300 dpi)
-│   └── diff-report.txt            # per-cell validation vs the CSR
-├── tlf-index.md                   # id → outputs + match rate
+│   └── <id>.png                   # figures only (KM curve, 300 dpi)
+├── tlf-index.md                   # id → outputs
 └── issues.md                      # failures, data-provenance flags, sparse-strata fallbacks
 ```
 
@@ -81,8 +80,9 @@ Naming: `T-` tables, `L-` listings, `F-` figures, matching the analysis spec `ta
 
 Ensure packages (versions validated on this machine, from `references/generation-idioms.md`):
 `cards` 0.7.1.9008, `cardx` 0.3.2.9001, `gtsummary` 2.5.0.9003, `emmeans` 2.0.3, plus `dplyr`,
-`tidyr`, `survival`, `ggsurvfit`, `mmrm`, `jsonlite`. Read each TLF's analysis-spec entry and its
-target CSR file (for the exact row labels and column shape) before generating its script.
+`tidyr`, `survival`, `ggsurvfit`, `mmrm`, `jsonlite`. Read each TLF's analysis-spec entry
+(`groupingFactor`, `analysisVariables`, the method `display` block) — the source of its row labels
+and column order — plus its mock shell if one exists, before generating its script.
 
 ### Step 1 — Setup script (`00_setup.R`)
 
@@ -158,9 +158,10 @@ ct  <- contrast(emm, method = list(                      # EXPLICIT coefs → si
 
 ### Phase B — Display (the format)
 
-Render the persisted ARD to the CSR's row/column shape. **Read the target CSR file first** for exact
-row labels (including footnote markers like `p-value(Dose Response) [1][2]`, kept verbatim) and
-column order.
+Render the persisted ARD to the target row/column shape defined by the **analysis-spec** —
+`groupingFactor.levels` become the columns (in order, reference first), and `analysisVariables` +
+the method `display` block become the rows — following standard CSR table conventions. If a mock TLG
+shell was provided for the TLF, match its exact layout (row labels and footnote markers kept verbatim).
 
 - **Tables:** `gtsummary` (ARD-backed) for the standard shape, or emit markdown directly for
   exact-match control (as the spike does). Either way, pull values from the ARD and apply `fmt()`
@@ -173,29 +174,15 @@ column order.
 
 ---
 
-### Validate
-
-Score each generated table against the CSR with the harness:
-
-```bash
-python evals/tlf_numeric/diff.py outputs/{study}/tlf/<id>/<id>.generated.md \
-       csr-outputs-md/cdiscpilot01-tlf-<id>.md --round-decimals 1
-```
-
-Or programmatically: `from diff import compare, format_summary` (see `evals/tlf_numeric/README.md`).
-Use `--round-decimals` per the statistic's display precision so a SAS-vs-R last-digit half-rounding
-difference lands in the **rounding** bucket, not **mismatch**. Write `diff-report.txt` per table and
-the per-table match rate into `tlf-index.md`.
-
 ## Accuracy watch-list (from `adam-to-tlf-design.md` §6)
 
 Ordered by how often they bite. When numbers are wrong, check these first:
 
 1. **Populations/flags are upstream in ADaM.** LOCF/OC/windowed/completers are `ANLxxFL`;
    populations are `SAFFL/EFFFL/COMPLFL/ITTFL`. A wrong flag corrupts every N, %, and LS-mean even
-   with a perfect model. If N per arm disagrees with the CSR, the fault is in ADaM, not the stats —
-   flag it in `issues.md` (this exact denominator mismatch, `79/81/74` vs `76/75/65`, sank the first
-   spike run). **Review the population/subset conditions hardest.**
+   with a perfect model. If N per arm looks wrong, the fault is in ADaM, not the stats — flag it in
+   `issues.md` (a denominator mismatch like `79/81/74` vs an expected `76/75/65` sinks a whole table).
+   **Review the population/subset conditions hardest.**
 2. **SAS rounding** — replicate half-away-from-zero via `sas_round()` in the formatter.
 3. **LS-means/contrast setup** — exact model (`CHG ~ TRTP + SITEGR1 + BASE`, Type III), exact
    contrast, equal reference-grid weighting; factor vs continuous dose flips the p-value.
@@ -205,7 +192,7 @@ Ordered by how often they bite. When numbers are wrong, check these first:
 7. **Dataset provenance** — validate denominators explicitly; PHUSE Test-Data-Factory flags can
    differ from the original CDISC Pilot analysis data.
 
-## Worked example — generating & validating T-14-3.01
+## Worked example — generating T-14-3.01
 
 `T-14-3.01` (ADAS-Cog(11) CFB→Wk24, LOCF, ANCOVA) is the proven end-to-end template; the reference
 implementation is `testing-tlf-planner/spike-T-14-3.01/generate.R` and its idioms are distilled in
@@ -222,8 +209,9 @@ implementation is `testing-tlf-planner/spike-T-14-3.01/generate.R` and its idiom
 3. **Phase B / display:** render the CSR's rows (Baseline / Week 24 / Change from Baseline blocks
    with n, Mean (SD), Median (Range); then Dose-Response p, pairwise p, Diff of LS Means (SE), 95%
    CI), applying `fmt()` — mean 1 dp, SD 2 dp, median 1 dp, range integers, p-values 3 dp.
-4. **Validate:** `diff.py … --round-decimals 1` against `csr-outputs-md/cdiscpilot01-tlf-T-14-3.01.md`.
-   The spike reproduced this table at **100%** once the ADaM denominators were correct.
+
+The spike reproduced this table exactly once the ADaM denominators were correct — the residual error
+was upstream in ADaM, not in the generator.
 
 ## How a KM figure (F-14-1) differs — `ggsurvfit`
 
@@ -235,11 +223,10 @@ implementation is `testing-tlf-planner/spike-T-14-3.01/generate.R` and its idiom
   95% CL per arm) and `cardx::ard_survival_survdiff` for the **log-rank p**. Persist to `ard.json`.
 - **Phase B / display** uses **`ggsurvfit`**, not `gtsummary`: `survfit2(Surv(...) ~ TRTP)` →
   `ggsurvfit()` + `add_censor_mark()` + `add_risktable()` (number-at-risk), distinct line types per
-  arm (Placebo solid, High dotted, Low dashed per the CSR), axis 0–200 days / 0–1 survival, log-rank
+  arm (Placebo solid, High dotted, Low dashed per convention), axis 0–200 days / 0–1 survival, log-rank
   p annotation. Export **`.png` at 300 dpi** (~10×7 in).
-- **Validation:** the numeric harness is **tabular only** (figures out of scope), so score the
-  figure's **Summary Statistics** block (subjects, event/censored %, median survival + 95% CL) as a
-  small markdown table via `diff.py`, and eyeball the curve against the CSR figure description.
+- **Summary block:** alongside the curve, emit the figure's **Summary Statistics** block (subjects,
+  event/censored %, median survival + 95% CL) as a small markdown table, pulled from the same ARD.
 
 ## Reference files
 
@@ -249,5 +236,4 @@ implementation is `testing-tlf-planner/spike-T-14-3.01/generate.R` and its idiom
   `groupingFactor.levels`, ANCOVA sub-objects).
 - the protocol-to-tfl adam-to-tlf design note — the Steps 2–3 design (§1 three artifacts, §5 method map,
   §6 accuracy watch-list). *(repo root)*
-- the numeric-diff validation harness + `diff.py` — the validation harness contract. *(repo root)*
 - `../../../../testing-tlf-planner/spike-T-14-3.01/generate.R` — the proven end-to-end template. *(repo root)*

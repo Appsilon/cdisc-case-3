@@ -28,7 +28,7 @@ deaths / severity / relationship tables are conventional family members; emit th
 reports separate displays. The `data-feasibility-checker` (agent 8) downgrades any member the study
 data cannot support, and the `tlf-consolidator` (agent 9) dedups. Over-produce rather than
 self-censor — but see the CDISCPILOT01 worked output below for the members that map to that study's
-CSR ground truth.
+expected output set.
 
 ### Lab family — trigger: "laboratory evaluations", "lab", domain_hint `safety-lab`
 
@@ -99,8 +99,8 @@ summary so `tlf-traceability-critic` raises clarification action items.
 
 CDISCPILOT01's OBJ2 (safety) has three endpoints. `study-profile.flags.needs_tte_safety_figure`
 is `true` (transdermal therapy with a dermatologic AE signal), so the Kaplan-Meier figure **is**
-emitted. This produces **12 candidates** that map 1:1 to the CSR ground truth
-(`csr-outputs-md/`): 3 AE (incl. the figure), 6 lab, 3 vitals. The `final_id` column shows the
+emitted. This produces **12 candidates** that map 1:1 to the CDISCPILOT01 §14 output
+set: 3 AE (incl. the figure), 6 lab, 3 vitals. The `final_id` column shows the
 number the `tlf-consolidator` will assign; this planner leaves `final_id: null`.
 
 | candidate_id | endpoint | category | method | title | → final_id |

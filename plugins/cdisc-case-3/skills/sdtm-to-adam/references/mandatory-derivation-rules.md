@@ -1,9 +1,9 @@
 # Mandatory Derivation Rules & Data-Quality Gate
 
 These rules are **non-negotiable**. Each was a real bug in this repo's ADaM that produced a
-silently-wrong CSR number until fixed. `sdtm-to-adam` MUST implement all three and MUST assert them
-with the data-quality gate at the end. They are the authoritative reasons the derived ADaM either
-reproduces the reference CSR or drifts.
+silently-wrong analysis number until fixed. `sdtm-to-adam` MUST implement all three and MUST assert
+them with the data-quality gate at the end. They are the authoritative reasons the derived ADaM
+either yields correct analysis numbers or drifts.
 
 Canonical source of the rules: `../../tlf-analysis-spec/references/adam-spec-schema.md`
 (section "MANDATORY derivation rules"). Reference implementations (read-only, do not edit):

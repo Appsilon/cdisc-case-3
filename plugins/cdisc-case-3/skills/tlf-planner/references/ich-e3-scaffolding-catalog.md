@@ -49,7 +49,7 @@ must be true. Category values map to §14 sections per the candidate schema (`di
 | 11 | `reg-ae-discontinuation-listing` | Listing of AEs Leading to Discontinuation | Listing | `disposition` | ICH E3 §12.3 | `not_covered_by_safety` | Emit only if safety planner is not covering it. |
 
 Entries 1–6 form the **core set** present in essentially every multi-arm CSR. Entries 7–11 are
-feature-gated and are typically **absent** from the CDISCPILOT01 CSR ground truth (see below):
+feature-gated and are typically **absent** from the CDISCPILOT01 output set (see below):
 CDISCPILOT01 does not report standalone medical-history or protocol-deviation summary tables,
 and its deaths/SAE/discontinuation information is carried inside the safety §14-5 tables and the
 End-of-Study disposition table — so the scaffolding planner does not duplicate them.
@@ -76,8 +76,8 @@ End-of-Study disposition table — so the scaffolding planner does not duplicate
 
 CDISCPILOT01 is Phase II, 3-arm (Placebo / Xanomeline Low 54 mg / Xanomeline High 81 mg),
 multi-site (18 sites, some pooled). The scaffolding planner emits exactly the **6 core-set**
-candidates — matching Section 3 of `objective-endpoint-tlf-mapping.md` and the CSR ground-truth
-tables `csr-outputs-md/cdiscpilot01-tlf-T-14-*`:
+candidates — matching Section 3 of `objective-endpoint-tlf-mapping.md` (the CDISCPILOT01 §14
+tables `T-14-*`):
 
 | candidate_id | title | type | category | regulatory_rule | population | → final_id |
 |---|---|---|---|---|---|---|

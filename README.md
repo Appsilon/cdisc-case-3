@@ -19,20 +19,25 @@ durable, per-skill lessons and opened as a PR, so the skills improve over time.
 
 | # | Step | Executor | Skill / script | Output |
 |---|------|----------|----------------|--------|
-| 1 | provide-inputs | human | — | upload USDM + SDTM (+ optional CSR ground truth) |
-| 2 | stage-inputs | script | `stage_inputs.py` | `/workspace/usdm.json`, `/workspace/sdtm/`, `/workspace/ground_truth/` |
-| 3 | plan-tlfs | agent | `tlf-planner` | study-model.json, tlf-plan.json, tlf-index.md |
-| 4 | audit-plan | agent | `tlf-plan-critic` | coverage-report.md + verdict |
-| 5 | **review-plan** | human review | — | approve → specs · revise → plan |
-| 6 | build-specs | agent | `tlf-analysis-spec` | analysis-spec.json, adam-spec.json |
-| 7 | **review-specs** | human review | — | approve → ADaM · revise → specs |
+| 1 | upload-usdm | human | — | upload the study's USDM JSON (→ `/data/` for plan-tlfs) |
+| 2 | plan-tlfs | agent | `tlf-planner` | study-model.json, tlf-plan.json, tlf-index.md |
+| 3 | audit-plan | agent | `tlf-plan-critic` | coverage-report.md + verdict |
+| 4 | **review-plan** | human review | — | approve → specs · revise → plan |
+| 5 | build-specs | agent | `tlf-analysis-spec` | analysis-spec.json, adam-spec.json |
+| 6 | **review-specs** | human review | — | approve → SDTM upload · revise → specs |
+| 7 | upload-sdtm | human | — | upload the study's SDTM datasets (→ `/data/` for derive-adam) |
 | 8 | derive-adam | agent | `sdtm-to-adam` | `/workspace/adam/*` + conformance report |
-| 9 | generate-tlfs | agent | `tlf-generator` | ARD + rendered TFLs + diff report |
+| 9 | generate-tlfs | agent | `tlf-generator` | ARD + rendered TFLs |
 | 10 | **review-tlfs** | human review | — | approve → trace · revise → generate |
 | 11 | build-traceability | agent | `traceability-builder` | traceability.html, trace_graph.json, manifest.json |
 | 12 | propose-skill-update | agent | `propose-skill-lesson` | per-skill lesson blocks |
 | 13 | open-skill-pr | script | `open_skill_pr.py` | PR against main (or clean no-op) |
 | 14 | done | human (terminal) | — | — |
+
+Inputs are uploaded via two `file-upload` human steps — the **USDM** up front
+(step 1) and the **SDTM** datasets later (step 7, once the specs are approved).
+Each upload is made available read-only under `/data/` to the agent step that
+immediately follows it; no separate staging step is needed.
 
 Transitions include three revise loops (each review gate can send the run back
 to its producing agent step).
@@ -80,21 +85,20 @@ bundled CDISCPILOT01 reference (`fixtures/`). Skills are **not** baked in. Build
 ## Output contract (`/output`)
 
 `study-model.json`, `tlf-plan.json`, `tlf-index.md`, `coverage-report.md`,
-`analysis-spec.json`, `adam-spec.json`, the ARD + rendered TFLs, per-table diff
-reports, `traceability.html`, `trace_graph.json`, `manifest.json`, and each
+`analysis-spec.json`, `adam-spec.json`, the ARD + rendered TFLs,
+`traceability.html`, `trace_graph.json`, `manifest.json`, and each
 step's `result.json`.
 
 ## Inputs (uploaded per run — nothing bundled)
 
-At `provide-inputs`, upload:
-- the study's **USDM** study-definition JSON (required),
-- its **SDTM** datasets (required; `.xpt` / Dataset-JSON / `.csv`),
-- optionally, reference **CSR outputs** (markdown) as ground truth — when present,
-  `generate-tlfs` cell-diffs the generated tables against them.
+Two upload steps, each feeding the agent step that follows it (read-only `/data/`):
+- **`upload-usdm`** (step 1) — the study's **USDM** study-definition JSON (required).
+- **`upload-sdtm`** (step 7, after the specs are approved) — the study's **SDTM**
+  datasets (required; `.xpt` / Dataset-JSON / `.csv` / `.sas7bdat`).
 
-Known-good reference: the **CDISCPILOT01** (H2Q-MC-LZZT Alzheimer's) USDM + SDTM +
-CSR outputs, produced/held upstream (Case 1/Case 2 and the `protocol-to-tfl`
-source). `stage-inputs` fails fast if no USDM or SDTM is uploaded.
+The pipeline runs against any new study's USDM + SDTM. A known-good reference for
+smoke-testing is the **CDISCPILOT01** (H2Q-MC-LZZT Alzheimer's) USDM + SDTM,
+produced/held upstream (Case 1/Case 2 and the `protocol-to-tfl` source).
 
 ## Runtime source pinning
 

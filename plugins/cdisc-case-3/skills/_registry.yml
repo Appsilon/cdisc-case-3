@@ -30,7 +30,7 @@ domains:
         path: tlf-generator/SKILL.md
         complexity: advanced
         language: multi
-        description: Compute the ARD (cards/cardx + emmeans; MMRM custom ARD) from ADaM per the analysis-spec and render the TLFs (gtsummary/ggsurvfit) with SAS rounding; validate cell-by-cell against ground truth
+        description: Compute the ARD (cards/cardx + emmeans; MMRM custom ARD) from ADaM per the analysis-spec and render the TLFs (gtsummary/ggsurvfit) with SAS rounding
       - id: traceability-builder
         path: traceability-builder/SKILL.md
         complexity: advanced

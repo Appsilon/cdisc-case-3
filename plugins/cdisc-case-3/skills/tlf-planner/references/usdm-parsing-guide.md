@@ -172,7 +172,7 @@ and fall back to `.decode`.
 (If a code is unrecognized, decode from the `.decode` string — strip the trailing
 " Objective"/" Endpoint" — and note the unmapped code.)
 
-## 10. CDISCPILOT01 ground-truth cross-check
+## 10. CDISCPILOT01 parse cross-check (dev sanity-check)
 
 A correct normalization of `test-docs/cdiscpilot01/CDISC_Pilot_Study.json` yields:
 

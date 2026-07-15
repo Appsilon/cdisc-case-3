@@ -116,7 +116,7 @@ over the naive priority sort. The naive sort would place all primary-endpoint va
 subgroup, MMRM) ahead of every secondary-endpoint table; real CSRs frequently interleave — grouping
 the primary and secondary timepoints of the same measure together (Week 8/16 tables directly after
 the Week 24 headline) before the primary-endpoint sensitivity/subgroup block. The CDISCPILOT01 worked
-output in §5 reflects that CSR ground-truth ordering. Record any deviation from the naive sort in the
+output in §5 reflects that conventional CSR ordering. Record any deviation from the naive sort in the
 candidate's `notes` so the traceability critic can see the numbering is intentional.
 
 ---

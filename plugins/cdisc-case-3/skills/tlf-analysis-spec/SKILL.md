@@ -31,8 +31,8 @@ USDM ─▶ tlf-planner ─▶ tlf-plan-critic ─▶ [HUMAN REVIEW]
 
 Both outputs are **reviewable, editable gate artifacts**. A biostatistician catches a wrong
 analysis flag, population, or contrast *here* — before it silently corrupts every downstream
-number. Accuracy against the reference CSR is the top metric, and per `adam-to-tlf-design.md` §6
-the #1 battle is upstream in the ADaM flags/populations: **review the adam-spec hardest.**
+number. Per `adam-to-tlf-design.md` §6 the #1 battle is upstream in the ADaM flags/populations:
+**review the adam-spec hardest.**
 
 ## When to use
 
@@ -108,8 +108,7 @@ For each producible candidate, author one analysis-spec object:
    inferential method reports summary stats alongside the model.
 8. **`rounding`** — always the SAS half-away-from-zero rule (R defaults to banker's rounding; the
    generator must replicate SAS — see `adam-to-tlf-design.md` §6.2).
-9. **`output`** — `ard`, `display` (`<table_id>.generated.md`), `validation` (diff vs the matching
-   `csr-outputs-md` file).
+9. **`output`** — `ard`, `display` (`<table_id>.generated.md`).
 
 **Method map** (`analysis.method` → analysis-spec `methods[]`; ⚠️ = assemble, ❌ = custom ARD):
 
@@ -174,8 +173,7 @@ human-review gate), then run `sdtm-to-adam`** with the ADaM spec, followed by `t
 
 ## Worked mappings
 
-**`T-14-3.01` (ADAS-Cog(11), ANCOVA, Efficacy, Week 24, LOCF)** — the validated 100%-reference
-spike. `analysisSet` = `EFFFL='Y'`; `groupingFactor` = `TRTP` (Placebo ref / Low 54 / High 81),
+**`T-14-3.01` (ADAS-Cog(11), ANCOVA, Efficacy, Week 24, LOCF)** — the reference worked example. `analysisSet` = `EFFFL='Y'`; `groupingFactor` = `TRTP` (Placebo ref / Low 54 / High 81),
 `doseVariable=TRT01PN`; `dataSubset` = `ADQSADAS` where `PARAMCD='ACTOT11' AND AVISITN=24 AND
 ANL01FL='Y'`; `analysisVariables` = BASE/AVAL/CHG; `methods` = `Descriptive` (N/mean/sd/median/
 min/max on BASE,AVAL,CHG) + `ANCOVA` (`CHG ~ TRTP + SITEGR1 + BASE`, emmeans LS-means, three

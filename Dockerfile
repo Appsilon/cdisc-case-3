@@ -8,9 +8,9 @@
 #   - display:            gtsummary, gt, tfrmt, rtables, rlistings, ggsurvfit, ggplot2
 #   - data plumbing:      dplyr, tidyr, haven, jsonlite
 #   - Python:             pyyaml (skills + step scripts)
-# plus the deterministic step scripts (stage_inputs.py, open_skill_pr.py). No study
-# data is bundled — the USDM + SDTM (+ optional CSR ground truth) are uploaded at
-# the Provide inputs step each run.
+# plus the deterministic step script (open_skill_pr.py). No study data is bundled —
+# the USDM is uploaded at the Upload USDM step and the SDTM datasets at the Upload
+# SDTM step each run.
 #
 # NOTE: `siera` is deliberately NOT installed. The ARS-native CRAN package's back
 # end is not production-grade; the tlf-generator skill drafts analysis R directly
@@ -49,7 +49,7 @@ RUN install2.r --error --skipinstalled \
 # --- Python deps for the step scripts / skills ---
 RUN pip install --no-cache-dir --break-system-packages pyyaml > /dev/null
 
-# --- Deterministic step scripts (stage_inputs.py, open_skill_pr.py) ---
+# --- Deterministic step script (open_skill_pr.py) ---
 COPY container/ /app/container/
 
 WORKDIR /workspace
