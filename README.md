@@ -19,25 +19,24 @@ durable, per-skill lessons and opened as a PR, so the skills improve over time.
 
 | # | Step | Executor | Skill / script | Output |
 |---|------|----------|----------------|--------|
-| 1 | upload-usdm | human | — | upload the study's USDM JSON (→ `/data/` for plan-tlfs) |
-| 2 | plan-tlfs | agent | `tlf-planner` | study-model.json, tlf-plan.json, tlf-index.md |
+| 1 | upload-inputs | human | — | upload the study's USDM JSON + SDTM datasets (→ `/data/` for plan-tlfs) |
+| 2 | plan-tlfs | agent | `tlf-planner` | study-model.json, tlf-plan.json, tlf-index.md (+ persists SDTM → `/workspace/sdtm/`) |
 | 3 | audit-plan | agent | `tlf-plan-critic` | coverage-report.md + verdict |
 | 4 | **review-plan** | human review | — | approve → specs · revise → plan |
 | 5 | build-specs | agent | `tlf-analysis-spec` | analysis-spec.json, adam-spec.json |
-| 6 | **review-specs** | human review | — | approve → SDTM upload · revise → specs |
-| 7 | upload-sdtm | human | — | upload the study's SDTM datasets (→ `/data/` for derive-adam) |
-| 8 | derive-adam | agent | `sdtm-to-adam` | `/workspace/adam/*` + conformance report |
-| 9 | generate-tlfs | agent | `tlf-generator` | ARD + rendered TFLs |
-| 10 | **review-tlfs** | human review | — | approve → trace · revise → generate |
-| 11 | build-traceability | agent | `traceability-builder` | traceability.html, trace_graph.json, manifest.json |
-| 12 | propose-skill-update | agent | `propose-skill-lesson` | per-skill lesson blocks |
-| 13 | open-skill-pr | script | `open_skill_pr.py` | PR against main (or clean no-op) |
-| 14 | done | human (terminal) | — | — |
+| 6 | **review-specs** | human review | — | approve → ADaM · revise → specs |
+| 7 | derive-adam | agent | `sdtm-to-adam` | `/workspace/adam/*` + conformance report |
+| 8 | generate-tlfs | agent | `tlf-generator` | ARD + rendered TFLs |
+| 9 | **review-tlfs** | human review | — | approve → trace · revise → generate |
+| 10 | build-traceability | agent | `traceability-builder` | traceability.html, trace_graph.json, manifest.json |
+| 11 | propose-skill-update | agent | `propose-skill-lesson` | per-skill lesson blocks |
+| 12 | open-skill-pr | script | `open_skill_pr.py` | PR against main (or clean no-op) |
+| 13 | done | human (terminal) | — | — |
 
-Inputs are uploaded via two `file-upload` human steps — the **USDM** up front
-(step 1) and the **SDTM** datasets later (step 7, once the specs are approved).
-Each upload is made available read-only under `/data/` to the agent step that
-immediately follows it; no separate staging step is needed.
+All inputs are uploaded up front at a single `file-upload` step (step 1): the
+**USDM** JSON and the **SDTM** datasets together. They are made available read-only
+under `/data/` to the next step (plan-tlfs), which persists the SDTM into
+`/workspace/sdtm/` for the later ADaM step — so no separate staging step is needed.
 
 Transitions include three revise loops (each review gate can send the run back
 to its producing agent step).
@@ -91,10 +90,10 @@ step's `result.json`.
 
 ## Inputs (uploaded per run — nothing bundled)
 
-Two upload steps, each feeding the agent step that follows it (read-only `/data/`):
-- **`upload-usdm`** (step 1) — the study's **USDM** study-definition JSON (required).
-- **`upload-sdtm`** (step 7, after the specs are approved) — the study's **SDTM**
-  datasets (required; `.xpt` / Dataset-JSON / `.csv` / `.sas7bdat`).
+A single `upload-inputs` step (step 1) collects everything up front; the files land
+read-only under `/data/` for plan-tlfs (which persists the SDTM into `/workspace/sdtm/`):
+- the study's **USDM** study-definition JSON (required).
+- the study's **SDTM** datasets (required; `.xpt` / Dataset-JSON / `.csv` / `.sas7bdat`).
 
 The pipeline runs against any new study's USDM + SDTM. A known-good reference for
 smoke-testing is the **CDISCPILOT01** (H2Q-MC-LZZT Alzheimer's) USDM + SDTM,

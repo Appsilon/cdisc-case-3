@@ -9,8 +9,7 @@
 #   - data plumbing:      dplyr, tidyr, haven, jsonlite
 #   - Python:             pyyaml (skills + step scripts)
 # plus the deterministic step script (open_skill_pr.py). No study data is bundled —
-# the USDM is uploaded at the Upload USDM step and the SDTM datasets at the Upload
-# SDTM step each run.
+# the USDM + SDTM datasets are uploaded together at the Upload inputs step each run.
 #
 # NOTE: `siera` is deliberately NOT installed. The ARS-native CRAN package's back
 # end is not production-grade; the tlf-generator skill drafts analysis R directly
