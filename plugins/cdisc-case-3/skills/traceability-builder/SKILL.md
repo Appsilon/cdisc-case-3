@@ -51,6 +51,10 @@ derive ADaM (`sdtm-to-adam`). If those artifacts are missing, build them first, 
 | Analysis spec | `testing-tlf-planner/analysis-spec.json` | Per-TLF `method`, `analysisSet`, `dataSubset` (dataset), `purpose` |
 | ADaM spec | `testing-tlf-planner/adam-spec.json` | `datasets[]` with `sdtm_source` (ADaM->SDTM) and `used_by_tables` (ADaM->TLF); variables, parameters, derivation requirements |
 | Per-table outputs | `outputs/<study>-outputs/tlf/<id>/` | `<id>.generated.md` (rendered TLF, embedded), `ard.json` (ARD), `generate.R` (code) |
+| Issues (optional) | `outputs/<study>-outputs/tlf/issues.md` | Free-text data-quality / provenance notes from `tlf-generator`, if present — folded into the issues feed (Workflow 5) |
+
+The ADaM spec's `variables[]` (name + `role`/derivation) and `parameters[]` (`paramcd`, `param`,
+`note`) are the source for variable-level traceability (Workflow 4/6).
 
 Paths are conventions, not hard-coded: the assembler locates artifacts by the study's output layout.
 Every field is optional at the leaf level — a missing `generate.R`, a blocked table with only a
@@ -66,6 +70,14 @@ A single file: `outputs/<study>-outputs/traceability/<study>-traceability.html`.
 - **Interactive**: pan / zoom / drag; click-to-highlight directed lineage with a dimmed rest; type +
   status filters; id/title search; a summary bar of entity counts and status tallies; light/dark
   theme-aware; responsive with wide content scrolling inside its own container.
+- **Issues surfaced**: a dedicated, collapsible **Issues panel** aggregates every problem (blocked
+  tables, unresolved endpoints, absent domains, coverage gaps) as a clickable list that focuses the
+  offending node; messages are built from data, never hard-coded (Workflow 5). Nodes with an issue
+  also carry an on-graph warning marker.
+- **Meaningful labels**: every node face shows a human-readable descriptor (e.g. an endpoint reads
+  "ADAS-Cog(11) · Wk24", not just "END1"), with the full text in the panel + a hover tooltip.
+- **Variable-level depth**: ADaM and SDTM detail panels drill down to variables / PARAMCDs and their
+  cross-domain sources, and an ADaM node can expand into variable sub-nodes (Workflow 4/6).
 
 ## Workflow
 
@@ -75,17 +87,38 @@ A single file: `outputs/<study>-outputs/traceability/<study>-traceability.html`.
 2. **Classify status** per TLF from the **plan** (`status` / `status_reason`) and whether its outputs
    exist: `generated` (a `.generated.md` was produced), `blocked`, or `needs-clarification`. Endpoint
    nodes carry their resolution status from the study model (`resolved` / `unresolved_endpoints`).
-3. **Assemble the graph** — nodes and edges per the model in
+3. **Derive a meaningful label** for every node (see `references/graph-data-schema.md` "Node labels").
+   Keep `label` as the short code chip (`OBJ1`, `END1`, `T-14-3.01`, `ADQSADAS`, `QS`) but set
+   `sublabel` to something a reader understands without clicking: Endpoint -> `parsed.measure` + short
+   timepoint (e.g. "ADAS-Cog(11) · Wk24"); Objective -> a concise descriptor from its `text` (or its
+   child endpoints' measures). Full text stays in the panel + a hover tooltip. Fall back gracefully
+   when `parsed`/`text` is missing (use `text` truncated, then `level`).
+4. **Assemble the graph** — nodes and edges per the model in
    `references/graph-data-schema.md`. Six node types (Objective, Endpoint, Regulatory, TLF, ADaM,
    SDTM); edges: `obj-end`, `end-tlf`, `reg-tlf`, `tlf-adam`, `adam-sdtm`, plus dashed `tlf-sdtm`
    for domains a table *declares* but has no derived ADaM bridge to (e.g. blocked/clarify tables).
    Keep unresolved endpoints and blocked/needs-clarification TLFs as first-class visible nodes.
-4. **Emit** the standalone HTML: inject the graph JSON (escape `</` as `<\/`), then the static
+   **Enrich ADaM nodes** with their full `variables[]` (name + role/derivation) and `parameters[]`
+   (PARAMCD + label + note) from the ADaM spec, and record each variable's source domain(s) — from
+   the dataset `sdtm_source` and any domain named in the `role`/derivation text — so the detail panel
+   and the optional variable drill-down (step 6) have data to show.
+5. **Build the issues feed** — assemble a top-level `issues[]` (schema in
+   `references/graph-data-schema.md`) from DATA, never hard-coded per node: every `blocked` /
+   `needs-clarification` TLF (message = its `status_reason`), every unresolved endpoint, every
+   `absent` SDTM domain (name the tables it blocks), coverage gaps (objectives/endpoints with no
+   TLF), and any lines from `issues.md` if present. Each issue references its node id so the UI can
+   focus it, and flags that node with a warning marker.
+6. **Emit** the standalone HTML: inject the graph JSON (escape `</` as `<\/`), then the static
    template (head + CSS) and the app JS. Lay out by tier (layered columns), render SVG, wire the
-   interactions. Structure the TLF detail so a future **Phase 2** (cell -> ARD drill-down) can slot in
-   without reshaping the node model.
-5. **Verify** by opening the file in a browser: confirm no console errors, lineage highlight works,
-   the rendered tables and collapsibles populate, and there are **zero** external network requests.
+   interactions: an aggregated **Issues panel** (severity tally + clickable rows that focus the
+   node), on-node warning markers, meaningful labels, and variable-level ADaM/SDTM detail panels
+   (Variables + PARAMCD tables; an ADaM node can **expand** into variable sub-nodes joined by
+   `var-sdtm` edges to their source domains). Structure the TLF detail so a future **Phase 2**
+   (cell -> ARD drill-down) can slot in without reshaping the node model.
+7. **Verify** by opening the file in a browser: confirm no console errors; lineage highlight works;
+   the Issues panel lists every problem and clicking a row focuses its node; Objective/Endpoint faces
+   read meaningfully; an ADaM panel shows its Variables + PARAMCDs and expands to variable sub-nodes;
+   rendered tables and collapsibles populate; and there are **zero** external network requests.
 
 ## Design notes
 
@@ -94,6 +127,16 @@ A single file: `outputs/<study>-outputs/traceability/<study>-traceability.html`.
 - **Color encodes node type** (a validated categorical palette; see the graph schema). **Status is a
   reserved palette** (never reused for a type) and always ships with an icon + label, never color
   alone — good for colorblind readers and print.
+- **Issues are visible, not buried, and never hard-coded**: every problem appears both in the
+  aggregated Issues panel and as an on-node warning marker (icon + label). The message text is always
+  derived from data (`status_reason`, `absent`, unresolved endpoints, coverage gaps) so it
+  generalizes to any study — do NOT special-case a particular node's message in the JS.
+- **The node face must be legible on its own**: show a meaningful `sublabel` (measure + timepoint,
+  short objective descriptor), keep the code as a mono chip, and put the full text in the panel + a
+  `<title>` hover tooltip. A reader should grasp what a node is without clicking.
+- **Variable-level stays a drill-down**: keep the hero graph at entity level; surface variable /
+  PARAMCD detail in the ADaM/SDTM panels and behind an opt-in node expansion, so the main view stays
+  legible while the depth is one click away.
 - **Type wears text tokens, never the series color**: node labels/values stay in ink; the colored
   box/rail carries identity.
 - Use the domain's real vernacular as structure — monospace dataset codes (`ADQSADAS`), section
