@@ -33,6 +33,7 @@
       "name": "Plan required TLFs from USDM",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. The uploaded inputs are read-only under /data/: the USDM study-definition JSON (identify it by its usdmVersion / study.versions) plus the SDTM datasets. FIRST, persist the SDTM datasets from /data/ into /workspace/sdtm/ (everything that is not the USDM) so the later derive-adam step can read them. THEN run the tlf-planner skill on the USDM: interpret objectives/endpoints, add ICH E3 regulatory scaffolding, fan out statistical analyses (imputation/subgroup/timepoint), check data feasibility against the now-available SDTM domains, and number the outputs. Writes study-model.json, tlf-plan.json, and the human-readable tlf-index.md to both /workspace and /output, and a /output/result.json summary. On a revise re-entry, read the reviewer comment from the review-plan step and append it to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-planner\",\"iteration\":N,\"comment\":\"...\"}, then correct only the flagged items.",
       "env": {
@@ -43,7 +44,7 @@
       "agent": {
         "skill": "tlf-planner",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -57,6 +58,7 @@
       "name": "Audit TLF plan (traceability + completeness)",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. Run the tlf-plan-critic skill: independently audit /workspace/tlf-plan.json against /workspace/study-model.json (fresh context, reads only the plan + study model). Two-way coverage: every objective and resolved endpoint maps to >=1 planned TLF; every TLF traces to an endpoint/objective or a regulatory rule. Writes coverage-report.md to /workspace and /output, plus /output/result.json with the verdict.",
       "env": {
@@ -67,7 +69,7 @@
       "agent": {
         "skill": "tlf-plan-critic",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -101,6 +103,7 @@
       "name": "Build analysis + ADaM specs",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. Run the tlf-analysis-spec skill on the approved plan: for each producible TLF emit an ARS-aligned analysis-spec entry (analysisSet, groupingFactor, dataSubset, method + operations), and aggregate the variable-level adam-spec.json (datasets, PARAMCDs, flags) INCLUDING the 3 mandatory derivation rules + the data-quality N-gate. Writes analysis-spec.json + adam-spec.json to /workspace and /output, plus /output/result.json. On a revise re-entry, append the reviewer comment to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-analysis-spec\",...} and fix only the flagged specs.",
       "env": {
@@ -111,7 +114,7 @@
       "agent": {
         "skill": "tlf-analysis-spec",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -145,6 +148,7 @@
       "name": "Derive ADaM from SDTM",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. Run the sdtm-to-adam skill: derive the BDS/OCCDS/TTE ADaM datasets that /workspace/adam-spec.json demands from the SDTM datasets at /workspace/sdtm/ (persisted from the upload by plan-tlfs) using admiral. ENFORCE the 3 mandatory rules (day-based visit windowing that keeps unscheduled/ET visits; LOCF endpoint records; SITEGR1 pooling on randomized counts) and the data-quality N-gate (assert each analysis-set N against its population flag, fail on shortfall). Writes /workspace/adam/*.csv (+ derivation code + a conformance report) and /output/result.json.",
       "env": {
@@ -155,7 +159,7 @@
       "agent": {
         "skill": "sdtm-to-adam",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -169,6 +173,7 @@
       "name": "Generate ARD + TLFs",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. Run the tlf-generator skill: for each TLF, compute the ARD (numbers) from ADaM per the analysis-spec using cards/cardx + emmeans directly (explicit contrast signs; MMRM via mmrm + custom ARD), then render the display (gtsummary tables, ggsurvfit figures) applying SAS rounding at display precision. Keep numbers and formatting as separate phases. Writes /workspace/{ard,tfl,code}/<id>.* and /output/ (rendered TLFs, ard) + /output/result.json. On a revise re-entry, append the reviewer comment to /workspace/review_feedback.jsonl as {\"skill\":\"tlf-generator\",...} and fix only the flagged outputs.",
       "env": {
@@ -179,7 +184,7 @@
       "agent": {
         "skill": "tlf-generator",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -230,6 +235,7 @@
       "name": "Propose skill lessons from review feedback",
       "type": "creation",
       "executor": "agent",
+      "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
       "description": "AI. Self-learning loop, generalized across all three review gates. Read /workspace/review_feedback.jsonl (reviewer comments captured by plan-tlfs, build-specs, and generate-tlfs on each revise, each tagged with its skill), the approved artifacts, and each target skill's current references/lessons-learned.md. For EACH skill that was revised, distil durable, skill-general lessons and emit a per-skill append block. Writes /output/result.json as { hasLessons, lessons: [ { skill, lessonAppendMarkdown } ], prTitle, prBody, summary }. When review_feedback.jsonl is absent/empty (first-pass approvals) emit hasLessons=false and no lessons.",
       "env": {
@@ -240,7 +246,7 @@
       "agent": {
         "skill": "propose-skill-lesson",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "~anthropic/claude-sonnet-latest",
+        "model": "sonnet",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",

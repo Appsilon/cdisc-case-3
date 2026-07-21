@@ -83,8 +83,9 @@ baked into the image.
 mediforce-golden-image`). Adds the pinned R stack — admiral/admiraldev/metacore/
 metatools (ADaM); cards/cardx/emmeans/mmrm/survival/broom.helpers (ARD + models);
 gtsummary/gt/tfrmt/rtables/rlistings/ggsurvfit/ggplot2 (display); dplyr/tidyr/
-haven/jsonlite — plus Python `pyyaml`, the step scripts (`container/`), and the
-bundled CDISCPILOT01 reference (`fixtures/`). Skills are **not** baked in. Build:
+haven/jsonlite — plus Python `pyyaml` and the step scripts (`container/`). Skills
+and the local-test `fixtures/` are **not** baked in (inputs are uploaded per run;
+fixtures are for local testing only). Build:
 `docker build -t mediforce-agent:cdisc-case-3 .`.
 
 ## Output contract (`/output`)
