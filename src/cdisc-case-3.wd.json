@@ -44,7 +44,7 @@
       "agent": {
         "skill": "tlf-planner",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -69,7 +69,7 @@
       "agent": {
         "skill": "tlf-plan-critic",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -114,7 +114,7 @@
       "agent": {
         "skill": "tlf-analysis-spec",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -159,7 +159,7 @@
       "agent": {
         "skill": "sdtm-to-adam",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -184,7 +184,7 @@
       "agent": {
         "skill": "tlf-generator",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
@@ -246,7 +246,7 @@
       "agent": {
         "skill": "propose-skill-lesson",
         "skillsDir": "plugins/cdisc-case-3/skills",
-        "model": "sonnet",
+        "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
         "repo": "vedhav/cdisc-case-3",
         "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
