@@ -46,10 +46,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 30
       }
     },
@@ -71,10 +67,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 20
       }
     },
@@ -116,10 +108,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 25
       }
     },
@@ -161,10 +149,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 40
       }
     },
@@ -186,10 +170,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 45
       }
     },
@@ -222,10 +202,6 @@
       "description": "Deterministic. Run build_traceability.py: a pure reporting/visualisation layer that reads the run's already-produced artifacts (study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json from /workspace + the per-TLF ard/tfl/code outputs) and assembles the objective -> endpoint -> SDTM -> ADaM -> TLF graph (linked by the ARD). It NEVER recomputes a statistic. Emits ONE self-contained interactive HTML explorer (vanilla JS + SVG, zero external requests, theme-aware) with lineage highlighting, per-node detail panels (embedded rendered TLF + ARD + code), a data-derived issues feed, and type/status filters + search. Writes /output/traceability.html, /output/trace_graph.json, /output/manifest.json, plus /output/result.json. Parsing is tolerant: a missing optional field never drops a node, and absent inputs downgrade to a warn (never a crash).",
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/build_traceability.py"
       }
@@ -248,10 +224,6 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 15
       }
     },
@@ -267,10 +239,6 @@
       },
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
-        "repo": "vedhav/cdisc-case-3",
-        "commit": "aaa04123d74094b96a9f0ce41cdf56b79fda5989",
-        "dockerfile": "Dockerfile",
-        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/open_skill_pr.py"
       }

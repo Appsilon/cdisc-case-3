@@ -85,8 +85,18 @@ metatools (ADaM); cards/cardx/emmeans/mmrm/survival/broom.helpers (ARD + models)
 gtsummary/gt/tfrmt/rtables/rlistings/ggsurvfit/ggplot2 (display); dplyr/tidyr/
 haven/jsonlite — plus Python `pyyaml` and the step scripts (`container/`). Skills
 and the local-test `fixtures/` are **not** baked in (inputs are uploaded per run;
-fixtures are for local testing only). Build:
-`docker build -t mediforce-agent:cdisc-case-3 .`.
+fixtures are for local testing only).
+
+Every step references this image **by tag only** (`image: mediforce-agent:cdisc-case-3`,
+no `repo`/`commit`/`dockerfile`) — same as `apps/protocol-to-tfl`. The image must
+already exist on the host that runs the containers; the platform does **not**
+auto-build it. Build it once on that host:
+`docker build -t mediforce-agent:cdisc-case-3 .`. Rebuild + re-tag whenever the
+`Dockerfile` or `container/` scripts change. (The prior per-step auto-build shape
+— `repo`+`commit`+`dockerfile` — was removed: a hand-built image carries no
+`mediforce.build.commit` label, so the runtime saw it as "stale" and tried to
+rebuild the R stack through `execSync(stdio:'pipe')`, whose 1 MB `maxBuffer`
+overflows on the chatty source compile and hangs the step outside its timeout.)
 
 ## Output contract (`/output`)
 
@@ -108,12 +118,14 @@ produced/held upstream (Case 1/Case 2 and the `protocol-to-tfl` source).
 
 ## Runtime source pinning
 
-`externalSkillsRepo.commit` and every step's `script.commit` / `agent.commit`
-are pinned to a single repo commit (updated on each release via the two-step pin
-dance: push, read HEAD, rewrite the pins to that SHA, push again). The four repo
-fields are kept distinct: `source` (import provenance, n/a here), `externalSkillsRepo`
-(runtime skills), step `agent.repo`/`script.repo` (Docker build context), and
-`workspace.remote` (unused).
+Only `externalSkillsRepo.commit` is pinned — it is the sole runtime source the
+platform fetches at run time (the pipeline skills, cloned from this repo at that
+commit). Update it on each skill release via the two-step pin dance: push, read
+HEAD, rewrite the pin to that SHA, push again. The Docker image is **not** pinned
+by commit here — it is referenced by tag and built out-of-band on the host (see
+Docker image above), so keep the image in sync with `Dockerfile`/`container/` by
+rebuilding when they change. `workspace.remote` is unused; `source` (git-import
+provenance) is n/a.
 
 ## Registration
 

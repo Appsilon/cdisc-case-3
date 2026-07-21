@@ -31,22 +31,22 @@ FROM mediforce-golden-image
 
 # --- ADaM derivation stack ---
 RUN install2.r --error --skipinstalled \
-      admiral admiraldev metacore metatools > /dev/null
+      admiral admiraldev metacore metatools > /dev/null 2>&1
 
 # --- ARD (numbers) + models ---
 RUN install2.r --error --skipinstalled \
-      cards cardx emmeans mmrm survival broom broom.helpers > /dev/null
+      cards cardx emmeans mmrm survival broom broom.helpers > /dev/null 2>&1
 
 # --- Display / rendering ---
 RUN install2.r --error --skipinstalled \
-      gtsummary gt tfrmt rtables rlistings ggsurvfit ggplot2 > /dev/null
+      gtsummary gt tfrmt rtables rlistings ggsurvfit ggplot2 > /dev/null 2>&1
 
 # --- Data plumbing ---
 RUN install2.r --error --skipinstalled \
-      dplyr tidyr haven jsonlite > /dev/null
+      dplyr tidyr haven jsonlite > /dev/null 2>&1
 
 # --- Python deps for the step scripts / skills ---
-RUN pip install --no-cache-dir --break-system-packages pyyaml > /dev/null
+RUN pip install --no-cache-dir --break-system-packages pyyaml > /dev/null 2>&1
 
 # --- Deterministic step script (open_skill_pr.py) ---
 COPY container/ /app/container/
