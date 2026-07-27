@@ -20,7 +20,7 @@ Inputs:
 
   env:
     GITHUB_TOKEN  — token with contents:write + pull-requests:write on SKILL_REPO
-    SKILL_REPO    — "<owner>/<repo>" the skills live in (e.g. vedhav/cdisc-case-3)
+    SKILL_REPO    — "<owner>/<repo>" the skills live in (e.g. Appsilon/cdisc-case-3)
     RUN_ID        — short id for the branch name; falls back to runId /
                     processInstanceId from /output/input.json
 

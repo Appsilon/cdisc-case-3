@@ -8,7 +8,7 @@
     "OPENROUTER_API_KEY": "{{OPENROUTER_API_KEY}}"
   },
   "externalSkillsRepo": {
-    "url": "https://github.com/vedhav/cdisc-case-3",
+    "url": "https://github.com/Appsilon/cdisc-case-3",
     "commit": "14382a8673bf6f7ba7b90032f16b4de3b7a54156",
     "auth": "GITHUB_TOKEN"
   },
@@ -279,7 +279,7 @@
       "plugin": "script-container",
       "description": "Deterministic. If propose-skill-update produced lessons (hasLessons=true), fresh-clone SKILL_REPO with GITHUB_TOKEN, append each lesson's block to that skill's plugins/cdisc-case-3/skills/<skill>/references/lessons-learned.md, branch skill-lesson/<runId>, commit as Mediforce Bot, push, and open one PR against main covering all touched skills. hasLessons=false (or byte-identical files) => no PR, clean exit. Idempotent on retry: force-pushes the branch and reuses an existing open PR.",
       "env": {
-        "SKILL_REPO": "vedhav/cdisc-case-3"
+        "SKILL_REPO": "Appsilon/cdisc-case-3"
       },
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
