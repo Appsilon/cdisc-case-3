@@ -46,6 +46,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 30
       }
     },
@@ -67,6 +71,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 20
       }
     },
@@ -108,6 +116,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 25
       }
     },
@@ -120,6 +132,10 @@
       "description": "Deterministic ARS conformance gate. Run validate_ars.py: validate /workspace/reporting-event.json against the CDISC ARS Low-level Data Model JSON Schema (baked into the image) plus reference-integrity checks (every methodId/analysisSetId/groupingId/analysisId/outputId resolves). ALWAYS exits 0 and writes /output/result.json {passed, attempts, maxAttempts, errorCount, status} — the transitions branch on it. On pass it proceeds to human spec review; on fail it routes back to build-specs (bounded at 3 attempts) with /workspace/ars-validation.md naming the exact errors; once the loop is exhausted it proceeds to human review with the errors surfaced so a human decides. Never recomputes a statistic.",
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/validate_ars.py"
       }
@@ -151,7 +167,7 @@
       "executor": "agent",
       "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
-      "description": "AI. Run the sdtm-to-adam skill: derive the BDS/OCCDS/TTE ADaM datasets that /workspace/adam-spec.json demands from the SDTM datasets at /workspace/sdtm/ (persisted from the upload by plan-tlfs) using admiral. ENFORCE the 3 mandatory rules (day-based visit windowing that keeps unscheduled/ET visits; LOCF endpoint records; SITEGR1 pooling on randomized counts) and the data-quality N-gate (assert each analysis-set N against its population flag, fail on shortfall). Writes /workspace/adam/*.csv (+ derivation code + a conformance report) and /output/result.json. On a validate-core fail re-entry (the automated CDISC CORE gate found ERROR-severity conformance findings), read /workspace/core-report.md and fix ONLY the flagged ADaM conformance errors, then re-derive; append the findings to /workspace/review_feedback.jsonl as {\"skill\":\"sdtm-to-adam\",...} so the self-learning loop can distil a durable lesson.",
+      "description": "AI. Run the sdtm-to-adam skill: derive the BDS/OCCDS/TTE ADaM datasets that /workspace/adam-spec.json demands from the SDTM datasets at /workspace/sdtm/ (persisted from the upload by plan-tlfs) using admiral. ENFORCE the 3 mandatory rules (day-based visit windowing that keeps unscheduled/ET visits; LOCF endpoint records; SITEGR1 pooling on randomized counts) and the data-quality N-gate (assert each analysis-set N against its population flag, fail on shortfall). Writes /workspace/adam/*.csv (+ derivation code + a conformance report) and /output/result.json.",
       "env": {
         "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}",
         "ANTHROPIC_API_KEY": "",
@@ -162,6 +178,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 40
       }
     },
@@ -174,6 +194,10 @@
       "description": "Deterministic producer. Run generate_define.py: read /workspace/adam-spec.json and the derived datasets under /workspace/adam/ and emit a Define-XML 2.1 (ODM 1.3.2 + def:2.1.0) describing each ADaM dataset (ItemGroupDef, def:Class) and variable (ItemDef, def:Origin) with an ADaMIG standard declaration. Writes /workspace/define.xml + /output/define.xml + /output/result.json. The define is handed to the CORE gate so conformance is checked against the metadata contract, not just the raw data. Tolerant: a missing adam-spec downgrades to a define reconstructed from the derived data headers rather than crashing.",
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/generate_define.py"
       }
@@ -184,14 +208,18 @@
       "type": "creation",
       "executor": "script",
       "plugin": "script-container",
-      "description": "Deterministic CDISC CORE conformance gate. Run validate_core.py: run the CDISC Open Rules Engine (cdisc-rules-engine) over the derived ADaM datasets checked against /workspace/define.xml, for the configured standard/version. ALWAYS exits 0 and writes /output/result.json {passed, attempts, maxAttempts, errorCount, warningNoticeCount, status}; the report is /output/core-report.md. ERROR-severity findings gate: on pass -> generate-tlfs; on fail -> back to derive-adam (bounded at 2 attempts) to re-derive; once the loop is exhausted -> proceed to generate-tlfs with the unresolved findings carried forward for the reviewer to justify at review-tlfs. WARNING/NOTICE findings are reported, not blocking. If the engine/rules-cache is unavailable it reports status=core-unavailable and proceeds (unless CORE_REQUIRED=true) so a missing engine never silently passes nor bricks the run.",
+      "description": "Intermediate CDISC CORE conformance validation (advisory, same proven pattern as cdisc-case-1). Run validate_core.py: normalise the derived ADaM (/workspace/adam) to XPT v5, then run the CDISC Open Rules Engine (`core`, running offline against the engine's bundled rules cache — no CDISC Library API key) over them for the configured standard/version. Writes the conformance report to /output/core_report/ + /output/core-report.md and a /output/result.json {coreRan, errorCount, warningNoticeCount, ...}. ADVISORY: always exits 0 and proceeds to TLF generation; the reviewer resolves or justifies any ERROR-severity findings at the review-tlfs gate. A CORE failure never fails the step.",
       "env": {
         "CORE_STANDARD": "adamig",
-        "CORE_VERSION": "1.3",
-        "CORE_REQUIRED": "false"
+        "CORE_VERSION": "1-3",
+        "CORE_CT": ""
       },
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 20,
         "command": "python3 /app/container/validate_core.py"
       }
@@ -214,6 +242,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 45
       }
     },
@@ -222,7 +254,7 @@
       "name": "Review generated TLFs",
       "type": "review",
       "executor": "human",
-      "description": "Review the rendered TLFs in /output. Approve to assemble traceability, or request changes to send the run back to Generate ARD + TLFs with your comment. If the CDISC CORE gate carried forward unresolved ERROR-severity conformance findings (/output/core-report.md) after its auto-fix loop, justify or reject them here before approving.",
+      "description": "Review the rendered TLFs in /output. Approve to assemble traceability, or request changes to send the run back to Generate ARD + TLFs with your comment. Also review the intermediate CDISC CORE conformance report (/output/core-report.md) and justify or reject any ERROR-severity findings before approving.",
       "params": [
         {
           "name": "comment",
@@ -246,6 +278,10 @@
       "description": "Deterministic. Run build_traceability.py: a pure reporting/visualisation layer that reads the run's already-produced artifacts (study-model.json, tlf-plan.json, analysis-spec.json, adam-spec.json from /workspace + the per-TLF ard/tfl/code outputs) and assembles the objective -> endpoint -> SDTM -> ADaM -> TLF graph (linked by the ARD). It NEVER recomputes a statistic. Emits ONE self-contained interactive HTML explorer (vanilla JS + SVG, zero external requests, theme-aware) with lineage highlighting, per-node detail panels (embedded rendered TLF + ARD + code), a data-derived issues feed, and type/status filters + search. Writes /output/traceability.html, /output/trace_graph.json, /output/manifest.json, plus /output/result.json. Parsing is tolerant: a missing optional field never drops a node, and absent inputs downgrade to a warn (never a crash).",
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/build_traceability.py"
       }
@@ -268,6 +304,10 @@
         "skillsDir": "plugins/cdisc-case-3/skills",
         "model": "anthropic/claude-sonnet-5",
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 15
       }
     },
@@ -283,6 +323,10 @@
       },
       "script": {
         "image": "mediforce-agent:cdisc-case-3",
+        "repo": "vedhav/cdisc-case-3",
+        "commit": "454e7ae7fa29de91670d069141d5c5d3df06fe6f",
+        "dockerfile": "Dockerfile",
+        "repoAuth": "GITHUB_TOKEN",
         "timeoutMinutes": 10,
         "command": "python3 /app/container/open_skill_pr.py"
       }
@@ -302,8 +346,7 @@
     { "from": "review-specs", "to": "build-specs" },
     { "from": "derive-adam", "to": "generate-define" },
     { "from": "generate-define", "to": "validate-core" },
-    { "from": "validate-core", "to": "generate-tlfs", "when": "output.passed == true || output.attempts >= 2" },
-    { "from": "validate-core", "to": "derive-adam", "when": "output.passed == false && output.attempts < 2" },
+    { "from": "validate-core", "to": "generate-tlfs" },
     { "from": "generate-tlfs", "to": "review-tlfs" },
     { "from": "review-tlfs", "to": "build-traceability" },
     { "from": "review-tlfs", "to": "generate-tlfs" },

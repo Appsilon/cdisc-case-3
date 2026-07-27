@@ -41,31 +41,31 @@ RUN install2.r --error --skipinstalled \
 RUN install2.r --error --skipinstalled \
       gtsummary gt tfrmt rtables rlistings ggsurvfit ggplot2 > /dev/null 2>&1
 
-# --- Data plumbing ---
+# --- Data plumbing (+ dataset IO for CORE: datasetjson reads Dataset-JSON,
+#     xportr/haven write XPT v5 that CDISC CORE ingests) ---
 RUN install2.r --error --skipinstalled \
-      dplyr tidyr haven jsonlite > /dev/null 2>&1
+      dplyr tidyr haven jsonlite datasetjson xportr > /dev/null 2>&1
 
 # --- Python deps for the step scripts / skills ---
-#   pyyaml            skills + step scripts
-#   jsonschema        validate_ars.py — ARS LDM schema gate
-#   cdisc-rules-engine  validate_core.py — CDISC Open Rules Engine (CLI `core`)
+#   pyyaml       skills + step scripts
+#   jsonschema   validate_ars.py — ARS LDM schema gate
 RUN pip install --no-cache-dir --break-system-packages \
-      pyyaml jsonschema cdisc-rules-engine > /dev/null 2>&1
+      pyyaml jsonschema > /dev/null 2>&1
+
+# --- CDISC CORE: cdisc-rules-engine (same proven pattern as cdisc-case-1) ---
+# Shallow clone of a release tag (history-free) so the build completes on a cold
+# builder; the tag ships the OFFLINE resources/cache, so CORE runs with NO CDISC
+# Library API key and no network at run time. Exposed as the `core` command; the
+# wrapper cd's into the engine dir so `-ca resources/cache` (relative) resolves.
+ARG CORE_ENGINE_REF=v0.16.0
+RUN git clone --depth 1 --branch "${CORE_ENGINE_REF}" --quiet https://github.com/cdisc-org/cdisc-rules-engine.git /app/cdisc-rules-engine \
+ && pip install --quiet --no-input --no-cache-dir --break-system-packages -r /app/cdisc-rules-engine/requirements.txt > /dev/null 2>&1
+RUN printf '#!/bin/bash\ncd /app/cdisc-rules-engine && exec python3 core.py "$@"\n' > /usr/local/bin/core \
+ && chmod +x /usr/local/bin/core
 
 # --- Deterministic step scripts + baked-in schemas ---
 #   container/ carries build_traceability.py, open_skill_pr.py, validate_ars.py,
 #   generate_define.py, validate_core.py, and schemas/ars_ldm.schema.json.
 COPY container/ /app/container/
-
-# --- CDISC CORE rules cache (optional at build time) ---
-# The rules engine needs a rules cache. Populate it here if a CDISC Library API
-# key is supplied as a build arg (docker build --build-arg CDISC_LIBRARY_API_KEY=…);
-# non-fatal so the image still builds without it (the gate then reports
-# status=core-unavailable and proceeds unless CORE_REQUIRED=true).
-ARG CDISC_LIBRARY_API_KEY=""
-ENV CDISC_LIBRARY_API_KEY=${CDISC_LIBRARY_API_KEY}
-RUN if [ -n "$CDISC_LIBRARY_API_KEY" ]; then \
-      core update-cache > /dev/null 2>&1 || echo "core update-cache failed — cache not populated"; \
-    fi
 
 WORKDIR /workspace

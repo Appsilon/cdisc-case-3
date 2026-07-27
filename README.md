@@ -32,7 +32,7 @@ as a PR, so the skills improve over time.
 | 7 | **review-specs** | human review | — | approve → ADaM · revise → specs |
 | 8 | derive-adam | agent | `sdtm-to-adam` | `/workspace/adam/*` + conformance report |
 | 9 | **generate-define** | script | `generate_define.py` | define.xml (Define-XML 2.1) |
-| 10 | **validate-core** | script (gate) | `validate_core.py` | core-report.md · pass → generate · fail → derive-adam (≤2) |
+| 10 | **validate-core** | script (advisory) | `validate_core.py` | CDISC CORE report → core-report.md (findings reviewed at review-tlfs) |
 | 11 | generate-tlfs | agent | `tlf-generator` | ARD + rendered TFLs |
 | 12 | **review-tlfs** | human review | — | approve → trace · revise → generate |
 | 13 | build-traceability | script | `build_traceability.py` | traceability.html, trace_graph.json, manifest.json |
@@ -40,28 +40,28 @@ as a PR, so the skills improve over time.
 | 15 | open-skill-pr | script | `open_skill_pr.py` | PR against main (or clean no-op) |
 | 16 | done | human (terminal) | — | — |
 
-### The two automated conformance gates
+### The ARS gate + the CDISC CORE check
 
-Both are deterministic `script` steps that **always exit 0** and encode the
-outcome in `result.json`; the workflow transitions branch on `output.passed` and
-a bounded `output.attempts` counter (persisted in `/workspace/.gate-attempts.json`).
+- **`validate-ars`** (hard gate) — a deterministic `script` step that **always
+  exits 0** and encodes the outcome in `result.json`; transitions branch on
+  `output.passed` and a bounded `output.attempts` counter (persisted in
+  `/workspace/.gate-attempts.json`). It validates `reporting-event.json` against
+  the ARS LDM JSON Schema (baked into the image at
+  `container/schemas/ars_ldm.schema.json`) plus reference-integrity checks. Pass
+  → human spec review; fail → back to `build-specs` with the exact errors
+  (`ars-validation.md`), capped at **3** attempts, after which it proceeds to
+  human review with the errors surfaced. (The cap lives BOTH in the transition
+  `when` and the script's `ARS_MAX_ATTEMPTS` default — keep them in sync.)
 
-- **`validate-ars`** validates `reporting-event.json` against the ARS LDM JSON
-  Schema (baked into the image at `container/schemas/ars_ldm.schema.json`) plus
-  reference-integrity checks. Pass → human spec review; fail → back to
-  `build-specs` with the exact errors (`ars-validation.md`), capped at **3**
-  attempts, after which it proceeds to human review with the errors surfaced.
-- **`validate-core`** runs the CDISC Open Rules Engine (`cdisc-rules-engine`,
-  CLI `core`) over the derived ADaM **against `define.xml`**. ERROR-severity
-  findings gate: pass → `generate-tlfs`; fail → back to `derive-adam` (capped at
-  **2**), then proceed forward with unresolved findings carried to `review-tlfs`
-  for the reviewer to justify. WARNING/NOTICE findings are reported, not blocking.
-  If the engine/rules-cache is unavailable it reports `status=core-unavailable`
-  and proceeds unless `CORE_REQUIRED=true` — never a silent pass.
-
-The loop caps (3, 2) live BOTH in the transition `when` expressions and as the
-scripts' `ARS_MAX_ATTEMPTS` / `CORE_MAX_ATTEMPTS` defaults; keep them in sync if
-you change either.
+- **`validate-core`** (advisory — same proven pattern as `cdisc-case-1`) — runs
+  the CDISC Open Rules Engine (`cdisc-rules-engine`, exposed as `core`) over the
+  derived ADaM (normalised to XPT v5). The engine is a shallow clone of tag
+  `v0.16.0` which ships an **offline rules cache**, so CORE runs with **no CDISC
+  Library API key and no network**. It is advisory: the report lands at
+  `/output/core_report/` + `/output/core-report.md`, the step always proceeds to
+  TLF generation, and the reviewer resolves or justifies ERROR-severity findings
+  at `review-tlfs`. Standard/version/CT are set via the step env
+  (`CORE_STANDARD=adamig`, `CORE_VERSION=1-3`, `CORE_CT` optional).
 
 All inputs are uploaded up front at a single `file-upload` step (step 1): the
 **USDM** JSON and the **SDTM** datasets together. They are made available read-only
@@ -113,20 +113,23 @@ baked into the image.
 mediforce-golden-image`). Adds the pinned R stack — admiral/admiraldev/metacore/
 metatools (ADaM); cards/cardx/emmeans/mmrm/survival/broom.helpers (ARD + models);
 gtsummary/gt/tfrmt/rtables/rlistings/ggsurvfit/ggplot2 (display); dplyr/tidyr/
-haven/jsonlite — plus Python `pyyaml` and the step scripts (`container/`). Skills
-and the local-test `fixtures/` are **not** baked in (inputs are uploaded per run;
-fixtures are for local testing only).
+haven/jsonlite/datasetjson/xportr — plus Python `pyyaml` + `jsonschema`, the
+**CDISC CORE** engine (`cdisc-rules-engine` tag `v0.16.0`, shallow-cloned with its
+offline rules cache and exposed as the `core` command — no CDISC key needed), and
+the step scripts (`container/`). Skills and the local-test `fixtures/` are **not**
+baked in (inputs are uploaded per run; fixtures are for local testing only).
 
-Every step references this image **by tag only** (`image: mediforce-agent:cdisc-case-3`,
-no `repo`/`commit`/`dockerfile`) — same as `apps/protocol-to-tfl`. The image must
-already exist on the host that runs the containers; the platform does **not**
-auto-build it. Build it once on that host:
-`docker build -t mediforce-agent:cdisc-case-3 .`. Rebuild + re-tag whenever the
-`Dockerfile` or `container/` scripts change. (The prior per-step auto-build shape
-— `repo`+`commit`+`dockerfile` — was removed: a hand-built image carries no
-`mediforce.build.commit` label, so the runtime saw it as "stale" and tried to
-rebuild the R stack through `execSync(stdio:'pipe')`, whose 1 MB `maxBuffer`
-overflows on the chatty source compile and hangs the step outside its timeout.)
+Every step carries the auto-build quintet `image`+`repo`+`commit`+`dockerfile`+
+`repoAuth` (same pattern as `cdisc-case-1`): the platform builds the image lazily
+via `ensureImage`/`buildImageFromRepo` — HTTPS-token clone of `repo` at `commit`,
+`docker build` of `dockerfile`, stamping a `mediforce.build.commit=<commit>`
+label — and **rebuilds only when `commit` changes**. So bumping the step `commit`
+on release is what ships a new image; no manual `docker build` on the host. The
+`Dockerfile` is kept **quiet** (`> /dev/null 2>&1` on every `RUN`) because the
+platform builds with `execSync(stdio:'pipe')` and Node's 1 MB `maxBuffer` — a
+chatty build overflows it and is killed. (An earlier switch to "image by tag
+only, no auto-build" was reverted: it left the image stale because a workflow
+update can't rebuild a tag-only image.)
 
 ## Output contract (`/output`)
 
@@ -148,14 +151,13 @@ produced/held upstream (Case 1/Case 2 and the `protocol-to-tfl` source).
 
 ## Runtime source pinning
 
-Only `externalSkillsRepo.commit` is pinned — it is the sole runtime source the
-platform fetches at run time (the pipeline skills, cloned from this repo at that
-commit). Update it on each skill release via the two-step pin dance: push, read
-HEAD, rewrite the pin to that SHA, push again. The Docker image is **not** pinned
-by commit here — it is referenced by tag and built out-of-band on the host (see
-Docker image above), so keep the image in sync with `Dockerfile`/`container/` by
-rebuilding when they change. `workspace.remote` is unused; `source` (git-import
-provenance) is n/a.
+Two things are pinned to the release commit, both updated by the same two-step
+pin dance (push content, read HEAD, rewrite the pins to that SHA, push again):
+1. `externalSkillsRepo.commit` — the runtime source for the pipeline skills.
+2. every step's `commit` (in the `image`+`repo`+`commit`+`dockerfile`+`repoAuth`
+   block) — the source the platform auto-builds the Docker image from.
+Keep both at the same SHA on each release so the skills and the image come from
+one commit. `workspace.remote` is unused; `source` (git-import provenance) is n/a.
 
 ## Registration
 
