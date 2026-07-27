@@ -119,17 +119,20 @@ offline rules cache and exposed as the `core` command — no CDISC key needed), 
 the step scripts (`container/`). Skills and the local-test `fixtures/` are **not**
 baked in (inputs are uploaded per run; fixtures are for local testing only).
 
-Every step carries the auto-build quintet `image`+`repo`+`commit`+`dockerfile`+
-`repoAuth` (same pattern as `cdisc-case-1`): the platform builds the image lazily
-via `ensureImage`/`buildImageFromRepo` — HTTPS-token clone of `repo` at `commit`,
-`docker build` of `dockerfile`, stamping a `mediforce.build.commit=<commit>`
-label — and **rebuilds only when `commit` changes**. So bumping the step `commit`
-on release is what ships a new image; no manual `docker build` on the host. The
-`Dockerfile` is kept **quiet** (`> /dev/null 2>&1` on every `RUN`) because the
-platform builds with `execSync(stdio:'pipe')` and Node's 1 MB `maxBuffer` — a
-chatty build overflows it and is killed. (An earlier switch to "image by tag
-only, no auto-build" was reverted: it left the image stale because a workflow
-update can't rebuild a tag-only image.)
+Every step references the image **by tag only** (`image: mediforce-agent:cdisc-case-3`,
+no `repo`/`commit`/`dockerfile`). The platform's `ensureImage` then just checks the
+image exists and uses it — it does **not** build during a step. This is deliberate:
+the per-step auto-build (`repo`+`commit`+`dockerfile`) rebuilds the image lazily on
+the first step of a run after a commit bump, and that slow in-step build can trip a
+container-name collision (`docker run --rm --name …` with no `docker rm -f` first →
+a retried attempt hits `Conflict … already in use`, exit 125). Until the platform
+carries that guard (Appsilon/mediforce#1052), we avoid the in-step build entirely.
+
+Consequence: the host image must be (re)built out-of-band whenever the `Dockerfile`
+or `container/` scripts change — `docker build -t mediforce-agent:cdisc-case-3 .`
+Skills and the step env (`CORE_CT`, etc.) are read at run time, so most changes do
+NOT need an image rebuild. The `Dockerfile` is kept **quiet** (`> /dev/null 2>&1`
+on every `RUN`) regardless.
 
 ## Output contract (`/output`)
 
@@ -151,13 +154,12 @@ produced/held upstream (Case 1/Case 2 and the `protocol-to-tfl` source).
 
 ## Runtime source pinning
 
-Two things are pinned to the release commit, both updated by the same two-step
-pin dance (push content, read HEAD, rewrite the pins to that SHA, push again):
-1. `externalSkillsRepo.commit` — the runtime source for the pipeline skills.
-2. every step's `commit` (in the `image`+`repo`+`commit`+`dockerfile`+`repoAuth`
-   block) — the source the platform auto-builds the Docker image from.
-Keep both at the same SHA on each release so the skills and the image come from
-one commit. `workspace.remote` is unused; `source` (git-import provenance) is n/a.
+Only `externalSkillsRepo.commit` is pinned — the runtime source the platform
+fetches the pipeline skills from. Bump it on each skill release via the two-step
+pin dance (push content, read HEAD, rewrite the pin to that SHA, push again). The
+Docker image is referenced by tag and built out-of-band on the host (see Docker
+image above), so rebuild it when the `Dockerfile`/`container/` change.
+`workspace.remote` is unused; `source` (git-import provenance) is n/a.
 
 ## Registration
 
