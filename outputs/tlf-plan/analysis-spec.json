@@ -1,0 +1,3546 @@
+[
+  {
+    "id": "AN-14-1.01",
+    "table_id": "14-1.01",
+    "title": "Summary of Populations",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §11.1 analysis-set accounting; defines the denominators every other table cites.",
+    "analysisSet": {
+      "id": "AnalysisSet.All",
+      "label": "All Enrolled Subjects",
+      "condition": "(no analysis-flag filter; all ADSL records)",
+      "source": "ADSL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-1.01",
+      "dataset": "ADSL",
+      "condition": "(all records)"
+    },
+    "analysisVariables": {
+      "population_flags": {
+        "variable": "ITTFL/SAFFL/EFFFL/COMPLFL",
+        "label": "Analysis-set membership flags"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Categorical",
+        "label": "Count and percent of subjects in each analysis set",
+        "type": "Descriptive",
+        "appliesTo": [
+          "ITTFL",
+          "SAFFL",
+          "EFFFL",
+          "COMPLFL"
+        ],
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cards::ard_categorical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-1.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.1"
+    },
+    "notes": [
+      "Percent denominator is the number of enrolled subjects (all ADSL records), by treatment group.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-1.02",
+    "table_id": "14-1.02",
+    "title": "Summary of End of Study Data",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §10.1 disposition: completion vs early termination with reason.",
+    "analysisSet": {
+      "id": "AnalysisSet.ITT",
+      "label": "Intent-to-Treat Population",
+      "condition": "ITTFL = 'Y'",
+      "source": "ADSL.ITTFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-1.02",
+      "dataset": "ADSL",
+      "condition": "ITTFL = 'Y'"
+    },
+    "analysisVariables": {
+      "disposition": {
+        "variable": "DCSREAS",
+        "label": "Reason for discontinuation"
+      },
+      "completion": {
+        "variable": "EOSSTT",
+        "label": "End of study status"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Categorical",
+        "label": "Completion status and discontinuation reason",
+        "type": "Descriptive",
+        "appliesTo": [
+          "EOSSTT",
+          "DCSREAS"
+        ],
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cards::ard_categorical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-1.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §10.1"
+    },
+    "notes": [
+      "SDTM DS carries DSDECOD values COMPLETED / ADVERSE EVENT / DEATH / LACK OF EFFICACY / PHYSICIAN DECISION / WITHDRAWAL BY SUBJECT / SCREEN FAILURE. SCREEN FAILURE is excluded by the ITT filter.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-1.03",
+    "table_id": "14-1.03",
+    "title": "Summary of Number of Subjects by Site",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §10.1 enrollment accounting by (pooled) site.",
+    "analysisSet": {
+      "id": "AnalysisSet.All",
+      "label": "All Enrolled Subjects",
+      "condition": "(no analysis-flag filter; all ADSL records)",
+      "source": "ADSL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-1.03",
+      "dataset": "ADSL",
+      "condition": "(all records)"
+    },
+    "analysisVariables": {
+      "site": {
+        "variable": "SITEID",
+        "label": "Investigational site"
+      },
+      "pooled_site": {
+        "variable": "SITEGR1",
+        "label": "Pooled site group (ANCOVA covariate)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Categorical",
+        "label": "Subject counts by site and by pooled site group",
+        "type": "Descriptive",
+        "appliesTo": [
+          "SITEID",
+          "SITEGR1"
+        ],
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cards::ard_categorical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-1.03.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §10.1"
+    },
+    "notes": [
+      "Shows BOTH raw SITEID and derived SITEGR1 so the reviewer can verify the mandatory <3-randomized pooling rule. 6 sites (701/704/708/710/711/718) over 17 randomized subjects — heavy pooling expected.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-1.04",
+    "table_id": "14-1.04",
+    "title": "Summary of Medical History",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §11.2 baseline medical history.",
+    "analysisSet": {
+      "id": "AnalysisSet.ITT",
+      "label": "Intent-to-Treat Population",
+      "condition": "ITTFL = 'Y'",
+      "source": "ADSL.ITTFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-1.04",
+      "dataset": "ADSL",
+      "condition": "ITTFL = 'Y'"
+    },
+    "analysisVariables": {
+      "term": {
+        "variable": "MHTERM",
+        "label": "Reported medical-history term"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of baseline medical-history conditions",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "MHTERM"
+          },
+          {
+            "role": "PT",
+            "variable": "MHTERM"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-1.04.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "notes": [
+      "MH is UNCODED in this extract — no MHDECOD/MHBODSYS. The 'SOC' and 'PT' hierarchy levels both collapse onto verbatim MHTERM, which holds the single value \"ALZHEIMER'S DISEASE\" for all subjects. Expect a one-row table. Flagged at plan review (critic finding R-5) as a prune candidate.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-2.01",
+    "table_id": "14-2.01",
+    "title": "Summary of Demographic and Baseline Characteristics",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §11.2 demographics and baseline comparability of the treatment arms.",
+    "analysisSet": {
+      "id": "AnalysisSet.ITT",
+      "label": "Intent-to-Treat Population",
+      "condition": "ITTFL = 'Y'",
+      "source": "ADSL.ITTFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-2.01",
+      "dataset": "ADSL",
+      "condition": "ITTFL = 'Y'"
+    },
+    "analysisVariables": {
+      "age": {
+        "variable": "AGE",
+        "label": "Age (years)"
+      },
+      "sex": {
+        "variable": "SEX",
+        "label": "Sex"
+      },
+      "race": {
+        "variable": "RACE",
+        "label": "Race"
+      },
+      "ethnic": {
+        "variable": "ETHNIC",
+        "label": "Ethnicity"
+      },
+      "weight": {
+        "variable": "WEIGHTBL",
+        "label": "Baseline weight (kg)"
+      },
+      "height": {
+        "variable": "HEIGHTBL",
+        "label": "Baseline height (cm)"
+      },
+      "bmi": {
+        "variable": "BMIBL",
+        "label": "Baseline BMI (kg/m2)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Continuous baseline characteristics",
+        "type": "Descriptive",
+        "appliesTo": [
+          "AGE",
+          "WEIGHTBL",
+          "HEIGHTBL",
+          "BMIBL"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      },
+      {
+        "id": "M.Categorical",
+        "label": "Categorical baseline characteristics",
+        "type": "Descriptive",
+        "appliesTo": [
+          "SEX",
+          "RACE",
+          "ETHNIC",
+          "AGEGR1"
+        ],
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cards::ard_categorical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-2.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "notes": [
+      "No between-group inferential test: at N=17 a baseline comparability p-value is meaningless and baseline testing in a randomized trial is discouraged (ICH E9).",
+      "DM RACE has 3 levels in the data (WHITE / BLACK OR AFRICAN AMERICAN / MULTIPLE); ETHNIC is present.",
+      "AGEGR1 (<65 / 65-80 / >80) must be derived in ADSL; observed AGE range is 61-89.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-2.02",
+    "table_id": "14-2.02",
+    "title": "Summary of HAMD 17 Total Score at Baseline",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Baseline characterization of depression severity (HAMD 17), supporting the delivered-data depression objective OBJ-TS1.",
+    "analysisSet": {
+      "id": "AnalysisSet.ITT",
+      "label": "Intent-to-Treat Population",
+      "condition": "ITTFL = 'Y'",
+      "source": "ADSL.ITTFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-2.02",
+      "dataset": "ADRSHAMD",
+      "condition": "PARAMCD = 'HAMD118' AND ABLFL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "HAMD 17 Total Score at baseline"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "HAMD 17 total score at baseline",
+        "type": "Descriptive",
+        "appliesTo": [
+          "AVAL"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-2.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS2"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Recategorized from efficacy (14-3) to demographics (14-2) at plan review — critic finding R-3.",
+      "SDTM RS collects HAMD 17 ONLY at BASELINE and EARLY DISCONTINUATION RETRIEVAL. There is no scheduled post-baseline visit, so no change-from-baseline or endpoint analysis is possible. Baseline summary only.",
+      "No inferential comparison: this is a baseline characteristic of a randomized trial.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-3.01",
+    "table_id": "14-3.01",
+    "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - LOCF",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "PRIMARY analysis of the delivered-data depression objective: dose-dependent improvement in PHQ-9 total score at Week 24.",
+    "analysisSet": {
+      "id": "AnalysisSet.Efficacy",
+      "label": "Efficacy Population",
+      "condition": "EFFFL = 'Y'",
+      "source": "ADSL.EFFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ],
+      "doseVariable": "TRT01PN"
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-3.01",
+      "dataset": "ADQSPHQ",
+      "condition": "PARAMCD = 'PHQTOT' AND AVISITN = 24 AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline PHQ-9 Total Score"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline in PHQ-9 Total Score"
+      },
+      "value": {
+        "variable": "AVAL",
+        "label": "PHQ-9 Total Score at Week 24"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Baseline, Week 24 and change-from-baseline summary",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      },
+      {
+        "id": "M.ANCOVA",
+        "label": "ANCOVA of change from baseline",
+        "type": "ANCOVA",
+        "responseVariable": "CHG",
+        "model": "CHG ~ TRTP + SITEGR1 + BASE",
+        "fixedEffects": [
+          "TRTP",
+          "SITEGR1",
+          "BASE"
+        ],
+        "lsmeans": {
+          "engine": "emmeans::emmeans(fit, ~ TRTP)",
+          "referenceGridWeighting": "equal",
+          "operations": [
+            "lsmean",
+            "lsmean_se"
+          ]
+        },
+        "contrasts": {
+          "engine": "emmeans::contrast (explicit coef lists)",
+          "conf.level": 0.95,
+          "adjust": "none",
+          "comparisons": [
+            {
+              "id": "low_vs_pbo",
+              "label": "Zanomaline Low Dose - Placebo",
+              "coef": [
+                -1,
+                1,
+                0
+              ]
+            },
+            {
+              "id": "high_vs_pbo",
+              "label": "Zanomaline High Dose - Placebo",
+              "coef": [
+                -1,
+                0,
+                1
+              ]
+            },
+            {
+              "id": "high_vs_low",
+              "label": "Zanomaline High Dose - Zanomaline Low Dose",
+              "coef": [
+                0,
+                -1,
+                1
+              ]
+            }
+          ],
+          "operations": [
+            "diff",
+            "diff_se",
+            "conf.low",
+            "conf.high",
+            "p.value"
+          ]
+        },
+        "display": {
+          "lsmean": 1,
+          "lsmean_se": 2,
+          "diff": 1,
+          "diff_se": 2,
+          "conf.low": 1,
+          "conf.high": 1,
+          "p.value": 3
+        },
+        "engine": "stats::lm + emmeans::emmeans / emmeans::contrast (NOT cardx::ard_emmeans_contrast — broken in the tested build)"
+      },
+      {
+        "id": "M.DoseResponse",
+        "label": "Dose-response trend test",
+        "type": "DoseResponse",
+        "doseVariable": "TRT01PN",
+        "model": "CHG ~ TRT01PN + SITEGR1 + BASE",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "stats::lm with continuous dose term"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-3.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "PARAMCD 'PHQTOT' is DERIVED in ADQSPHQ from SDTM QSPH QSTESTCD='PHQ0111' (QSTEST 'PHQ01-Total Score'). Do NOT use the 10 item-level PHQ0101..PHQ0110 records.",
+      "LOCF-DEPENDENT: only 2 subjects have an OBSERVED Week 24 PHQ-9 total; 13 have a baseline and 6 have an EARLY DISCONTINUATION RETRIEVAL record. Mandatory rule 2 (DTYPE='LOCF', ANL01FL='Y' at the endpoint visit) will supply most analysis records. Expected analysis n ~13.",
+      "The generator MUST report n(observed) alongside n(analyzed) on the table face — critic finding R-2.",
+      "SITEGR1 in the model may be non-estimable after pooling (6 sites, 17 subjects). If the term is rank-deficient, refit without SITEGR1 and record the fallback in the ARD and the table footnote.",
+      "LOCF imputation assumed from estimand EST1 'Treatment Policy' strategy — no SAP provided.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-3.02",
+    "table_id": "14-3.02",
+    "title": "Change from Baseline to Week 24 in Satisfaction With Life Scale (SWLS) Total Score - LOCF",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Dose-dependent improvement in life satisfaction (SWLS) at Week 24 — delivered-data objective OBJ-TS2.",
+    "analysisSet": {
+      "id": "AnalysisSet.Efficacy",
+      "label": "Efficacy Population",
+      "condition": "EFFFL = 'Y'",
+      "source": "ADSL.EFFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ],
+      "doseVariable": "TRT01PN"
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-3.02",
+      "dataset": "ADQSSWL",
+      "condition": "PARAMCD = 'SWLSTOT' AND AVISITN = 24 AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline SWLS Total Score"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline in SWLS Total Score"
+      },
+      "value": {
+        "variable": "AVAL",
+        "label": "SWLS Total Score at Week 24"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Baseline, Week 24 and change-from-baseline summary",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      },
+      {
+        "id": "M.ANCOVA",
+        "label": "ANCOVA of change from baseline",
+        "type": "ANCOVA",
+        "responseVariable": "CHG",
+        "model": "CHG ~ TRTP + SITEGR1 + BASE",
+        "fixedEffects": [
+          "TRTP",
+          "SITEGR1",
+          "BASE"
+        ],
+        "lsmeans": {
+          "engine": "emmeans::emmeans(fit, ~ TRTP)",
+          "referenceGridWeighting": "equal",
+          "operations": [
+            "lsmean",
+            "lsmean_se"
+          ]
+        },
+        "contrasts": {
+          "engine": "emmeans::contrast (explicit coef lists)",
+          "conf.level": 0.95,
+          "adjust": "none",
+          "comparisons": [
+            {
+              "id": "low_vs_pbo",
+              "label": "Zanomaline Low Dose - Placebo",
+              "coef": [
+                -1,
+                1,
+                0
+              ]
+            },
+            {
+              "id": "high_vs_pbo",
+              "label": "Zanomaline High Dose - Placebo",
+              "coef": [
+                -1,
+                0,
+                1
+              ]
+            },
+            {
+              "id": "high_vs_low",
+              "label": "Zanomaline High Dose - Zanomaline Low Dose",
+              "coef": [
+                0,
+                -1,
+                1
+              ]
+            }
+          ],
+          "operations": [
+            "diff",
+            "diff_se",
+            "conf.low",
+            "conf.high",
+            "p.value"
+          ]
+        },
+        "display": {
+          "lsmean": 1,
+          "lsmean_se": 2,
+          "diff": 1,
+          "diff_se": 2,
+          "conf.low": 1,
+          "conf.high": 1,
+          "p.value": 3
+        },
+        "engine": "stats::lm + emmeans::emmeans / emmeans::contrast (NOT cardx::ard_emmeans_contrast — broken in the tested build)"
+      },
+      {
+        "id": "M.DoseResponse",
+        "label": "Dose-response trend test",
+        "type": "DoseResponse",
+        "doseVariable": "TRT01PN",
+        "model": "CHG ~ TRT01PN + SITEGR1 + BASE",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "stats::lm with continuous dose term"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-3.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "DERIVATION DEPENDENCY: SDTM QSSL carries only the 5 SWLS items (SWLS0101..SWLS0105) and NO total-score record. PARAMCD 'SWLSTOT' must be derived in ADQSSWL as the sum of the 5 item scores, with an explicit completeness rule: set the total to missing unless all 5 items are non-missing at that visit. Record the rule in the ADaM define.",
+      "LOCF-DEPENDENT with the same visit sparsity as PHQ-9 (13 at baseline, 2 observed at Week 24).",
+      "LOCF imputation assumed — no SAP provided.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-3.03",
+    "table_id": "14-3.03",
+    "title": "Change from Baseline to Week 24 in AVLT-REY List A Total Score - LOCF",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Dose-dependent improvement in memory and learning (AVLT-REY List A Total) at Week 24 — delivered-data objective OBJ-TS3.",
+    "analysisSet": {
+      "id": "AnalysisSet.Efficacy",
+      "label": "Efficacy Population",
+      "condition": "EFFFL = 'Y'",
+      "source": "ADSL.EFFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ],
+      "doseVariable": "TRT01PN"
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-3.03",
+      "dataset": "ADFTAVLT",
+      "condition": "PARAMCD = 'AVLATOT' AND AVISITN = 24 AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline (Screening 2) AVLT-REY List A Total"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline in AVLT-REY List A Total"
+      },
+      "value": {
+        "variable": "AVAL",
+        "label": "AVLT-REY List A Total at Week 24"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Baseline, Week 24 and change-from-baseline summary",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      },
+      {
+        "id": "M.ANCOVA",
+        "label": "ANCOVA of change from baseline",
+        "type": "ANCOVA",
+        "responseVariable": "CHG",
+        "model": "CHG ~ TRTP + SITEGR1 + BASE",
+        "fixedEffects": [
+          "TRTP",
+          "SITEGR1",
+          "BASE"
+        ],
+        "lsmeans": {
+          "engine": "emmeans::emmeans(fit, ~ TRTP)",
+          "referenceGridWeighting": "equal",
+          "operations": [
+            "lsmean",
+            "lsmean_se"
+          ]
+        },
+        "contrasts": {
+          "engine": "emmeans::contrast (explicit coef lists)",
+          "conf.level": 0.95,
+          "adjust": "none",
+          "comparisons": [
+            {
+              "id": "low_vs_pbo",
+              "label": "Zanomaline Low Dose - Placebo",
+              "coef": [
+                -1,
+                1,
+                0
+              ]
+            },
+            {
+              "id": "high_vs_pbo",
+              "label": "Zanomaline High Dose - Placebo",
+              "coef": [
+                -1,
+                0,
+                1
+              ]
+            },
+            {
+              "id": "high_vs_low",
+              "label": "Zanomaline High Dose - Zanomaline Low Dose",
+              "coef": [
+                0,
+                -1,
+                1
+              ]
+            }
+          ],
+          "operations": [
+            "diff",
+            "diff_se",
+            "conf.low",
+            "conf.high",
+            "p.value"
+          ]
+        },
+        "display": {
+          "lsmean": 1,
+          "lsmean_se": 2,
+          "diff": 1,
+          "diff_se": 2,
+          "conf.low": 1,
+          "conf.high": 1,
+          "p.value": 3
+        },
+        "engine": "stats::lm + emmeans::emmeans / emmeans::contrast (NOT cardx::ard_emmeans_contrast — broken in the tested build)"
+      },
+      {
+        "id": "M.DoseResponse",
+        "label": "Dose-response trend test",
+        "type": "DoseResponse",
+        "doseVariable": "TRT01PN",
+        "model": "CHG ~ TRT01PN + SITEGR1 + BASE",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "stats::lm with continuous dose term"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-3.03.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS4"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "PARAMCD 'AVLATOT' derived from SDTM FT FTTESTCD='AVL0216' (FTTEST 'AVL02-List A Total').",
+      "BASELINE DEPENDENCY: FT has NO 'BASELINE' visit for AVLT-REY. The earliest assessment is SCREENING 2. ABLFL must be set on the SCREENING 2 record (FTLOBXFL='Y' should corroborate). Record this deviation from the usual baseline definition in the ADaM define and the table footnote.",
+      "Best-populated of the three efficacy endpoints: 14 subjects have an observed Week 24 record and 21 an ED record, so LOCF carries less of the analysis than for PHQ-9/SWLS.",
+      "LOCF imputation assumed — no SAP provided.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-3.04",
+    "table_id": "14-3.04",
+    "title": "Repeated Measures Analysis of Change from Baseline to Week 24 in PHQ-9 Total Score",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Repeated-measures confirmation of the PHQ-9 primary analysis using all observed post-baseline visits under MAR.",
+    "analysisSet": {
+      "id": "AnalysisSet.Efficacy",
+      "label": "Efficacy Population",
+      "condition": "EFFFL = 'Y'",
+      "source": "ADSL.EFFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-3.04",
+      "dataset": "ADQSPHQ",
+      "condition": "PARAMCD = 'PHQTOT' AND AVISITN > 0 AND DTYPE = '' AND ANL02FL = 'Y'"
+    },
+    "analysisVariables": {
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline PHQ-9 Total Score"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline in PHQ-9 Total Score"
+      },
+      "value": {
+        "variable": "AVAL",
+        "label": "PHQ-9 Total Score"
+      },
+      "visit": {
+        "variable": "AVISIT",
+        "label": "Analysis visit"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.MMRM",
+        "label": "Mixed model for repeated measures",
+        "type": "MMRM",
+        "responseVariable": "CHG",
+        "model": "CHG ~ TRTP + AVISIT + TRTP:AVISIT + BASE + BASE:AVISIT + us(AVISIT | USUBJID)",
+        "covariance": "unstructured",
+        "degreesOfFreedom": "Kenward-Roger",
+        "lsmeans": {
+          "engine": "emmeans::emmeans(fit, ~ TRTP | AVISIT)",
+          "operations": [
+            "lsmean",
+            "lsmean_se"
+          ]
+        },
+        "contrasts": {
+          "engine": "emmeans::contrast (explicit coef lists), at AVISIT = Week 24",
+          "conf.level": 0.95,
+          "adjust": "none",
+          "comparisons": [
+            {
+              "id": "low_vs_pbo",
+              "label": "Zanomaline Low Dose - Placebo",
+              "coef": [
+                -1,
+                1,
+                0
+              ]
+            },
+            {
+              "id": "high_vs_pbo",
+              "label": "Zanomaline High Dose - Placebo",
+              "coef": [
+                -1,
+                0,
+                1
+              ]
+            }
+          ],
+          "operations": [
+            "diff",
+            "diff_se",
+            "conf.low",
+            "conf.high",
+            "p.value"
+          ]
+        },
+        "display": {
+          "lsmean": 1,
+          "lsmean_se": 2,
+          "diff": 1,
+          "diff_se": 2,
+          "conf.low": 1,
+          "conf.high": 1,
+          "p.value": 3
+        },
+        "engine": "mmrm::mmrm + emmeans -> CUSTOM ARD (no cardx function exists for MMRM)"
+      },
+      {
+        "id": "M.Descriptive",
+        "label": "Observed summary by visit",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-3.04.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "EXPLICITLY EXCLUDES LOCF records (DTYPE = ''): MMRM uses observed data under MAR and must not be fed carried-forward values. ANL02FL is the observed-cases record flag.",
+      "Critic finding R-2 recommends this as the more defensible headline analysis than T-14-3.01, because it uses every observed visit rather than depending on LOCF for ~11 of ~13 analysis values.",
+      "AT N=17 THE UNSTRUCTURED COVARIANCE WILL ALMOST CERTAINLY FAIL TO CONVERGE. Fallback ladder, applied in order and recorded in the ARD: (1) unstructured, (2) Toeplitz, (3) compound symmetry, (4) if all fail, emit the descriptive companion only with an explicit non-convergence footnote. Do not silently drop the table.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-3.05",
+    "table_id": "14-3.05",
+    "title": "PHQ-9 Total Score - Mean and Mean Change from Baseline Over Time",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "Descriptive companion to the PHQ-9 primary analysis: mean and mean change from baseline at every visit.",
+    "analysisSet": {
+      "id": "AnalysisSet.Efficacy",
+      "label": "Efficacy Population",
+      "condition": "EFFFL = 'Y'",
+      "source": "ADSL.EFFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-3.05",
+      "dataset": "ADQSPHQ",
+      "condition": "PARAMCD = 'PHQTOT' AND ANL02FL = 'Y'"
+    },
+    "analysisVariables": {
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline PHQ-9 Total Score"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "value": {
+        "variable": "AVAL",
+        "label": "PHQ-9 Total Score"
+      },
+      "visit": {
+        "variable": "AVISIT",
+        "label": "Analysis visit"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Mean and mean change from baseline by analysis visit",
+        "type": "Descriptive",
+        "appliesTo": [
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-3.05.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Observed cases only (ANL02FL, DTYPE=''), by AVISIT. No inferential statistic — descriptive leaf.",
+      "This table is the honest picture of the data behind T-14-3.01: it will show how few subjects contribute at each post-baseline visit.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-4.01",
+    "table_id": "14-4.01",
+    "title": "Summary of Planned Exposure to Study Drug",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §12.1 extent of exposure to study drug.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-4.01",
+      "dataset": "ADEX",
+      "condition": "PARAMCD IN ('TRTDUR','CUMDOSE','AVGDD')"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Exposure parameter value"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Exposure parameter"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Duration of exposure, cumulative dose and average daily dose",
+        "type": "Descriptive",
+        "appliesTo": [
+          "AVAL"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      },
+      {
+        "id": "M.Categorical",
+        "label": "Subjects by exposure-duration category",
+        "type": "Descriptive",
+        "appliesTo": [
+          "EXDURGR1"
+        ],
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cards::ard_categorical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-4.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §12.1"
+    },
+    "notes": [
+      "ADEX parameters derived from SDTM EX (1583 dosing records; EXTRT ZANOMALINE / PLACEBO): TRTDUR = last EXENDT - first EXSTDT + 1; CUMDOSE = sum(EXDOSE); AVGDD = CUMDOSE / TRTDUR.",
+      "EXDURGR1 duration bands must be defined in the ADaM spec; study length is 28 weeks (TS LENGTH P28W).",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.01",
+    "table_id": "14-5.01",
+    "title": "Incidence of Treatment-Emergent Adverse Events by System Organ Class and Preferred Term",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Primary safety display: incidence of treatment-emergent adverse events by SOC and PT.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.01",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of TEAEs, n(%) subjects and event counts, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects",
+          "n_events"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "USE AESOC, NOT AEBODSYS: AEBODSYS is blank on every record in this extract; AESOC and AESOCCD are populated.",
+      "TRTEMFL must be derived in ADAE (AESTDT on/after TRTSDT and on/before TRTEDT + follow-up window).",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.02",
+    "table_id": "14-5.02",
+    "title": "Incidence of Treatment-Emergent Serious Adverse Events by System Organ Class and Preferred Term",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Incidence of treatment-emergent SERIOUS adverse events by SOC and PT.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.02",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y' AND AESER = 'Y'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of treatment-emergent SAEs, n(%) subjects and event counts, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects",
+          "n_events"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Only 4 AE records carry AESER='Y'. Expect a very sparse table.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.03",
+    "table_id": "14-5.03",
+    "title": "Incidence of Adverse Events Leading to Study Drug Discontinuation",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Incidence of adverse events leading to study-drug discontinuation.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.03",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y' AND AEACN = 'DRUG WITHDRAWN'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of AEs leading to drug withdrawal, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects",
+          "n_events"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.03.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Corroborate the subject count against ADSL DCSREAS='ADVERSE EVENT' (13 DS records); a mismatch between AEACN and DS is a data-consistency finding worth reporting.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.04",
+    "table_id": "14-5.04",
+    "title": "Incidence of Adverse Events with a Fatal Outcome (Deaths)",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Incidence of adverse events with a fatal outcome.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.04",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y' AND AEOUT = 'FATAL'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of fatal AEs, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects",
+          "n_events"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.04.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "3 subjects have DM.DTHFL set; SDTM DD carries the primary cause of death (SUDDEN DEATH, COMPLETED SUICIDE, MYOCARDIAL INFARCTION). Reconcile the AEOUT='FATAL' count against DTHFL and report any gap.",
+      "Subject-level cause-of-death detail is carried by L-14-5.01, not here.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.05",
+    "table_id": "14-5.05",
+    "title": "Incidence of Treatment-Emergent Adverse Events by Maximum Severity",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Incidence of treatment-emergent adverse events by maximum severity per subject.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.05",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y' AND AOCC01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      },
+      "severity": {
+        "variable": "ASEV",
+        "label": "Maximum severity (MILD/MODERATE/SEVERE)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of TEAEs by maximum severity, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.05.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "MAXIMUM-SEVERITY SEMANTICS: a subject is counted ONCE at their worst severity per SOC/PT. This requires the ADAE occurrence flag AOCC01FL (first occurrence of the most severe event per subject per PT). Counting all records instead would double-count subjects — a classic AE-table defect.",
+      "ASEV ordering MILD < MODERATE < SEVERE must be an explicit factor level order, not alphabetical.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-5.06",
+    "table_id": "14-5.06",
+    "title": "Incidence of Treatment-Emergent Adverse Events by Relationship to Study Drug",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Incidence of treatment-emergent adverse events by relationship to study drug.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.06",
+      "dataset": "ADAE",
+      "condition": "TRTEMFL = 'Y'"
+    },
+    "analysisVariables": {
+      "soc": {
+        "variable": "AESOC",
+        "label": "System organ class"
+      },
+      "pt": {
+        "variable": "AEDECOD",
+        "label": "Preferred term"
+      },
+      "relationship": {
+        "variable": "AREL",
+        "label": "Relationship to study drug"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of TEAEs by relationship, by SOC and PT",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "AESOC"
+          },
+          {
+            "role": "PT",
+            "variable": "AEDECOD"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-5.06.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "AEREL levels in the data: RELATED / POSSIBLY RELATED / UNLIKELY RELATED / NOT RELATED. Define whether 'related' pools the first two (the usual convention) and footnote the choice.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-L-14-5.01",
+    "table_id": "14-5.01",
+    "title": "Listing of Deaths",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §12.3 subject-level listing of deaths with primary cause.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-5.01L",
+      "dataset": "ADSL",
+      "condition": "DTHFL = 'Y'"
+    },
+    "analysisVariables": {
+      "subject": {
+        "variable": "USUBJID",
+        "label": "Subject"
+      },
+      "treatment": {
+        "variable": "TRT01A",
+        "label": "Actual treatment"
+      },
+      "death_date": {
+        "variable": "DTHDT",
+        "label": "Date of death"
+      },
+      "study_day": {
+        "variable": "DTHDY",
+        "label": "Study day of death"
+      },
+      "cause": {
+        "variable": "DTHCAUS",
+        "label": "Primary cause of death (SDTM DD)"
+      },
+      "ae_term": {
+        "variable": "AEDECOD",
+        "label": "Associated fatal AE preferred term"
+      }
+    },
+    "methods": [],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "listing.json",
+      "display": "L-14-5.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §12.3"
+    },
+    "notes": [
+      "LISTING — no statistical method, no summarization. One row per death (3 expected).",
+      "DTHCAUS sourced from SDTM DD (DDTESTCD for primary cause of death); joined to ADSL by USUBJID.",
+      "Listings are rendered directly from the subsetted ADaM, not via an ARD of statistics.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.01",
+    "table_id": "14-6.01",
+    "title": "Summary Statistics for Continuous Laboratory Values and Change from Baseline",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Summary statistics for continuous laboratory values and change from baseline, by parameter and visit.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.01",
+      "dataset": "ADLB",
+      "condition": "PARCAT1 IN ('CHEMISTRY','HEMATOLOGY','URINALYSIS') AND ANL01FL = 'Y' AND AVAL IS NOT NULL"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Lab value and change from baseline by parameter and visit",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "LB has 3488 records over 40 LBTESTCDs in 4 categories (CHEMISTRY / HEMATOLOGY / URINALYSIS / OTHER).",
+      "OTHER category is excluded here — it holds non-numeric qualitative results (COLOR, KETONES, ANISO, POIKILO, MACROCY). Restrict to parameters with a numeric LBSTRESN.",
+      "AVISIT must come from day-based windowing (mandatory rule 1): LB contains unscheduled visits ('WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01', 'WEEK 8: UNSCHEDULED 01') that a nominal-VISITNUM map would silently delete.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.02",
+    "table_id": "14-6.02",
+    "title": "Frequency of Normal and Abnormal (Beyond Normal Range) Laboratory Values During Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Frequency of normal and abnormal laboratory values relative to the reference range, during treatment.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.02",
+      "dataset": "ADLB",
+      "condition": "ANL01FL = 'Y' AND ANRIND IS NOT NULL"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      },
+      "from_": {
+        "variable": "BNRIND",
+        "label": "Baseline reference-range indicator"
+      },
+      "to_": {
+        "variable": "ANRIND",
+        "label": "Post-baseline reference-range indicator"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.ShiftTable",
+        "label": "Baseline-to-worst-post-baseline shift vs the reference range",
+        "type": "ShiftTable",
+        "fromVariable": "BNRIND",
+        "toVariable": "ANRIND",
+        "byVisit": false,
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cardx::ard_tabulate_shift"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "ANRIND/BNRIND derive from SDTM LBNRIND (NORMAL / LOW / HIGH / ABNORMAL) against LBSTNRLO/LBSTNRHI.",
+      "Category order LOW < NORMAL < HIGH must be explicit; 'ABNORMAL' (used for qualitative tests) is a fourth, unordered level — keep it separate rather than forcing it into the ordering.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.03",
+    "table_id": "14-6.03",
+    "title": "Frequency of Normal and Abnormal (Clinically Significant Change from Previous Visit) Laboratory Values During Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Frequency of normal and abnormal laboratory values by clinically significant change from the previous visit.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.03",
+      "dataset": "ADLB",
+      "condition": "ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      },
+      "csc": {
+        "variable": "CSCFL",
+        "label": "Clinically significant change flag"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.ShiftTable",
+        "label": "Shift by clinically significant change from the previous visit",
+        "type": "ShiftTable",
+        "fromVariable": "BNRIND",
+        "toVariable": "ANRIND",
+        "byVisit": false,
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cardx::ard_tabulate_shift"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.03.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "*** SPECIFICATION DEPENDENCY, NOT A DATA GAP *** SDTM LB carries no clinical-significance flag. The CSCFL derivation rule (e.g. a parameter-specific delta threshold vs the previous non-missing visit) is NOT defined by the protocol or any SAP available to this run.",
+      "sdtm-to-adam MUST NOT invent a threshold. Derive CSCFL as all-missing and let the generator emit the table with an explicit 'criterion not specified' footnote, OR block the table. Do not silently guess.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.04",
+    "table_id": "14-6.04",
+    "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges, by Visit",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Shifts of laboratory values against threshold ranges, by visit.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.04",
+      "dataset": "ADLB",
+      "condition": "ANL01FL = 'Y' AND ANRIND IS NOT NULL"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.ShiftTable",
+        "label": "Threshold-range shift by visit",
+        "type": "ShiftTable",
+        "fromVariable": "BNRIND",
+        "toVariable": "ANRIND",
+        "byVisit": true,
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cardx::ard_tabulate_shift"
+      },
+      {
+        "id": "M.CMH",
+        "label": "Cochran-Mantel-Haenszel test across ordered shift categories",
+        "type": "CMH",
+        "strata": "SITEGR1",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "cardx::ard_stats_mantelhaen_test",
+        "warning": "Sparse strata: 17 subjects over 6 sites. CMH will be unstable or non-estimable; expect NA and do not interpret."
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.04.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "CMH stratified by SITEGR1 across the ordered shift categories.",
+      "At 17 subjects over 6 pooled sites the CMH will be non-estimable or wildly unstable. Expect NA p-values; the generator must emit NA rather than a spurious number, and footnote why.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.05",
+    "table_id": "14-6.05",
+    "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Shifts of laboratory values against threshold ranges, overall (worst post-baseline).",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.05",
+      "dataset": "ADLB",
+      "condition": "ANL01FL = 'Y' AND ANRIND IS NOT NULL AND WORSTFL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.ShiftTable",
+        "label": "Threshold-range shift, worst post-baseline value per subject",
+        "type": "ShiftTable",
+        "fromVariable": "BNRIND",
+        "toVariable": "ANRIND",
+        "byVisit": false,
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cardx::ard_tabulate_shift"
+      },
+      {
+        "id": "M.CMH",
+        "label": "Cochran-Mantel-Haenszel test across ordered shift categories",
+        "type": "CMH",
+        "strata": "SITEGR1",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "cardx::ard_stats_mantelhaen_test",
+        "warning": "Sparse strata: 17 subjects over 6 sites. CMH will be unstable or non-estimable; expect NA and do not interpret."
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.05.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "WORSTFL flags the worst post-baseline reference-range indicator per subject per parameter; it must be derived in ADLB with an explicit worst-direction rule per parameter.",
+      "Same CMH sparsity caveat as 14-6.04.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-6.06",
+    "table_id": "14-6.06",
+    "title": "Shifts of Hy's Law Values During Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Shifts of Hy's Law liver-function values during treatment.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-6.06",
+      "dataset": "ADLB",
+      "condition": "PARAMCD IN ('ALT','AST','BILI','ALP') AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Lab value (standardized units)"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline lab value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Lab parameter"
+      },
+      "category": {
+        "variable": "PARCAT1",
+        "label": "Lab category (CHEMISTRY/HEMATOLOGY/URINALYSIS)"
+      },
+      "criterion": {
+        "variable": "CRIT1FL",
+        "label": "Hy's Law criterion met flag"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.ShiftTable",
+        "label": "Hy's Law threshold shifts",
+        "type": "ShiftTable",
+        "fromVariable": "BNRIND",
+        "toVariable": "ANRIND",
+        "byVisit": false,
+        "operations": [
+          "n",
+          "p"
+        ],
+        "display": {
+          "n": 0,
+          "p": 1
+        },
+        "engine": "cardx::ard_tabulate_shift"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-6.06.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "ALT, AST, BILI and ALP are all present in SDTM LB, so the criterion is fully derivable.",
+      "CRIT1 = 'ALT or AST >= 3xULN AND BILI >= 2xULN' evaluated per subject at the same or nearby visit; CRIT1FL='Y' when met. Use LBSTNRHI as ULN.",
+      "Report as a subject-level count, not a record count — Hy's Law is a subject property.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-7.01",
+    "table_id": "14-7.01",
+    "title": "Summary of Vital Signs at Baseline and End of Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Vital signs at baseline and at end of treatment, by parameter.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-7.01",
+      "dataset": "ADVS",
+      "condition": "PARAMCD IN ('SYSBPST','SYSBPSU','DIABPST','DIABPSU','PULSEST','PULSESU','TEMP','WEIGHT') AND AVISITN IN (0, 24) AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Vital sign value"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Vital sign parameter (with position)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Vital signs at baseline and end of treatment",
+        "type": "Descriptive",
+        "appliesTo": [
+          "AVAL"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-7.01.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "POSITION MATTERS: USDM END4 names 'standing and supine blood pressure'. SDTM VS carries VSPOS = STANDING / SUPINE for SYSBP, DIABP and PULSE. ADVS PARAMCD must encode the position (SYSBPST/SYSBPSU etc.) — collapsing across position would average two different measurements.",
+      "TEMP, WEIGHT and HEIGHT have no position. HEIGHT is excluded (measured once, not a safety endpoint).",
+      "End of treatment = AVISITN 24 after day-based windowing, with LOCF supplying subjects who terminated early.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-7.02",
+    "table_id": "14-7.02",
+    "title": "Summary of Vital Signs Change from Baseline at End of Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Change from baseline in vital signs at end of treatment.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-7.02",
+      "dataset": "ADVS",
+      "condition": "PARAMCD IN ('SYSBPST','SYSBPSU','DIABPST','DIABPSU','PULSEST','PULSESU','TEMP') AND AVISITN = 24 AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Vital sign value"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Vital sign parameter (with position)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Change from baseline in vital signs at end of treatment",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-7.02.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Same position handling as 14-7.01. Weight is reported separately in 14-7.03.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-7.03",
+    "table_id": "14-7.03",
+    "title": "Summary of Weight Change from Baseline at End of Treatment",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Change from baseline in body weight at end of treatment.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-7.03",
+      "dataset": "ADVS",
+      "condition": "PARAMCD = 'WEIGHT' AND AVISITN = 24 AND ANL01FL = 'Y'"
+    },
+    "analysisVariables": {
+      "value": {
+        "variable": "AVAL",
+        "label": "Vital sign value"
+      },
+      "baseline": {
+        "variable": "BASE",
+        "label": "Baseline value"
+      },
+      "response": {
+        "variable": "CHG",
+        "label": "Change from baseline"
+      },
+      "parameter": {
+        "variable": "PARAM",
+        "label": "Vital sign parameter (with position)"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Descriptive",
+        "label": "Change from baseline in weight at end of treatment",
+        "type": "Descriptive",
+        "appliesTo": [
+          "BASE",
+          "AVAL",
+          "CHG"
+        ],
+        "operations": [
+          "N",
+          "mean",
+          "sd",
+          "median",
+          "min",
+          "max"
+        ],
+        "display": {
+          "N": 0,
+          "mean": 1,
+          "sd": 2,
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "engine": "cards::ard_continuous"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-7.03.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "Weight is called out explicitly by USDM endpoint END4 and gets its own display.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-14-7.04",
+    "table_id": "14-7.04",
+    "title": "Summary of Concomitant Medications",
+    "protocol": "CDISCPILOT01",
+    "reason": "CONVENTION",
+    "purpose": "ICH E3 §11.2 concomitant medications, safety context.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-7.04",
+      "dataset": "ADCM",
+      "condition": "(all concomitant-medication records)"
+    },
+    "analysisVariables": {
+      "term": {
+        "variable": "CMTRT",
+        "label": "Reported medication (verbatim)"
+      },
+      "indication": {
+        "variable": "CMINDC",
+        "label": "Indication"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.Incidence",
+        "label": "Incidence of concomitant medications, n(%) subjects",
+        "type": "Incidence",
+        "hierarchy": [
+          {
+            "role": "SOC",
+            "variable": "CMTRT"
+          },
+          {
+            "role": "PT",
+            "variable": "CMTRT"
+          }
+        ],
+        "operations": [
+          "n_subjects",
+          "pct_subjects"
+        ],
+        "denominator": "subjects in the analysis set, by treatment group",
+        "display": {
+          "n_subjects": 0,
+          "pct_subjects": 1,
+          "n_events": 0
+        },
+        "engine": "cards::ard_hierarchical"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "14-7.04.generated.md"
+    },
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "notes": [
+      "*** NOT WHO-DD CODED *** SDTM CM in this extract has no CMDECOD and no CMCLAS/CMATC therapeutic-class variables — only verbatim CMTRT (68 records, 14 subjects). The conventional 'by therapeutic class then preferred term' hierarchy is NOT producible.",
+      "Summarize by verbatim CMTRT with an explicit footnote that medications are uncoded. Critic finding R-6.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  },
+  {
+    "id": "AN-F-14-1",
+    "table_id": "14-1",
+    "title": "Time to First Injection-Site Reaction by Treatment Group (Kaplan-Meier)",
+    "protocol": "CDISCPILOT01",
+    "reason": "SPECIFIED IN SAP",
+    "purpose": "Time to first injection-site reaction by treatment group, with log-rank comparison.",
+    "analysisSet": {
+      "id": "AnalysisSet.Safety",
+      "label": "Safety Population",
+      "condition": "SAFFL = 'Y'",
+      "source": "ADSL.SAFFL"
+    },
+    "groupingFactor": {
+      "id": "Grouping.TRTP",
+      "variable": "TRTP",
+      "dataType": "character",
+      "levels": [
+        {
+          "value": "Placebo",
+          "order": 1,
+          "isReference": true,
+          "dose": 0
+        },
+        {
+          "value": "Zanomaline Low Dose (54 mg)",
+          "order": 2,
+          "dose": 54
+        },
+        {
+          "value": "Zanomaline High Dose (81 mg)",
+          "order": 3,
+          "dose": 81
+        }
+      ]
+    },
+    "subgroup": null,
+    "dataSubset": {
+      "id": "DataSubset.14-1F",
+      "dataset": "ADTTE",
+      "condition": "PARAMCD = 'TTISR'"
+    },
+    "analysisVariables": {
+      "time": {
+        "variable": "AVAL",
+        "label": "Time to first injection-site reaction (days)"
+      },
+      "event": {
+        "variable": "CNSR",
+        "label": "Censoring indicator (0 = event, 1 = censored)"
+      },
+      "event_desc": {
+        "variable": "EVNTDESC",
+        "label": "Event description"
+      }
+    },
+    "methods": [
+      {
+        "id": "M.KaplanMeier",
+        "label": "Kaplan-Meier time-to-event estimate",
+        "type": "KaplanMeier",
+        "timeVariable": "AVAL",
+        "censorVariable": "CNSR",
+        "operations": [
+          "median",
+          "median_lcl",
+          "median_ucl",
+          "n_event",
+          "n_censor",
+          "surv_at_time"
+        ],
+        "display": {
+          "median": 1,
+          "median_lcl": 1,
+          "median_ucl": 1,
+          "surv_at_time": 3
+        },
+        "engine": "cardx::ard_survival_survfit; rendered with ggsurvfit::ggsurvfit + add_risktable"
+      },
+      {
+        "id": "M.LogRank",
+        "label": "Log-rank test across treatment groups",
+        "type": "LogRank",
+        "operations": [
+          "p.value"
+        ],
+        "display": {
+          "p.value": 3
+        },
+        "engine": "cardx::ard_survival_survdiff"
+      }
+    ],
+    "rounding": {
+      "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+      "note": "R's round() uses banker's rounding — the generator MUST implement half-away-from-zero explicitly."
+    },
+    "output": {
+      "ard": "ard.json",
+      "display": "F-14-1.generated.png"
+    },
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "notes": [
+      "ADTTE PARAMCD 'TTISR' derived from SDTM FA (FACAT = 'INJECTION SITE REACTION', 78 records) joined to the AE/EX timeline: AVAL = first FADTC with FAORRES indicating occurrence, minus TRTSDT, +1. Censor at last on-study day (CNSR=1) for subjects with no reaction.",
+      "The USDM endpoint END3 describes a transdermal APPLICATION-site signal; the delivered study is a SUBCUTANEOUS INJECTION. Title and derivation follow the delivered route. Record as a reporting deviation (critic finding R-7).",
+      "Figure must include a number-at-risk table. At 17 subjects the log-rank p-value is uninterpretable.",
+      "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+    ]
+  }
+]

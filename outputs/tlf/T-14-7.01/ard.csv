@@ -1,0 +1,289 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","AVAL","DIABPST | Baseline","descriptive","N",5
+"Placebo","AVAL","DIABPST | Baseline","descriptive","mean",72
+"Placebo","AVAL","DIABPST | Baseline","descriptive","sd",11.3137084989848
+"Placebo","AVAL","DIABPST | Baseline","descriptive","median",76
+"Placebo","AVAL","DIABPST | Baseline","descriptive","min",52
+"Placebo","AVAL","DIABPST | Baseline","descriptive","max",80
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","mean",72.4
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","sd",9.07193474403338
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","median",72
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","min",63
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Baseline","descriptive","max",83
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","N",7
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","mean",76.5714285714286
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","sd",9.0527554342521
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","median",78
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","min",60
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Baseline","descriptive","max",87
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","N",4
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","mean",70
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","sd",9.0921211313239
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","median",71
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","min",58
+"Placebo","AVAL","DIABPSU | Baseline","descriptive","max",80
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","N",3
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","mean",69
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","sd",8.88819441731559
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","median",72
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","min",59
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Baseline","descriptive","max",76
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","N",5
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","mean",74.4
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","sd",11.0136279218067
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","median",76
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","min",63
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Baseline","descriptive","max",89
+"Placebo","AVAL","PULSEST | Baseline","descriptive","N",5
+"Placebo","AVAL","PULSEST | Baseline","descriptive","mean",73.2
+"Placebo","AVAL","PULSEST | Baseline","descriptive","sd",8.8994381845148
+"Placebo","AVAL","PULSEST | Baseline","descriptive","median",72
+"Placebo","AVAL","PULSEST | Baseline","descriptive","min",62
+"Placebo","AVAL","PULSEST | Baseline","descriptive","max",84
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","mean",64.2
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","sd",10.3778610512957
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","median",68
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","min",50
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Baseline","descriptive","max",75
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","N",7
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","mean",78
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","sd",16.3808831670742
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","median",72
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","min",62
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Baseline","descriptive","max",104
+"Placebo","AVAL","PULSESU | Baseline","descriptive","N",4
+"Placebo","AVAL","PULSESU | Baseline","descriptive","mean",72.25
+"Placebo","AVAL","PULSESU | Baseline","descriptive","sd",11.7862914721581
+"Placebo","AVAL","PULSESU | Baseline","descriptive","median",70
+"Placebo","AVAL","PULSESU | Baseline","descriptive","min",61
+"Placebo","AVAL","PULSESU | Baseline","descriptive","max",88
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","N",3
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","mean",66.6666666666667
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","sd",6.11010092660779
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","median",68
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","min",60
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Baseline","descriptive","max",72
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","N",5
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","mean",74.6
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","sd",16.7272233200851
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","median",77
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","min",54
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Baseline","descriptive","max",98
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","N",5
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","mean",129.6
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","sd",25.8998069490875
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","median",120
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","min",108
+"Placebo","AVAL","SYSBPST | Baseline","descriptive","max",170
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","mean",143.4
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","sd",24.3885218904303
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","median",135
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","min",126
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Baseline","descriptive","max",186
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","N",7
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","mean",140.285714285714
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","sd",12.1204274637804
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","median",138
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","min",126
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Baseline","descriptive","max",160
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","N",4
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","mean",128
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","sd",13.9522996909709
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","median",124
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","min",116
+"Placebo","AVAL","SYSBPSU | Baseline","descriptive","max",148
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","N",3
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","mean",154.666666666667
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","sd",29.1433239925259
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","median",164
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","min",122
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Baseline","descriptive","max",178
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","N",5
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","mean",148.2
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","sd",13.3304163475864
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","median",154
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","min",131
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Baseline","descriptive","max",160
+"Placebo","AVAL","TEMP | Baseline","descriptive","N",5
+"Placebo","AVAL","TEMP | Baseline","descriptive","mean",36.634
+"Placebo","AVAL","TEMP | Baseline","descriptive","sd",0.318323734584778
+"Placebo","AVAL","TEMP | Baseline","descriptive","median",36.78
+"Placebo","AVAL","TEMP | Baseline","descriptive","min",36.17
+"Placebo","AVAL","TEMP | Baseline","descriptive","max",36.89
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","mean",36.488
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","sd",0.376789065658759
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","median",36.56
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","min",35.94
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Baseline","descriptive","max",36.94
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","N",7
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","mean",36.4814285714286
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","sd",0.572376000295509
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","median",36.44
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","min",35.72
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Baseline","descriptive","max",37.44
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","N",5
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","mean",62.506
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","sd",10.5485084253652
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","median",66.68
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","min",47.17
+"Placebo","AVAL","WEIGHT | Baseline","descriptive","max",72.12
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","mean",60.828
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","sd",12.2870488726952
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","median",58.51
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","min",45.36
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Baseline","descriptive","max",78.93
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","N",7
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","mean",77.5971428571429
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","sd",18.102301616356
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","median",82.1
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","min",51.71
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Baseline","descriptive","max",101.61
+"Placebo","AVAL","DIABPST | Week 24","descriptive","N",4
+"Placebo","AVAL","DIABPST | Week 24","descriptive","mean",70.5
+"Placebo","AVAL","DIABPST | Week 24","descriptive","sd",12.5830573921179
+"Placebo","AVAL","DIABPST | Week 24","descriptive","median",72
+"Placebo","AVAL","DIABPST | Week 24","descriptive","min",56
+"Placebo","AVAL","DIABPST | Week 24","descriptive","max",82
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","mean",67.8
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","sd",9.95991967839099
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","median",72
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","min",52
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPST | Week 24","descriptive","max",78
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","mean",72
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","sd",10.0995049383621
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","median",72
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","min",56
+"Zanomaline High Dose (81 mg)","AVAL","DIABPST | Week 24","descriptive","max",83
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","N",4
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","mean",70.5
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","sd",16.1141759536958
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","median",75
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","min",48
+"Placebo","AVAL","DIABPSU | Week 24","descriptive","max",84
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","N",4
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","mean",66
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","sd",16.5730705262081
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","median",72
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","min",42
+"Zanomaline Low Dose (54 mg)","AVAL","DIABPSU | Week 24","descriptive","max",78
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","mean",74.5
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","sd",9.41806774237688
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","median",77.5
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","min",62
+"Zanomaline High Dose (81 mg)","AVAL","DIABPSU | Week 24","descriptive","max",84
+"Placebo","AVAL","PULSEST | Week 24","descriptive","N",4
+"Placebo","AVAL","PULSEST | Week 24","descriptive","mean",72.5
+"Placebo","AVAL","PULSEST | Week 24","descriptive","sd",7.37111479583199
+"Placebo","AVAL","PULSEST | Week 24","descriptive","median",72
+"Placebo","AVAL","PULSEST | Week 24","descriptive","min",64
+"Placebo","AVAL","PULSEST | Week 24","descriptive","max",82
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","mean",79.2
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","sd",11.0770032048384
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","median",75
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","min",71
+"Zanomaline Low Dose (54 mg)","AVAL","PULSEST | Week 24","descriptive","max",98
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","mean",72.3333333333333
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","sd",11.2546286774228
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","median",71.5
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","min",57
+"Zanomaline High Dose (81 mg)","AVAL","PULSEST | Week 24","descriptive","max",86
+"Placebo","AVAL","PULSESU | Week 24","descriptive","N",4
+"Placebo","AVAL","PULSESU | Week 24","descriptive","mean",61.75
+"Placebo","AVAL","PULSESU | Week 24","descriptive","sd",5.56027577253743
+"Placebo","AVAL","PULSESU | Week 24","descriptive","median",62
+"Placebo","AVAL","PULSESU | Week 24","descriptive","min",55
+"Placebo","AVAL","PULSESU | Week 24","descriptive","max",68
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","N",4
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","mean",66.5
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","sd",11.2694276695846
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","median",65.5
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","min",56
+"Zanomaline Low Dose (54 mg)","AVAL","PULSESU | Week 24","descriptive","max",79
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","mean",66.5
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","sd",12.0291313069565
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","median",67
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","min",50
+"Zanomaline High Dose (81 mg)","AVAL","PULSESU | Week 24","descriptive","max",80
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","N",4
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","mean",130
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","sd",9.52190457139047
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","median",130
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","min",120
+"Placebo","AVAL","SYSBPST | Week 24","descriptive","max",140
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","mean",126
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","sd",33.5484723944325
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","median",114
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","min",99
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPST | Week 24","descriptive","max",178
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","mean",126
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","sd",13.5941163743731
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","median",123
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","min",115
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPST | Week 24","descriptive","max",150
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","N",4
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","mean",133.5
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","sd",27.6827262626594
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","median",137
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","min",100
+"Placebo","AVAL","SYSBPSU | Week 24","descriptive","max",160
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","N",4
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","mean",131.5
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","sd",37.6696164036747
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","median",129.5
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","min",99
+"Zanomaline Low Dose (54 mg)","AVAL","SYSBPSU | Week 24","descriptive","max",168
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","mean",136.666666666667
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","sd",14.0237893119751
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","median",130.5
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","min",122
+"Zanomaline High Dose (81 mg)","AVAL","SYSBPSU | Week 24","descriptive","max",158
+"Placebo","AVAL","TEMP | Week 24","descriptive","N",4
+"Placebo","AVAL","TEMP | Week 24","descriptive","mean",36.125
+"Placebo","AVAL","TEMP | Week 24","descriptive","sd",0.450518220127296
+"Placebo","AVAL","TEMP | Week 24","descriptive","median",36.165
+"Placebo","AVAL","TEMP | Week 24","descriptive","min",35.61
+"Placebo","AVAL","TEMP | Week 24","descriptive","max",36.56
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","mean",36.332
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","sd",0.304253184042502
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","median",36.33
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","min",35.94
+"Zanomaline Low Dose (54 mg)","AVAL","TEMP | Week 24","descriptive","max",36.78
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","mean",36.2683333333333
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","sd",0.0938971068066876
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","median",36.275
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","min",36.17
+"Zanomaline High Dose (81 mg)","AVAL","TEMP | Week 24","descriptive","max",36.39
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","N",4
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","mean",67.0175
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","sd",6.74319101019688
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","median",69.4
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","min",57.15
+"Placebo","AVAL","WEIGHT | Week 24","descriptive","max",72.12
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","mean",60.1
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","sd",12.8919897610881
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","median",57.15
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","min",43.09
+"Zanomaline Low Dose (54 mg)","AVAL","WEIGHT | Week 24","descriptive","max",78.47
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","N",6
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","mean",80.3633333333333
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","sd",16.588758442592
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","median",82.555
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","min",50.58
+"Zanomaline High Dose (81 mg)","AVAL","WEIGHT | Week 24","descriptive","max",102.06

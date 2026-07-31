@@ -1,0 +1,139 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","AGE",,"descriptive","N",5
+"Placebo","AGE",,"descriptive","mean",73.6
+"Placebo","AGE",,"descriptive","sd",9.93981891183134
+"Placebo","AGE",,"descriptive","median",74
+"Placebo","AGE",,"descriptive","min",63
+"Placebo","AGE",,"descriptive","max",89
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","N",5
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","mean",80.4
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","sd",4.09878030638384
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","median",82
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","min",76
+"Zanomaline Low Dose (54 mg)","AGE",,"descriptive","max",84
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","N",7
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","mean",70.8571428571429
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","sd",8.35520938154896
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","median",72
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","min",61
+"Zanomaline High Dose (81 mg)","AGE",,"descriptive","max",86
+"Placebo","WEIGHTBL",,"descriptive","N",5
+"Placebo","WEIGHTBL",,"descriptive","mean",62.506
+"Placebo","WEIGHTBL",,"descriptive","sd",10.5485084253652
+"Placebo","WEIGHTBL",,"descriptive","median",66.68
+"Placebo","WEIGHTBL",,"descriptive","min",47.17
+"Placebo","WEIGHTBL",,"descriptive","max",72.12
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","N",5
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","mean",60.828
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","sd",12.2870488726952
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","median",58.51
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","min",45.36
+"Zanomaline Low Dose (54 mg)","WEIGHTBL",,"descriptive","max",78.93
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","N",7
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","mean",77.5971428571429
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","sd",18.102301616356
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","median",82.1
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","min",51.71
+"Zanomaline High Dose (81 mg)","WEIGHTBL",,"descriptive","max",101.61
+"Placebo","HEIGHTBL",,"descriptive","N",5
+"Placebo","HEIGHTBL",,"descriptive","mean",167.386
+"Placebo","HEIGHTBL",,"descriptive","sd",9.43568121547142
+"Placebo","HEIGHTBL",,"descriptive","median",170.18
+"Placebo","HEIGHTBL",,"descriptive","min",157.48
+"Placebo","HEIGHTBL",,"descriptive","max",177.8
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","N",5
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","mean",162.154
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","sd",12.1424598002217
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","median",160.02
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","min",148.59
+"Zanomaline Low Dose (54 mg)","HEIGHTBL",,"descriptive","max",181.61
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","N",7
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","mean",169.272857142857
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","sd",12.6089593996831
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","median",170.18
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","min",152.4
+"Zanomaline High Dose (81 mg)","HEIGHTBL",,"descriptive","max",190.5
+"Placebo","BMIBL",,"descriptive","N",5
+"Placebo","BMIBL",,"descriptive","mean",22.32
+"Placebo","BMIBL",,"descriptive","sd",3.53510961640513
+"Placebo","BMIBL",,"descriptive","median",22.8
+"Placebo","BMIBL",,"descriptive","min",18.6
+"Placebo","BMIBL",,"descriptive","max",26.9
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","N",5
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","mean",23.04
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","sd",3.09160152671718
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","median",23.9
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","min",17.7
+"Zanomaline Low Dose (54 mg)","BMIBL",,"descriptive","max",25.7
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","N",7
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","mean",26.8857142857143
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","sd",4.90660390746613
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","median",26
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","min",20.5
+"Zanomaline High Dose (81 mg)","BMIBL",,"descriptive","max",34.6
+"Placebo","SEX","F","frequency","n",3
+"Placebo","SEX","F","frequency","pct",60
+"Zanomaline Low Dose (54 mg)","SEX","F","frequency","n",4
+"Zanomaline Low Dose (54 mg)","SEX","F","frequency","pct",80
+"Zanomaline High Dose (81 mg)","SEX","F","frequency","n",4
+"Zanomaline High Dose (81 mg)","SEX","F","frequency","pct",57.1428571428571
+"Placebo","SEX","M","frequency","n",2
+"Placebo","SEX","M","frequency","pct",40
+"Zanomaline Low Dose (54 mg)","SEX","M","frequency","n",1
+"Zanomaline Low Dose (54 mg)","SEX","M","frequency","pct",20
+"Zanomaline High Dose (81 mg)","SEX","M","frequency","n",3
+"Zanomaline High Dose (81 mg)","SEX","M","frequency","pct",42.8571428571429
+"Placebo","AGEGR1","<65","frequency","n",1
+"Placebo","AGEGR1","<65","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","AGEGR1","<65","frequency","n",0
+"Zanomaline Low Dose (54 mg)","AGEGR1","<65","frequency","pct",0
+"Zanomaline High Dose (81 mg)","AGEGR1","<65","frequency","n",2
+"Zanomaline High Dose (81 mg)","AGEGR1","<65","frequency","pct",28.5714285714286
+"Placebo","AGEGR1",">80","frequency","n",1
+"Placebo","AGEGR1",">80","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","AGEGR1",">80","frequency","n",3
+"Zanomaline Low Dose (54 mg)","AGEGR1",">80","frequency","pct",60
+"Zanomaline High Dose (81 mg)","AGEGR1",">80","frequency","n",1
+"Zanomaline High Dose (81 mg)","AGEGR1",">80","frequency","pct",14.2857142857143
+"Placebo","AGEGR1","65-80","frequency","n",3
+"Placebo","AGEGR1","65-80","frequency","pct",60
+"Zanomaline Low Dose (54 mg)","AGEGR1","65-80","frequency","n",2
+"Zanomaline Low Dose (54 mg)","AGEGR1","65-80","frequency","pct",40
+"Zanomaline High Dose (81 mg)","AGEGR1","65-80","frequency","n",4
+"Zanomaline High Dose (81 mg)","AGEGR1","65-80","frequency","pct",57.1428571428571
+"Placebo","RACE","BLACK OR AFRICAN AMERICAN","frequency","n",1
+"Placebo","RACE","BLACK OR AFRICAN AMERICAN","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","RACE","BLACK OR AFRICAN AMERICAN","frequency","n",0
+"Zanomaline Low Dose (54 mg)","RACE","BLACK OR AFRICAN AMERICAN","frequency","pct",0
+"Zanomaline High Dose (81 mg)","RACE","BLACK OR AFRICAN AMERICAN","frequency","n",1
+"Zanomaline High Dose (81 mg)","RACE","BLACK OR AFRICAN AMERICAN","frequency","pct",14.2857142857143
+"Placebo","RACE","MULTIPLE","frequency","n",1
+"Placebo","RACE","MULTIPLE","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","RACE","MULTIPLE","frequency","n",0
+"Zanomaline Low Dose (54 mg)","RACE","MULTIPLE","frequency","pct",0
+"Zanomaline High Dose (81 mg)","RACE","MULTIPLE","frequency","n",0
+"Zanomaline High Dose (81 mg)","RACE","MULTIPLE","frequency","pct",0
+"Placebo","RACE","WHITE","frequency","n",3
+"Placebo","RACE","WHITE","frequency","pct",60
+"Zanomaline Low Dose (54 mg)","RACE","WHITE","frequency","n",5
+"Zanomaline Low Dose (54 mg)","RACE","WHITE","frequency","pct",100
+"Zanomaline High Dose (81 mg)","RACE","WHITE","frequency","n",6
+"Zanomaline High Dose (81 mg)","RACE","WHITE","frequency","pct",85.7142857142857
+"Placebo","ETHNIC","HISPANIC OR LATINO","frequency","n",0
+"Placebo","ETHNIC","HISPANIC OR LATINO","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","ETHNIC","HISPANIC OR LATINO","frequency","n",1
+"Zanomaline Low Dose (54 mg)","ETHNIC","HISPANIC OR LATINO","frequency","pct",20
+"Zanomaline High Dose (81 mg)","ETHNIC","HISPANIC OR LATINO","frequency","n",1
+"Zanomaline High Dose (81 mg)","ETHNIC","HISPANIC OR LATINO","frequency","pct",14.2857142857143
+"Placebo","ETHNIC","NOT HISPANIC OR LATINO","frequency","n",5
+"Placebo","ETHNIC","NOT HISPANIC OR LATINO","frequency","pct",100
+"Zanomaline Low Dose (54 mg)","ETHNIC","NOT HISPANIC OR LATINO","frequency","n",4
+"Zanomaline Low Dose (54 mg)","ETHNIC","NOT HISPANIC OR LATINO","frequency","pct",80
+"Zanomaline High Dose (81 mg)","ETHNIC","NOT HISPANIC OR LATINO","frequency","n",6
+"Zanomaline High Dose (81 mg)","ETHNIC","NOT HISPANIC OR LATINO","frequency","pct",85.7142857142857
+"Placebo","COUNTRY","USA","frequency","n",5
+"Placebo","COUNTRY","USA","frequency","pct",100
+"Zanomaline Low Dose (54 mg)","COUNTRY","USA","frequency","n",5
+"Zanomaline Low Dose (54 mg)","COUNTRY","USA","frequency","pct",100
+"Zanomaline High Dose (81 mg)","COUNTRY","USA","frequency","n",7
+"Zanomaline High Dose (81 mg)","COUNTRY","USA","frequency","pct",100

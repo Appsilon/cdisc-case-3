@@ -1,0 +1,31 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","n_subjects",0
+"Placebo","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","pct_subjects",0
+"Zanomaline Low Dose (54 mg)","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","n_subjects",0
+"Zanomaline Low Dose (54 mg)","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","pct_subjects",0
+"Zanomaline High Dose (81 mg)","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","n_subjects",0
+"Zanomaline High Dose (81 mg)","CRIT1","ALT or AST >= 3xULN AND BILI >= 2xULN","criterion","pct_subjects",0
+"Placebo","XULN|ALT","ALT","criterion","max_xuln",1.37142857142857
+"Placebo","XULN|ALT","ALT","criterion","n_subjects_ge_3x",0
+"Zanomaline Low Dose (54 mg)","XULN|ALT","ALT","criterion","max_xuln",0.875
+"Zanomaline Low Dose (54 mg)","XULN|ALT","ALT","criterion","n_subjects_ge_3x",0
+"Zanomaline High Dose (81 mg)","XULN|ALT","ALT","criterion","max_xuln",1.44186046511628
+"Zanomaline High Dose (81 mg)","XULN|ALT","ALT","criterion","n_subjects_ge_3x",0
+"Placebo","XULN|AST","AST","criterion","max_xuln",1.35294117647059
+"Placebo","XULN|AST","AST","criterion","n_subjects_ge_3x",0
+"Zanomaline Low Dose (54 mg)","XULN|AST","AST","criterion","max_xuln",0.911764705882353
+"Zanomaline Low Dose (54 mg)","XULN|AST","AST","criterion","n_subjects_ge_3x",0
+"Zanomaline High Dose (81 mg)","XULN|AST","AST","criterion","max_xuln",2.02777777777778
+"Zanomaline High Dose (81 mg)","XULN|AST","AST","criterion","n_subjects_ge_3x",0
+"Placebo","XULN|BILI","BILI","criterion","max_xuln",1.22142857142857
+"Placebo","XULN|BILI","BILI","criterion","n_subjects_ge_3x",0
+"Zanomaline Low Dose (54 mg)","XULN|BILI","BILI","criterion","max_xuln",1.22142857142857
+"Zanomaline Low Dose (54 mg)","XULN|BILI","BILI","criterion","n_subjects_ge_3x",0
+"Zanomaline High Dose (81 mg)","XULN|BILI","BILI","criterion","max_xuln",0.814285714285714
+"Zanomaline High Dose (81 mg)","XULN|BILI","BILI","criterion","n_subjects_ge_3x",0
+"Placebo","XULN|ALP","ALP","criterion","max_xuln",0.991304347826087
+"Placebo","XULN|ALP","ALP","criterion","n_subjects_ge_3x",0
+"Zanomaline Low Dose (54 mg)","XULN|ALP","ALP","criterion","max_xuln",1.59130434782609
+"Zanomaline Low Dose (54 mg)","XULN|ALP","ALP","criterion","n_subjects_ge_3x",0
+"Zanomaline High Dose (81 mg)","XULN|ALP","ALP","criterion","max_xuln",0.88695652173913
+"Zanomaline High Dose (81 mg)","XULN|ALP","ALP","criterion","n_subjects_ge_3x",0

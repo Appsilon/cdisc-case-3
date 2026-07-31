@@ -1,0 +1,28 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","OVERALL","Any event","incidence","n_subjects",5
+"Placebo","OVERALL","Any event","incidence","pct_subjects",100
+"Placebo","OVERALL","Any event","incidence","n_events",5
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","n_subjects",5
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","pct_subjects",100
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","n_events",5
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","n_subjects",7
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","pct_subjects",100
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","n_events",7
+"Placebo","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_subjects",5
+"Placebo","SOC","(uncoded - no MedDRA SOC in source)","incidence","pct_subjects",100
+"Placebo","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_events",5
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_subjects",5
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","pct_subjects",100
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_events",5
+"Zanomaline High Dose (81 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_subjects",7
+"Zanomaline High Dose (81 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","pct_subjects",100
+"Zanomaline High Dose (81 mg)","SOC","(uncoded - no MedDRA SOC in source)","incidence","n_events",7
+"Placebo","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_subjects",5
+"Placebo","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","pct_subjects",100
+"Placebo","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_events",5
+"Zanomaline Low Dose (54 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_subjects",5
+"Zanomaline Low Dose (54 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","pct_subjects",100
+"Zanomaline Low Dose (54 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_events",5
+"Zanomaline High Dose (81 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_subjects",7
+"Zanomaline High Dose (81 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","pct_subjects",100
+"Zanomaline High Dose (81 mg)","PT|(uncoded - no MedDRA SOC in source)","ALZHEIMER'S DISEASE","incidence","n_events",7

@@ -1,0 +1,171 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","Baseline|LOW","LOW","shift","n",1
+"Placebo","Baseline|LOW","NORMAL","shift","n",0
+"Placebo","Baseline|LOW","HIGH","shift","n",0
+"Placebo","Baseline|NORMAL","LOW","shift","n",0
+"Placebo","Baseline|NORMAL","NORMAL","shift","n",165
+"Placebo","Baseline|NORMAL","HIGH","shift","n",0
+"Placebo","Baseline|HIGH","LOW","shift","n",0
+"Placebo","Baseline|HIGH","NORMAL","shift","n",0
+"Placebo","Baseline|HIGH","HIGH","shift","n",4
+"Zanomaline Low Dose (54 mg)","Baseline|LOW","LOW","shift","n",2
+"Zanomaline Low Dose (54 mg)","Baseline|LOW","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|NORMAL","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|NORMAL","NORMAL","shift","n",166
+"Zanomaline Low Dose (54 mg)","Baseline|NORMAL","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|HIGH","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Baseline|HIGH","HIGH","shift","n",2
+"Zanomaline High Dose (81 mg)","Baseline|LOW","LOW","shift","n",5
+"Zanomaline High Dose (81 mg)","Baseline|LOW","NORMAL","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|LOW","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|NORMAL","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|NORMAL","NORMAL","shift","n",229
+"Zanomaline High Dose (81 mg)","Baseline|NORMAL","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|HIGH","NORMAL","shift","n",0
+"Zanomaline High Dose (81 mg)","Baseline|HIGH","HIGH","shift","n",4
+,"Baseline|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 12|NORMAL","NORMAL","shift","n",124
+"Placebo","Week 12|NORMAL","HIGH","shift","n",1
+"Placebo","Week 12|HIGH","NORMAL","shift","n",2
+"Placebo","Week 12|HIGH","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 12|NORMAL","NORMAL","shift","n",31
+"Zanomaline Low Dose (54 mg)","Week 12|NORMAL","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 12|HIGH","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 12|HIGH","HIGH","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 12|NORMAL","NORMAL","shift","n",62
+"Zanomaline High Dose (81 mg)","Week 12|NORMAL","HIGH","shift","n",1
+,"Week 12|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 16|NORMAL","LOW","shift","n",1
+"Placebo","Week 16|NORMAL","NORMAL","shift","n",82
+"Placebo","Week 16|NORMAL","HIGH","shift","n",4
+"Placebo","Week 16|HIGH","LOW","shift","n",0
+"Placebo","Week 16|HIGH","NORMAL","shift","n",2
+"Placebo","Week 16|HIGH","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 16|NORMAL","NORMAL","shift","n",29
+"Zanomaline Low Dose (54 mg)","Week 16|HIGH","NORMAL","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 16|NORMAL","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 16|NORMAL","NORMAL","shift","n",59
+,"Week 16|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 2|NORMAL","LOW","shift","n",1
+"Placebo","Week 2|NORMAL","NORMAL","shift","n",124
+"Placebo","Week 2|NORMAL","HIGH","shift","n",0
+"Placebo","Week 2|HIGH","LOW","shift","n",0
+"Placebo","Week 2|HIGH","NORMAL","shift","n",2
+"Placebo","Week 2|HIGH","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 2|LOW","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 2|LOW","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 2|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 2|NORMAL","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 2|NORMAL","NORMAL","shift","n",153
+"Zanomaline Low Dose (54 mg)","Week 2|NORMAL","HIGH","shift","n",3
+"Zanomaline Low Dose (54 mg)","Week 2|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 2|HIGH","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 2|HIGH","HIGH","shift","n",2
+"Zanomaline High Dose (81 mg)","Week 2|LOW","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 2|LOW","NORMAL","shift","n",3
+"Zanomaline High Dose (81 mg)","Week 2|NORMAL","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 2|NORMAL","NORMAL","shift","n",184
+"Zanomaline High Dose (81 mg)","Week 2|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 2|HIGH","NORMAL","shift","n",3
+,"Week 2|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 20|NORMAL","NORMAL","shift","n",115
+"Placebo","Week 20|NORMAL","HIGH","shift","n",3
+"Placebo","Week 20|HIGH","NORMAL","shift","n",1
+"Placebo","Week 20|HIGH","HIGH","shift","n",2
+"Zanomaline Low Dose (54 mg)","Week 20|NORMAL","NORMAL","shift","n",31
+"Zanomaline Low Dose (54 mg)","Week 20|HIGH","NORMAL","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 20|NORMAL","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 20|NORMAL","NORMAL","shift","n",58
+"Zanomaline High Dose (81 mg)","Week 20|NORMAL","HIGH","shift","n",1
+,"Week 20|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 24|NORMAL","NORMAL","shift","n",120
+"Placebo","Week 24|NORMAL","HIGH","shift","n",5
+"Placebo","Week 24|HIGH","NORMAL","shift","n",2
+"Placebo","Week 24|HIGH","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 24|LOW","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 24|LOW","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 24|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 24|NORMAL","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 24|NORMAL","NORMAL","shift","n",151
+"Zanomaline Low Dose (54 mg)","Week 24|NORMAL","HIGH","shift","n",5
+"Zanomaline Low Dose (54 mg)","Week 24|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 24|HIGH","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 24|HIGH","HIGH","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 24|LOW","LOW","shift","n",2
+"Zanomaline High Dose (81 mg)","Week 24|LOW","NORMAL","shift","n",2
+"Zanomaline High Dose (81 mg)","Week 24|NORMAL","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 24|NORMAL","NORMAL","shift","n",185
+"Zanomaline High Dose (81 mg)","Week 24|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 24|HIGH","NORMAL","shift","n",3
+,"Week 24|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 26|NORMAL","NORMAL","shift","n",30
+"Zanomaline High Dose (81 mg)","Week 26|NORMAL","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 26|NORMAL","NORMAL","shift","n",60
+"Zanomaline High Dose (81 mg)","Week 26|NORMAL","HIGH","shift","n",1
+,"Week 26|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 4|NORMAL","NORMAL","shift","n",115
+"Placebo","Week 4|NORMAL","HIGH","shift","n",2
+"Placebo","Week 4|HIGH","NORMAL","shift","n",1
+"Placebo","Week 4|HIGH","HIGH","shift","n",2
+"Zanomaline Low Dose (54 mg)","Week 4|LOW","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 4|LOW","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 4|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 4|NORMAL","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 4|NORMAL","NORMAL","shift","n",145
+"Zanomaline Low Dose (54 mg)","Week 4|NORMAL","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 4|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 4|HIGH","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 4|HIGH","HIGH","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 4|LOW","LOW","shift","n",2
+"Zanomaline High Dose (81 mg)","Week 4|LOW","NORMAL","shift","n",2
+"Zanomaline High Dose (81 mg)","Week 4|NORMAL","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 4|NORMAL","NORMAL","shift","n",144
+"Zanomaline High Dose (81 mg)","Week 4|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 4|HIGH","NORMAL","shift","n",3
+,"Week 4|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 6|NORMAL","NORMAL","shift","n",115
+"Placebo","Week 6|NORMAL","HIGH","shift","n",2
+"Placebo","Week 6|HIGH","NORMAL","shift","n",2
+"Placebo","Week 6|HIGH","HIGH","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 6|LOW","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 6|LOW","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 6|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 6|NORMAL","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 6|NORMAL","NORMAL","shift","n",144
+"Zanomaline Low Dose (54 mg)","Week 6|NORMAL","HIGH","shift","n",4
+"Zanomaline Low Dose (54 mg)","Week 6|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 6|HIGH","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 6|HIGH","HIGH","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 6|LOW","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 6|LOW","NORMAL","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 6|LOW","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 6|NORMAL","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 6|NORMAL","NORMAL","shift","n",147
+"Zanomaline High Dose (81 mg)","Week 6|NORMAL","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 6|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 6|HIGH","NORMAL","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 6|HIGH","HIGH","shift","n",3
+,"Week 6|CMH","Cochran-Mantel-Haenszel","cmh","p.value",
+"Placebo","Week 8|NORMAL","NORMAL","shift","n",114
+"Placebo","Week 8|NORMAL","HIGH","shift","n",3
+"Placebo","Week 8|HIGH","NORMAL","shift","n",1
+"Placebo","Week 8|HIGH","HIGH","shift","n",2
+"Zanomaline Low Dose (54 mg)","Week 8|LOW","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 8|LOW","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 8|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 8|NORMAL","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 8|NORMAL","NORMAL","shift","n",118
+"Zanomaline Low Dose (54 mg)","Week 8|NORMAL","HIGH","shift","n",3
+"Zanomaline Low Dose (54 mg)","Week 8|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Week 8|HIGH","NORMAL","shift","n",1
+"Zanomaline Low Dose (54 mg)","Week 8|HIGH","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 8|LOW","LOW","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 8|LOW","NORMAL","shift","n",1
+"Zanomaline High Dose (81 mg)","Week 8|NORMAL","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 8|NORMAL","NORMAL","shift","n",119
+"Zanomaline High Dose (81 mg)","Week 8|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Week 8|HIGH","NORMAL","shift","n",3
+,"Week 8|CMH","Cochran-Mantel-Haenszel","cmh","p.value",

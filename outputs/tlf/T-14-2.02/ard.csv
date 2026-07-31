@@ -1,0 +1,19 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","AVAL","","descriptive","N",5
+"Placebo","AVAL","","descriptive","mean",12.6
+"Placebo","AVAL","","descriptive","sd",2.19089023002066
+"Placebo","AVAL","","descriptive","median",12
+"Placebo","AVAL","","descriptive","min",10
+"Placebo","AVAL","","descriptive","max",16
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","N",4
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","mean",10.25
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","sd",5.90903263374528
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","median",12
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","min",2
+"Zanomaline Low Dose (54 mg)","AVAL","","descriptive","max",15
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","N",5
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","mean",12.2
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","sd",8.25832912882503
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","median",12
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","min",4
+"Zanomaline High Dose (81 mg)","AVAL","","descriptive","max",21

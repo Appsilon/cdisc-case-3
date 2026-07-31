@@ -1,0 +1,47 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","SURVIVAL",,"km","n",5
+"Placebo","SURVIVAL",,"km","n_event",0
+"Placebo","SURVIVAL",,"km","n_censor",5
+"Placebo","SURVIVAL",,"km","median",
+"Placebo","SURVIVAL",,"km","median_lcl",
+"Placebo","SURVIVAL",,"km","median_ucl",
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","n",5
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","n_event",3
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","n_censor",2
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","median",100
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","median_lcl",3
+"Zanomaline Low Dose (54 mg)","SURVIVAL",,"km","median_ucl",
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","n",7
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","n_event",5
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","n_censor",2
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","median",39.5
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","median_lcl",14
+"Zanomaline High Dose (81 mg)","SURVIVAL",,"km","median_ucl",
+,"LOGRANK","across treatment groups","logrank","p.value",0.0200223724645251
+"Placebo","ATRISK","day 0","km","n_at_risk",5
+"Placebo","ATRISK","day 25","km","n_at_risk",4
+"Placebo","ATRISK","day 50","km","n_at_risk",4
+"Placebo","ATRISK","day 75","km","n_at_risk",4
+"Placebo","ATRISK","day 100","km","n_at_risk",4
+"Placebo","ATRISK","day 125","km","n_at_risk",4
+"Placebo","ATRISK","day 150","km","n_at_risk",3
+"Placebo","ATRISK","day 175","km","n_at_risk",2
+"Placebo","ATRISK","day 200","km","n_at_risk",0
+"Zanomaline Low Dose (54 mg)","ATRISK","day 0","km","n_at_risk",5
+"Zanomaline Low Dose (54 mg)","ATRISK","day 25","km","n_at_risk",3
+"Zanomaline Low Dose (54 mg)","ATRISK","day 50","km","n_at_risk",2
+"Zanomaline Low Dose (54 mg)","ATRISK","day 75","km","n_at_risk",1
+"Zanomaline Low Dose (54 mg)","ATRISK","day 100","km","n_at_risk",1
+"Zanomaline Low Dose (54 mg)","ATRISK","day 125","km","n_at_risk",0
+"Zanomaline Low Dose (54 mg)","ATRISK","day 150","km","n_at_risk",0
+"Zanomaline Low Dose (54 mg)","ATRISK","day 175","km","n_at_risk",0
+"Zanomaline Low Dose (54 mg)","ATRISK","day 200","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 0","km","n_at_risk",7
+"Zanomaline High Dose (81 mg)","ATRISK","day 25","km","n_at_risk",4
+"Zanomaline High Dose (81 mg)","ATRISK","day 50","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 75","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 100","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 125","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 150","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 175","km","n_at_risk",0
+"Zanomaline High Dose (81 mg)","ATRISK","day 200","km","n_at_risk",0

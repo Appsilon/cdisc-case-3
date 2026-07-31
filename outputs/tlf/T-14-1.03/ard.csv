@@ -1,0 +1,43 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","SITEID","701","frequency","n",1
+"Placebo","SITEID","701","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","SITEID","701","frequency","n",3
+"Zanomaline Low Dose (54 mg)","SITEID","701","frequency","pct",60
+"Zanomaline High Dose (81 mg)","SITEID","701","frequency","n",3
+"Zanomaline High Dose (81 mg)","SITEID","701","frequency","pct",42.8571428571429
+"Placebo","SITEID","704","frequency","n",1
+"Placebo","SITEID","704","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","SITEID","704","frequency","n",0
+"Zanomaline Low Dose (54 mg)","SITEID","704","frequency","pct",0
+"Zanomaline High Dose (81 mg)","SITEID","704","frequency","n",0
+"Zanomaline High Dose (81 mg)","SITEID","704","frequency","pct",0
+"Placebo","SITEID","708","frequency","n",2
+"Placebo","SITEID","708","frequency","pct",40
+"Zanomaline Low Dose (54 mg)","SITEID","708","frequency","n",0
+"Zanomaline Low Dose (54 mg)","SITEID","708","frequency","pct",0
+"Zanomaline High Dose (81 mg)","SITEID","708","frequency","n",2
+"Zanomaline High Dose (81 mg)","SITEID","708","frequency","pct",28.5714285714286
+"Placebo","SITEID","710","frequency","n",1
+"Placebo","SITEID","710","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","SITEID","710","frequency","n",0
+"Zanomaline Low Dose (54 mg)","SITEID","710","frequency","pct",0
+"Zanomaline High Dose (81 mg)","SITEID","710","frequency","n",0
+"Zanomaline High Dose (81 mg)","SITEID","710","frequency","pct",0
+"Placebo","SITEID","711","frequency","n",0
+"Placebo","SITEID","711","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","SITEID","711","frequency","n",1
+"Zanomaline Low Dose (54 mg)","SITEID","711","frequency","pct",20
+"Zanomaline High Dose (81 mg)","SITEID","711","frequency","n",1
+"Zanomaline High Dose (81 mg)","SITEID","711","frequency","pct",14.2857142857143
+"Placebo","SITEID","718","frequency","n",0
+"Placebo","SITEID","718","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","SITEID","718","frequency","n",1
+"Zanomaline Low Dose (54 mg)","SITEID","718","frequency","pct",20
+"Zanomaline High Dose (81 mg)","SITEID","718","frequency","n",1
+"Zanomaline High Dose (81 mg)","SITEID","718","frequency","pct",14.2857142857143
+"Placebo","SITEGR1","900","frequency","n",5
+"Placebo","SITEGR1","900","frequency","pct",100
+"Zanomaline Low Dose (54 mg)","SITEGR1","900","frequency","n",5
+"Zanomaline Low Dose (54 mg)","SITEGR1","900","frequency","pct",100
+"Zanomaline High Dose (81 mg)","SITEGR1","900","frequency","n",7
+"Zanomaline High Dose (81 mg)","SITEGR1","900","frequency","pct",100

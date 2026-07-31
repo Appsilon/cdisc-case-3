@@ -1,0 +1,139 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","AVAL","Baseline","descriptive","N",4
+"Placebo","AVAL","Baseline","descriptive","mean",14.25
+"Placebo","AVAL","Baseline","descriptive","sd",8.77021474461525
+"Placebo","AVAL","Baseline","descriptive","median",11
+"Placebo","AVAL","Baseline","descriptive","min",8
+"Placebo","AVAL","Baseline","descriptive","max",27
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","N",4
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","mean",13.5
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","sd",8.18535277187245
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","median",14
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","min",5
+"Zanomaline Low Dose (54 mg)","AVAL","Baseline","descriptive","max",21
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","N",5
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","mean",9.6
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","sd",9.555103348473
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","median",4
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","min",2
+"Zanomaline High Dose (81 mg)","AVAL","Baseline","descriptive","max",21
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","mean",20
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","median",20
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","min",20
+"Zanomaline Low Dose (54 mg)","AVAL","Week 12","descriptive","max",20
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","N",1
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","mean",2
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","sd",
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","median",2
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","min",2
+"Zanomaline High Dose (81 mg)","AVAL","Week 12","descriptive","max",2
+"Placebo","AVAL","Week 16","descriptive","N",2
+"Placebo","AVAL","Week 16","descriptive","mean",8.5
+"Placebo","AVAL","Week 16","descriptive","sd",0.707106781186548
+"Placebo","AVAL","Week 16","descriptive","median",8.5
+"Placebo","AVAL","Week 16","descriptive","min",8
+"Placebo","AVAL","Week 16","descriptive","max",9
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","mean",7
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","median",7
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","min",7
+"Zanomaline Low Dose (54 mg)","AVAL","Week 16","descriptive","max",7
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","N",1
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","mean",19
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","sd",
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","median",19
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","min",19
+"Zanomaline High Dose (81 mg)","AVAL","Week 16","descriptive","max",19
+"Placebo","AVAL","Week 20","descriptive","N",1
+"Placebo","AVAL","Week 20","descriptive","mean",12
+"Placebo","AVAL","Week 20","descriptive","sd",
+"Placebo","AVAL","Week 20","descriptive","median",12
+"Placebo","AVAL","Week 20","descriptive","min",12
+"Placebo","AVAL","Week 20","descriptive","max",12
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","mean",5
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","median",5
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","min",5
+"Zanomaline Low Dose (54 mg)","AVAL","Week 20","descriptive","max",5
+"Placebo","AVAL","Week 24","descriptive","N",1
+"Placebo","AVAL","Week 24","descriptive","mean",8
+"Placebo","AVAL","Week 24","descriptive","sd",
+"Placebo","AVAL","Week 24","descriptive","median",8
+"Placebo","AVAL","Week 24","descriptive","min",8
+"Placebo","AVAL","Week 24","descriptive","max",8
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","N",3
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","mean",8.33333333333333
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","sd",5.77350269189626
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","median",5
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","min",5
+"Zanomaline Low Dose (54 mg)","AVAL","Week 24","descriptive","max",15
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","N",4
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","mean",10.75
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","sd",11.295279249905
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","median",11
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","min",0
+"Zanomaline High Dose (81 mg)","AVAL","Week 24","descriptive","max",21
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","mean",0
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","median",0
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","min",0
+"Zanomaline Low Dose (54 mg)","CHG","Week 12","descriptive","max",0
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","N",1
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","mean",0
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","sd",
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","median",0
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","min",0
+"Zanomaline High Dose (81 mg)","CHG","Week 12","descriptive","max",0
+"Placebo","CHG","Week 16","descriptive","N",2
+"Placebo","CHG","Week 16","descriptive","mean",-2.5
+"Placebo","CHG","Week 16","descriptive","sd",2.12132034355964
+"Placebo","CHG","Week 16","descriptive","median",-2.5
+"Placebo","CHG","Week 16","descriptive","min",-4
+"Placebo","CHG","Week 16","descriptive","max",-1
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","mean",-1
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","median",-1
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","min",-1
+"Zanomaline Low Dose (54 mg)","CHG","Week 16","descriptive","max",-1
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","N",1
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","mean",0
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","sd",
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","median",0
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","min",0
+"Zanomaline High Dose (81 mg)","CHG","Week 16","descriptive","max",0
+"Placebo","CHG","Week 20","descriptive","N",1
+"Placebo","CHG","Week 20","descriptive","mean",4
+"Placebo","CHG","Week 20","descriptive","sd",
+"Placebo","CHG","Week 20","descriptive","median",4
+"Placebo","CHG","Week 20","descriptive","min",4
+"Placebo","CHG","Week 20","descriptive","max",4
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","N",1
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","mean",-3
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","sd",
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","median",-3
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","min",-3
+"Zanomaline Low Dose (54 mg)","CHG","Week 20","descriptive","max",-3
+"Placebo","CHG","Week 24","descriptive","N",1
+"Placebo","CHG","Week 24","descriptive","mean",-1
+"Placebo","CHG","Week 24","descriptive","sd",
+"Placebo","CHG","Week 24","descriptive","median",-1
+"Placebo","CHG","Week 24","descriptive","min",-1
+"Placebo","CHG","Week 24","descriptive","max",-1
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","N",3
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","mean",-2.66666666666667
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","sd",2.51661147842358
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","median",-3
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","min",-5
+"Zanomaline Low Dose (54 mg)","CHG","Week 24","descriptive","max",0
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","N",4
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","mean",-0.25
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","sd",1.25830573921179
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","median",0
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","min",-2
+"Zanomaline High Dose (81 mg)","CHG","Week 24","descriptive","max",1

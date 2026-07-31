@@ -1,0 +1,1778 @@
+{
+  "protocol": "CDISCPILOT01",
+  "generated_by": "tlf-analysis-spec",
+  "generated_from": {
+    "tlf_plan": "outputs/tlf-plan/tlf-plan.json",
+    "study_model": "outputs/tlf-plan/study-model.json"
+  },
+  "sdtm_source_directory": "inputs/sdtm/",
+  "adam_output_directory": "outputs/adam/",
+  "datasets": [
+    {
+      "name": "ADSL",
+      "class": "ADSL",
+      "sdtm_source": [
+        "DM",
+        "DS",
+        "EX",
+        "SV",
+        "SUPPDM",
+        "DD"
+      ],
+      "used_by_tables": [
+        "14-1",
+        "14-1.01",
+        "14-1.02",
+        "14-1.03",
+        "14-1.04",
+        "14-2.01",
+        "14-2.02",
+        "14-3.01",
+        "14-3.02",
+        "14-3.03",
+        "14-3.04",
+        "14-3.05",
+        "14-4.01",
+        "14-5.01",
+        "14-5.02",
+        "14-5.03",
+        "14-5.04",
+        "14-5.05",
+        "14-5.06",
+        "14-6.01",
+        "14-6.02",
+        "14-6.03",
+        "14-6.04",
+        "14-6.05",
+        "14-6.06",
+        "14-7.01",
+        "14-7.02",
+        "14-7.03",
+        "14-7.04"
+      ],
+      "parameters": [],
+      "variables": [
+        {
+          "name": "STUDYID",
+          "role": "study identifier"
+        },
+        {
+          "name": "USUBJID",
+          "role": "unique subject identifier"
+        },
+        {
+          "name": "SUBJID",
+          "role": "subject id"
+        },
+        {
+          "name": "SITEID",
+          "role": "investigational site",
+          "source": "DM.SITEID"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "derived",
+          "note": "MANDATORY-3: pooling on randomized (ITTFL=\"Y\") counts"
+        },
+        {
+          "name": "ARM",
+          "role": "planned arm",
+          "source": "DM.ARM"
+        },
+        {
+          "name": "ACTARM",
+          "role": "actual arm",
+          "source": "DM.ACTARM"
+        },
+        {
+          "name": "TRT01P",
+          "role": "planned treatment",
+          "source": "DM.ARM"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "derived",
+          "note": "Placebo=0, Zanomaline Low=54, Zanomaline High=81 (SDTM TS DOSE)"
+        },
+        {
+          "name": "TRT01A",
+          "role": "actual treatment",
+          "source": "DM.ACTARM"
+        },
+        {
+          "name": "TRT01AN",
+          "role": "numeric actual dose",
+          "source": "derived"
+        },
+        {
+          "name": "TRTSDT",
+          "role": "first exposure date",
+          "source": "EX.EXSTDTC (min)"
+        },
+        {
+          "name": "TRTEDT",
+          "role": "last exposure date",
+          "source": "EX.EXENDTC (max)"
+        },
+        {
+          "name": "TRTDURD",
+          "role": "treatment duration (days)",
+          "source": "derived",
+          "note": "TRTEDT - TRTSDT + 1"
+        },
+        {
+          "name": "AGE",
+          "role": "age",
+          "source": "DM.AGE"
+        },
+        {
+          "name": "AGEGR1",
+          "role": "age group",
+          "source": "derived",
+          "note": "<65 / 65-80 / >80; observed range 61-89"
+        },
+        {
+          "name": "SEX",
+          "role": "sex",
+          "source": "DM.SEX"
+        },
+        {
+          "name": "RACE",
+          "role": "race",
+          "source": "DM.RACE"
+        },
+        {
+          "name": "ETHNIC",
+          "role": "ethnicity",
+          "source": "DM.ETHNIC"
+        },
+        {
+          "name": "COUNTRY",
+          "role": "country",
+          "source": "DM.COUNTRY"
+        },
+        {
+          "name": "WEIGHTBL",
+          "role": "baseline weight (kg)",
+          "source": "VS WEIGHT at ABLFL"
+        },
+        {
+          "name": "HEIGHTBL",
+          "role": "baseline height (cm)",
+          "source": "VS HEIGHT at ABLFL"
+        },
+        {
+          "name": "BMIBL",
+          "role": "baseline BMI",
+          "source": "derived",
+          "note": "WEIGHTBL / (HEIGHTBL/100)^2"
+        },
+        {
+          "name": "RANDFL",
+          "role": "randomized flag",
+          "source": "derived",
+          "note": "ARM not blank"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population flag",
+          "source": "derived"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population flag",
+          "source": "derived"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population flag",
+          "source": "derived"
+        },
+        {
+          "name": "COMPLFL",
+          "role": "completers flag",
+          "source": "derived"
+        },
+        {
+          "name": "EOSSTT",
+          "role": "end of study status",
+          "source": "DS"
+        },
+        {
+          "name": "DCSREAS",
+          "role": "discontinuation reason",
+          "source": "DS.DSDECOD"
+        },
+        {
+          "name": "EOSDT",
+          "role": "end of study date",
+          "source": "DS.DSSTDTC"
+        },
+        {
+          "name": "DTHFL",
+          "role": "death flag",
+          "source": "DM.DTHFL"
+        },
+        {
+          "name": "DTHDT",
+          "role": "death date",
+          "source": "DM.DTHDTC"
+        },
+        {
+          "name": "DTHDY",
+          "role": "study day of death",
+          "source": "derived"
+        },
+        {
+          "name": "DTHCAUS",
+          "role": "primary cause of death",
+          "source": "DD.DDORRES where DDTESTCD is primary cause of death"
+        },
+        {
+          "name": "ARMCD",
+          "role": "planned arm code",
+          "source": "DM.ARMCD"
+        },
+        {
+          "name": "ACTARMCD",
+          "role": "actual arm code",
+          "source": "DM.ACTARMCD"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping variable used by every analysis)",
+          "source": "derived from TRT01P"
+        },
+        {
+          "name": "AGEU",
+          "role": "age unit",
+          "source": "DM.AGEU"
+        },
+        {
+          "name": "AGEGR1N",
+          "role": "age group number",
+          "source": "derived"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-3",
+          "name": "SITEGR1 pooling counts RANDOMIZED (ITTFL='Y') subjects",
+          "rule": "Pool a site into SITEGR1='900' when ANY planned arm at that site has < 3 randomized (ITTFL='Y') subjects. Count randomized subjects, NOT all enrolled — enrolled includes screen failures.",
+          "why": "Counting all-enrolled produces the wrong site groups and a different ANCOVA result.",
+          "study_specific": "WARNING: with 17 randomized subjects across 6 sites (701/704/708/710/711/718) and 3 arms, NO site can have >=3 randomized subjects in every arm. This rule will pool EVERY site into 900, leaving SITEGR1 with a single level. A single-level factor is rank-deficient and will be dropped from the ANCOVA model. sdtm-to-adam MUST apply the rule as written, report the resulting group count, and let the generator handle the degenerate covariate (refit without SITEGR1 and footnote it). Do NOT weaken the threshold to manufacture variation.",
+          "location": "ADSL; cascades to every table using site as a covariate or stratifier.",
+          "assert": "Report the number of distinct SITEGR1 values. Expected here: 1 (all pooled). Any other value means the rule was not applied on randomized counts."
+        }
+      ],
+      "notes": [
+        "18 DM records: 17 randomized + 1 screen failure (blank ARM). RANDFL/ITTFL must exclude the screen failure.",
+        "ACTARM equals ARM for every subject in this extract — no as-treated deviations.",
+        "DTHCAUS requires a join to SDTM DD (3 records).",
+        "Conformance correction (metatools::check_variables, 2026-07-29): ARMCD, ACTARMCD, TRTP, AGEU and AGEGR1N were derived but not enumerated in this spec. TRTP in particular is the grouping variable every analysis-spec entry references, so its omission was a real spec defect. Added."
+      ]
+    },
+    {
+      "name": "ADQSPHQ",
+      "class": "BDS",
+      "sdtm_source": [
+        "QSPH"
+      ],
+      "used_by_tables": [
+        "14-3.01",
+        "14-3.04",
+        "14-3.05"
+      ],
+      "parameters": [
+        {
+          "paramcd": "PHQTOT",
+          "param": "PHQ-9 Total Score",
+          "source": "QSPH QSTESTCD='PHQ0111' (QSTEST 'PHQ01-Total Score')",
+          "note": "Use the pre-computed total record. Do NOT sum PHQ0101..PHQ0110 — the total is supplied. Range 0-27."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "BASE",
+          "role": "baseline value",
+          "source": "derived from ABLFL record"
+        },
+        {
+          "name": "CHG",
+          "role": "change from baseline",
+          "source": "derived",
+          "note": "AVAL - BASE"
+        },
+        {
+          "name": "PCHG",
+          "role": "percent change from baseline",
+          "source": "derived"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day",
+          "source": "derived",
+          "note": "xxDTC - TRTSDT + 1"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit (windowed)",
+          "source": "derived",
+          "note": "MANDATORY-1: day-based windowing"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number",
+          "source": "derived"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag",
+          "source": "derived"
+        },
+        {
+          "name": "ANL01FL",
+          "role": "primary analysis record flag (observed OR LOCF)",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "ANL02FL",
+          "role": "observed-cases record flag (DTYPE='' only)",
+          "source": "derived"
+        },
+        {
+          "name": "DTYPE",
+          "role": "derivation type: '' or 'LOCF'",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping)",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "ADSL.TRT01PN"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population",
+          "source": "ADSL"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "PARAMN",
+          "role": "parameter number"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        },
+        {
+          "id": "MANDATORY-2",
+          "name": "LOCF record creation at the endpoint visit",
+          "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+          "why": "Without it the LOCF tables silently analyze only completers.",
+          "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+          "flags": {
+            "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+            "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+            "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+          },
+          "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+        }
+      ],
+      "notes": [
+        "Endpoint visit = Week 24 (AVISITN 24). Observed coverage: 13 BASELINE, 2 WEEK 24, 6 EARLY DISCONTINUATION RETRIEVAL, plus WEEK 12/16/20.",
+        "The ED RETRIEVAL record must be windowed by ADY, not dropped — it is the source of most LOCF values."
+      ]
+    },
+    {
+      "name": "ADQSSWL",
+      "class": "BDS",
+      "sdtm_source": [
+        "QSSL"
+      ],
+      "used_by_tables": [
+        "14-3.02"
+      ],
+      "parameters": [
+        {
+          "paramcd": "SWLSTOT",
+          "param": "Satisfaction With Life Scale Total Score",
+          "source": "DERIVED: sum of QSSL QSTESTCD SWLS0101..SWLS0105",
+          "note": "*** NO TOTAL-SCORE RECORD EXISTS IN SDTM *** Derive as the sum of the 5 items. Completeness rule: set the total to MISSING unless all 5 items are non-missing at that visit. Document the rule in define.xml."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "BASE",
+          "role": "baseline value",
+          "source": "derived from ABLFL record"
+        },
+        {
+          "name": "CHG",
+          "role": "change from baseline",
+          "source": "derived",
+          "note": "AVAL - BASE"
+        },
+        {
+          "name": "PCHG",
+          "role": "percent change from baseline",
+          "source": "derived"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day",
+          "source": "derived",
+          "note": "xxDTC - TRTSDT + 1"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit (windowed)",
+          "source": "derived",
+          "note": "MANDATORY-1: day-based windowing"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number",
+          "source": "derived"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag",
+          "source": "derived"
+        },
+        {
+          "name": "ANL01FL",
+          "role": "primary analysis record flag (observed OR LOCF)",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "ANL02FL",
+          "role": "observed-cases record flag (DTYPE='' only)",
+          "source": "derived"
+        },
+        {
+          "name": "DTYPE",
+          "role": "derivation type: '' or 'LOCF'",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping)",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "ADSL.TRT01PN"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population",
+          "source": "ADSL"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "NITEMS",
+          "role": "number of non-missing items contributing to the total",
+          "source": "derived"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        },
+        {
+          "id": "MANDATORY-2",
+          "name": "LOCF record creation at the endpoint visit",
+          "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+          "why": "Without it the LOCF tables silently analyze only completers.",
+          "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+          "flags": {
+            "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+            "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+            "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+          },
+          "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+        }
+      ],
+      "notes": [
+        "Same visit sparsity as PHQ-9: 13 subjects at BASELINE, 2 at WEEK 24, 6 with ED RETRIEVAL.",
+        "NITEMS is carried so a reviewer can verify the completeness rule was applied."
+      ]
+    },
+    {
+      "name": "ADFTAVLT",
+      "class": "BDS",
+      "sdtm_source": [
+        "FT"
+      ],
+      "used_by_tables": [
+        "14-3.03"
+      ],
+      "parameters": [
+        {
+          "paramcd": "AVLATOT",
+          "param": "AVLT-REY List A Total Learning (sum of trials 1-5)",
+          "source": "DERIVED: sum of FT FTSTRESN over FTTESTCD='AVL0216' and FTREPNUM 1..5, per subject x visit",
+          "note": "SD-7. 'AVL02-List A Total' is scored PER TRIAL (FTREPNUM 1-7), not once per visit. Trials 1-5 are the learning trials; their sum is the conventional AVLT Total Learning endpoint. Completeness rule: missing unless all 5 trials are present. CAUTION: FTDTC carries a time component (one per trial) and must NOT be part of the aggregation key."
+        },
+        {
+          "paramcd": "AVLADEL",
+          "param": "AVLT-REY List A 30-Minute Delayed Recall",
+          "source": "FT FTTESTCD='AVL0216' AND FTREPNUM=7 (FTTPT='30 MIN POST')",
+          "note": "SD-7. Derived and retained; not consumed by a planned table."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "BASE",
+          "role": "baseline value",
+          "source": "derived from ABLFL record"
+        },
+        {
+          "name": "CHG",
+          "role": "change from baseline",
+          "source": "derived",
+          "note": "AVAL - BASE"
+        },
+        {
+          "name": "PCHG",
+          "role": "percent change from baseline",
+          "source": "derived"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day",
+          "source": "derived",
+          "note": "xxDTC - TRTSDT + 1"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit (windowed)",
+          "source": "derived",
+          "note": "MANDATORY-1: day-based windowing"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number",
+          "source": "derived"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag",
+          "source": "derived"
+        },
+        {
+          "name": "ANL01FL",
+          "role": "primary analysis record flag (observed OR LOCF)",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "ANL02FL",
+          "role": "observed-cases record flag (DTYPE='' only)",
+          "source": "derived"
+        },
+        {
+          "name": "DTYPE",
+          "role": "derivation type: '' or 'LOCF'",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping)",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "ADSL.TRT01PN"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population",
+          "source": "ADSL"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        },
+        {
+          "id": "MANDATORY-2",
+          "name": "LOCF record creation at the endpoint visit",
+          "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+          "why": "Without it the LOCF tables silently analyze only completers.",
+          "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+          "flags": {
+            "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+            "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+            "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+          },
+          "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+        }
+      ],
+      "notes": [
+        "*** BASELINE DEVIATION *** FT has NO 'BASELINE' visit for AVLT-REY. The earliest assessment is SCREENING 2 (98 records). ABLFL MUST be set on the SCREENING 2 record; FTLOBXFL='Y' should corroborate. Document the deviation in define.xml and footnote every consuming table.",
+        "Best-populated efficacy endpoint: 14 observed WEEK 24 records and 21 ED RETRIEVAL records.",
+        "SD-7 (discovered at derivation): the original spec treated 'AVL02-List A Total' as one score per visit. It is one score per trial. Taking a single FTREPNUM record would have analysed an arbitrary learning trial instead of the instrument's score. Parameters corrected above."
+      ]
+    },
+    {
+      "name": "ADRSHAMD",
+      "class": "BDS",
+      "sdtm_source": [
+        "RS"
+      ],
+      "used_by_tables": [
+        "14-2.02"
+      ],
+      "parameters": [
+        {
+          "paramcd": "HAMD118",
+          "param": "HAMD 17 Total Score",
+          "source": "RS RSTESTCD='HAMD118'",
+          "note": "RSCAT='HAMD 17'."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        }
+      ],
+      "notes": [
+        "*** NO POST-BASELINE DATA *** RS collects HAMD 17 only at BASELINE and EARLY DISCONTINUATION RETRIEVAL. There are no scheduled post-baseline visits, so BASE/CHG/LOCF are NOT derivable and MANDATORY-2 does not apply. Baseline records only; consumed by the §14-2 baseline table T-14-2.02."
+      ]
+    },
+    {
+      "name": "ADAE",
+      "class": "OCCDS",
+      "sdtm_source": [
+        "AE"
+      ],
+      "used_by_tables": [
+        "14-1",
+        "14-5.01",
+        "14-5.02",
+        "14-5.03",
+        "14-5.04",
+        "14-5.05",
+        "14-5.06"
+      ],
+      "parameters": [],
+      "variables": [
+        {
+          "name": "USUBJID",
+          "role": "subject"
+        },
+        {
+          "name": "AESEQ",
+          "role": "AE sequence"
+        },
+        {
+          "name": "AETERM",
+          "role": "reported term"
+        },
+        {
+          "name": "AEDECOD",
+          "role": "preferred term",
+          "source": "AE.AEDECOD"
+        },
+        {
+          "name": "AESOC",
+          "role": "system organ class",
+          "source": "AE.AESOC",
+          "note": "*** USE AESOC, NOT AEBODSYS *** AEBODSYS is blank on every record in this extract."
+        },
+        {
+          "name": "AESOCCD",
+          "role": "SOC code",
+          "source": "AE.AESOCCD"
+        },
+        {
+          "name": "ASEV",
+          "role": "analysis severity",
+          "source": "AE.AESEV",
+          "note": "Explicit factor order MILD < MODERATE < SEVERE"
+        },
+        {
+          "name": "AESER",
+          "role": "serious flag",
+          "source": "AE.AESER"
+        },
+        {
+          "name": "AREL",
+          "role": "analysis relationship",
+          "source": "AE.AEREL"
+        },
+        {
+          "name": "AEACN",
+          "role": "action taken",
+          "source": "AE.AEACN"
+        },
+        {
+          "name": "AEOUT",
+          "role": "outcome",
+          "source": "AE.AEOUT"
+        },
+        {
+          "name": "ASTDT",
+          "role": "analysis start date",
+          "source": "AE.AESTDTC"
+        },
+        {
+          "name": "AENDT",
+          "role": "analysis end date",
+          "source": "AE.AEENDTC"
+        },
+        {
+          "name": "ASTDY",
+          "role": "analysis start day",
+          "source": "AE.AESTDY"
+        },
+        {
+          "name": "TRTEMFL",
+          "role": "treatment-emergent flag",
+          "source": "derived",
+          "note": "ASTDT >= TRTSDT and ASTDT <= TRTEDT + follow-up window"
+        },
+        {
+          "name": "AOCC01FL",
+          "role": "first occurrence of maximum severity per subject per PT",
+          "source": "derived",
+          "note": "Required by T-14-5.05 so a subject is counted once at their worst severity."
+        },
+        {
+          "name": "AOCCFL",
+          "role": "first occurrence per subject",
+          "source": "derived"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        }
+      ],
+      "derivation_requirements": [],
+      "notes": [
+        "74 AE records. AESER='Y' on 4; AEACN='DRUG WITHDRAWN' present; AEOUT='FATAL' present.",
+        "Reconcile AEOUT='FATAL' subject count against ADSL.DTHFL (3) and report any mismatch."
+      ]
+    },
+    {
+      "name": "ADLB",
+      "class": "BDS",
+      "sdtm_source": [
+        "LB"
+      ],
+      "used_by_tables": [
+        "14-6.01",
+        "14-6.02",
+        "14-6.03",
+        "14-6.04",
+        "14-6.05",
+        "14-6.06"
+      ],
+      "parameters": [
+        {
+          "paramcd": "<LBTESTCD>",
+          "param": "<LBTEST>",
+          "source": "One parameter per LB LBTESTCD (40 in the data)",
+          "note": "CHEMISTRY: ALB ALP ALT AST BILI CA CHOL CK CL CREAT GGT GLUC K PHOS PROT SODIUM TSH URATE UREAN VITB12. HEMATOLOGY: BASO EOS HCT HGB LYM MCH MCHC MCV MONO PLAT RBC WBC. URINALYSIS: PH SPGRAV UROBIL. OTHER (QUALITATIVE, EXCLUDE from continuous summaries): ANISO COLOR KETONES MACROCY POIKILO."
+        },
+        {
+          "paramcd": "ALT/AST/BILI/ALP",
+          "param": "Hy's Law components",
+          "note": "All four present — the criterion is derivable."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "BASE",
+          "role": "baseline value",
+          "source": "derived from ABLFL record"
+        },
+        {
+          "name": "CHG",
+          "role": "change from baseline",
+          "source": "derived",
+          "note": "AVAL - BASE"
+        },
+        {
+          "name": "PCHG",
+          "role": "percent change from baseline",
+          "source": "derived"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day",
+          "source": "derived",
+          "note": "xxDTC - TRTSDT + 1"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit (windowed)",
+          "source": "derived",
+          "note": "MANDATORY-1: day-based windowing"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number",
+          "source": "derived"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag",
+          "source": "derived"
+        },
+        {
+          "name": "ANL01FL",
+          "role": "primary analysis record flag (observed OR LOCF)",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "ANL02FL",
+          "role": "observed-cases record flag (DTYPE='' only)",
+          "source": "derived"
+        },
+        {
+          "name": "DTYPE",
+          "role": "derivation type: '' or 'LOCF'",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping)",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "ADSL.TRT01PN"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population",
+          "source": "ADSL"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "PARCAT1",
+          "role": "lab category",
+          "source": "LB.LBCAT"
+        },
+        {
+          "name": "AVALU",
+          "role": "unit",
+          "source": "LB.LBSTRESU"
+        },
+        {
+          "name": "ANRLO",
+          "role": "analysis normal range low",
+          "source": "LB.LBSTNRLO"
+        },
+        {
+          "name": "ANRHI",
+          "role": "analysis normal range high",
+          "source": "LB.LBSTNRHI"
+        },
+        {
+          "name": "ANRIND",
+          "role": "analysis reference-range indicator",
+          "source": "LB.LBNRIND",
+          "note": "Levels LOW / NORMAL / HIGH / ABNORMAL"
+        },
+        {
+          "name": "BNRIND",
+          "role": "baseline reference-range indicator",
+          "source": "derived"
+        },
+        {
+          "name": "WORSTFL",
+          "role": "worst post-baseline reference-range indicator per subject per parameter",
+          "source": "derived",
+          "note": "Required by T-14-6.05; needs an explicit worst-direction rule per parameter."
+        },
+        {
+          "name": "CRIT1",
+          "role": "Hy's Law criterion text",
+          "source": "derived",
+          "note": "ALT or AST >= 3xULN AND BILI >= 2xULN"
+        },
+        {
+          "name": "CRIT1FL",
+          "role": "Hy's Law criterion met flag",
+          "source": "derived"
+        },
+        {
+          "name": "CSCFL",
+          "role": "clinically significant change flag",
+          "source": "derived",
+          "note": "*** CRITERION NOT SPECIFIED *** No SDTM flag and no SAP rule. Derive as all-missing; do NOT invent a threshold. T-14-6.03 must footnote that the criterion is undefined."
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        },
+        {
+          "id": "MANDATORY-2",
+          "name": "LOCF record creation at the endpoint visit",
+          "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+          "why": "Without it the LOCF tables silently analyze only completers.",
+          "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+          "flags": {
+            "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+            "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+            "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+          },
+          "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+        }
+      ],
+      "notes": [
+        "3488 records. LB is the domain with explicit unscheduled visits — MANDATORY-1 is load-bearing here.",
+        "Restrict continuous summaries to parameters with a numeric LBSTRESN."
+      ]
+    },
+    {
+      "name": "ADVS",
+      "class": "BDS",
+      "sdtm_source": [
+        "VS"
+      ],
+      "used_by_tables": [
+        "14-7.01",
+        "14-7.02",
+        "14-7.03"
+      ],
+      "parameters": [
+        {
+          "paramcd": "SYSBPST",
+          "param": "Systolic Blood Pressure, Standing",
+          "source": "VS VSTESTCD='SYSBP' AND VSPOS='STANDING'"
+        },
+        {
+          "paramcd": "SYSBPSU",
+          "param": "Systolic Blood Pressure, Supine",
+          "source": "VS VSTESTCD='SYSBP' AND VSPOS='SUPINE'"
+        },
+        {
+          "paramcd": "DIABPST",
+          "param": "Diastolic Blood Pressure, Standing",
+          "source": "VS VSTESTCD='DIABP' AND VSPOS='STANDING'"
+        },
+        {
+          "paramcd": "DIABPSU",
+          "param": "Diastolic Blood Pressure, Supine",
+          "source": "VS VSTESTCD='DIABP' AND VSPOS='SUPINE'"
+        },
+        {
+          "paramcd": "PULSEST",
+          "param": "Pulse Rate, Standing",
+          "source": "VS VSTESTCD='PULSE' AND VSPOS='STANDING'"
+        },
+        {
+          "paramcd": "PULSESU",
+          "param": "Pulse Rate, Supine",
+          "source": "VS VSTESTCD='PULSE' AND VSPOS='SUPINE'"
+        },
+        {
+          "paramcd": "TEMP",
+          "param": "Temperature",
+          "source": "VS VSTESTCD='TEMP'"
+        },
+        {
+          "paramcd": "WEIGHT",
+          "param": "Weight",
+          "source": "VS VSTESTCD='WEIGHT'"
+        },
+        {
+          "paramcd": "HEIGHT",
+          "param": "Height",
+          "source": "VS VSTESTCD='HEIGHT'",
+          "note": "Baseline only; feeds ADSL.HEIGHTBL/BMIBL, not a safety table."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "BASE",
+          "role": "baseline value",
+          "source": "derived from ABLFL record"
+        },
+        {
+          "name": "CHG",
+          "role": "change from baseline",
+          "source": "derived",
+          "note": "AVAL - BASE"
+        },
+        {
+          "name": "PCHG",
+          "role": "percent change from baseline",
+          "source": "derived"
+        },
+        {
+          "name": "ADY",
+          "role": "analysis day",
+          "source": "derived",
+          "note": "xxDTC - TRTSDT + 1"
+        },
+        {
+          "name": "AVISIT",
+          "role": "analysis visit (windowed)",
+          "source": "derived",
+          "note": "MANDATORY-1: day-based windowing"
+        },
+        {
+          "name": "AVISITN",
+          "role": "analysis visit number",
+          "source": "derived"
+        },
+        {
+          "name": "ABLFL",
+          "role": "baseline record flag",
+          "source": "derived"
+        },
+        {
+          "name": "ANL01FL",
+          "role": "primary analysis record flag (observed OR LOCF)",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "ANL02FL",
+          "role": "observed-cases record flag (DTYPE='' only)",
+          "source": "derived"
+        },
+        {
+          "name": "DTYPE",
+          "role": "derivation type: '' or 'LOCF'",
+          "source": "derived",
+          "note": "MANDATORY-2"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment (grouping)",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "TRT01PN",
+          "role": "numeric planned dose",
+          "source": "ADSL.TRT01PN"
+        },
+        {
+          "name": "SITEGR1",
+          "role": "pooled site group",
+          "source": "ADSL"
+        },
+        {
+          "name": "EFFFL",
+          "role": "efficacy population",
+          "source": "ADSL"
+        },
+        {
+          "name": "ITTFL",
+          "role": "ITT population",
+          "source": "ADSL"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "AVALU",
+          "role": "unit",
+          "source": "VS.VSSTRESU"
+        },
+        {
+          "name": "ATPT",
+          "role": "position",
+          "source": "VS.VSPOS"
+        }
+      ],
+      "derivation_requirements": [
+        {
+          "id": "MANDATORY-1",
+          "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+          "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+          "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+          "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+          "target_days": {
+            "Baseline": 1,
+            "Week 2": 15,
+            "Week 4": 29,
+            "Week 6": 43,
+            "Week 8": 57,
+            "Week 12": 85,
+            "Week 16": 113,
+            "Week 20": 141,
+            "Week 24": 169,
+            "Week 26": 183
+          },
+          "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+        },
+        {
+          "id": "MANDATORY-2",
+          "name": "LOCF record creation at the endpoint visit",
+          "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+          "why": "Without it the LOCF tables silently analyze only completers.",
+          "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+          "flags": {
+            "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+            "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+            "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+          },
+          "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+        }
+      ],
+      "notes": [
+        "*** POSITION MUST BE IN PARAMCD *** SYSBP/DIABP/PULSE are each measured STANDING and SUPINE. Collapsing across VSPOS would average two different measurements. USDM endpoint END4 explicitly names 'standing and supine blood pressure'.",
+        "1414 records across SCREENING 1 .. WEEK 26 plus EARLY DISCONTINUATION RETRIEVAL."
+      ]
+    },
+    {
+      "name": "ADEX",
+      "class": "BDS",
+      "sdtm_source": [
+        "EX",
+        "EC"
+      ],
+      "used_by_tables": [
+        "14-4.01"
+      ],
+      "parameters": [
+        {
+          "paramcd": "TRTDUR",
+          "param": "Duration of Exposure (days)",
+          "note": "last EXENDT - first EXSTDT + 1"
+        },
+        {
+          "paramcd": "CUMDOSE",
+          "param": "Cumulative Dose (mg)",
+          "note": "sum of EXDOSE over all exposure records"
+        },
+        {
+          "paramcd": "AVGDD",
+          "param": "Average Daily Dose (mg/day)",
+          "note": "CUMDOSE / TRTDUR"
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "analysis value"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "EXDURGR1",
+          "role": "exposure duration category",
+          "source": "derived",
+          "note": "Bands must be defined; study length 28 weeks"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        }
+      ],
+      "derivation_requirements": [],
+      "notes": [
+        "EX has 1583 records (EXTRT ZANOMALINE / PLACEBO). EC (1590 records, as-collected) is retained as a cross-check on ECOCCUR but EX is the derivation source."
+      ]
+    },
+    {
+      "name": "ADCM",
+      "class": "OCCDS",
+      "sdtm_source": [
+        "CM"
+      ],
+      "used_by_tables": [
+        "14-7.04"
+      ],
+      "parameters": [],
+      "variables": [
+        {
+          "name": "USUBJID",
+          "role": "subject"
+        },
+        {
+          "name": "CMTRT",
+          "role": "reported medication (verbatim)",
+          "source": "CM.CMTRT"
+        },
+        {
+          "name": "CMINDC",
+          "role": "indication",
+          "source": "CM.CMINDC"
+        },
+        {
+          "name": "CMDOSE",
+          "role": "dose",
+          "source": "CM.CMDOSE"
+        },
+        {
+          "name": "ASTDT",
+          "role": "analysis start date",
+          "source": "CM.CMSTDTC"
+        },
+        {
+          "name": "AENDT",
+          "role": "analysis end date",
+          "source": "CM.CMENDTC"
+        },
+        {
+          "name": "AOCCFL",
+          "role": "first occurrence per subject per verbatim term",
+          "source": "derived"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        }
+      ],
+      "derivation_requirements": [],
+      "notes": [
+        "*** NOT WHO-DD CODED *** No CMDECOD, no CMCLAS/CMATC in this extract. The conventional therapeutic-class hierarchy is NOT derivable; T-14-7.04 must summarize verbatim CMTRT and footnote the absence of coding. 68 records across 14 subjects."
+      ]
+    },
+    {
+      "name": "ADTTE",
+      "class": "TTE",
+      "sdtm_source": [
+        "FA",
+        "AE",
+        "DM",
+        "EX"
+      ],
+      "used_by_tables": [
+        "14-1"
+      ],
+      "parameters": [
+        {
+          "paramcd": "TTISR",
+          "param": "Time to First Injection-Site Reaction",
+          "source": "SDTM FA where FACAT='INJECTION SITE REACTION' (78 records)",
+          "note": "AVAL = first FADTC with an occurrence result, minus TRTSDT, +1. Subjects with no reaction are censored (CNSR=1) at their last on-study day."
+        }
+      ],
+      "variables": [
+        {
+          "name": "AVAL",
+          "role": "time to event (days)"
+        },
+        {
+          "name": "CNSR",
+          "role": "censoring indicator",
+          "source": "derived",
+          "note": "0 = event, 1 = censored"
+        },
+        {
+          "name": "PARAMCD",
+          "role": "parameter code"
+        },
+        {
+          "name": "PARAM",
+          "role": "parameter"
+        },
+        {
+          "name": "STARTDT",
+          "role": "time origin",
+          "source": "ADSL.TRTSDT"
+        },
+        {
+          "name": "ADT",
+          "role": "event or censoring date",
+          "source": "derived"
+        },
+        {
+          "name": "EVNTDESC",
+          "role": "event description",
+          "source": "derived"
+        },
+        {
+          "name": "CNSDTDSC",
+          "role": "censoring description",
+          "source": "derived"
+        },
+        {
+          "name": "TRTP",
+          "role": "planned treatment",
+          "source": "ADSL.TRT01P"
+        },
+        {
+          "name": "SAFFL",
+          "role": "safety population",
+          "source": "ADSL"
+        }
+      ],
+      "derivation_requirements": [],
+      "notes": [
+        "The USDM endpoint END3 describes a transdermal APPLICATION-site signal; the delivered study is a SUBCUTANEOUS INJECTION with an FA domain of category 'INJECTION SITE REACTION'. Derivation follows the delivered route; record as a reporting deviation.",
+        "FA carries FATESTCD 'Occurrence Indicator' and 'Severity/Intensity' with FAOBJ naming the reaction."
+      ]
+    }
+  ],
+  "populations": [
+    {
+      "flag": "ITTFL",
+      "label": "Intent-to-Treat",
+      "definition": "All randomized subjects (ARM not blank), analyzed as randomized. Excludes the 1 screen failure. Expected N = 17.",
+      "derived_n": 17
+    },
+    {
+      "flag": "SAFFL",
+      "label": "Safety",
+      "definition": "All subjects with >=1 dose of study drug (>=1 EX record with EXDOSE > 0 or a placebo administration). Expected N = 17.",
+      "derived_n": 17
+    },
+    {
+      "flag": "EFFFL",
+      "label": "Efficacy",
+      "definition": "ITT subjects with a baseline and >=1 post-baseline efficacy assessment for at least one of PHQ-9 / SWLS / AVLT-REY. Expected N <= 13 (13 subjects have a PHQ-9 baseline).",
+      "derived_n": 13
+    },
+    {
+      "flag": "COMPLFL",
+      "label": "Completers",
+      "definition": "Subjects with EOSSTT='COMPLETED' (DS DSDECOD='COMPLETED'). DERIVED N = 3 (CDISC005, CDISC009, CDISC011). The pre-derivation spec said 6, which counted DS RECORDS (2 per subject), not subjects. Corrected. 3 completers is far too few for any completers/observed-cases analysis; all such variants stay N-gate blocked.",
+      "derived_n": 3
+    }
+  ],
+  "mandatory_derivation_rules": [
+    {
+      "id": "MANDATORY-1",
+      "name": "Day-based analysis-visit windowing that never drops unscheduled/ET visits",
+      "rule": "Derive AVISIT/AVISITN from the analysis day (ADY = xxDTC - TRTSDT + 1) using midpoint boundaries between scheduled target days; within each subject x window keep the record nearest the target day. NEVER map nominal VISITNUM to AVISITN with a hard-coded lookup.",
+      "why": "A nominal-VISITNUM map silently deletes records at unscheduled and early-termination visits, losing early terminators from the analysis. This was a real bug in this repo.",
+      "study_specific": "This study's data makes the failure mode certain, not hypothetical: LB carries 'WEEK 4: UNSCHEDULED 01', 'SCREENING 1: UNSCHEDULED 01', 'WEEK 6: UNSCHEDULED 01' and 'WEEK 8: UNSCHEDULED 01'; QSPH, QSSL, RS, FT, VS and OE all carry 'EARLY DISCONTINUATION RETRIEVAL'. With 11 of 17 subjects discontinuing early, dropping ET records would empty the efficacy analysis.",
+      "target_days": {
+        "Baseline": 1,
+        "Week 2": 15,
+        "Week 4": 29,
+        "Week 6": 43,
+        "Week 8": 57,
+        "Week 12": 85,
+        "Week 16": 113,
+        "Week 20": 141,
+        "Week 24": 169,
+        "Week 26": 183
+      },
+      "assert": "For every BDS dataset: count(records with non-missing AVISITN) >= count(source records with a non-missing result). No source record may be lost to windowing."
+    },
+    {
+      "id": "MANDATORY-2",
+      "name": "LOCF record creation at the endpoint visit",
+      "rule": "For every subject in the analysis population with a baseline (ABLFL='Y') and >=1 post-baseline value but NO observed record at the endpoint visit, carry the last observed post-baseline value forward as a new record at the endpoint AVISITN with DTYPE='LOCF' and ANL01FL='Y'. Exactly ONE record with ANL01FL='Y' per subject per parameter per endpoint.",
+      "why": "Without it the LOCF tables silently analyze only completers.",
+      "study_specific": "CRITICAL HERE. Only 2 subjects have an observed Week 24 PHQ-9 or SWLS total against 13 with a baseline; 6 have an EARLY DISCONTINUATION RETRIEVAL record. This rule supplies roughly 11 of the ~13 analysis records for T-14-3.01 and T-14-3.02. Its correctness is the single largest determinant of those tables' numbers.",
+      "flags": {
+        "ANL01FL": "primary analysis record (observed OR LOCF) at the endpoint visit",
+        "ANL02FL": "observed-cases record (DTYPE='' only) — used by MMRM and the descriptive-over-time table",
+        "DTYPE": "'' for observed records, 'LOCF' for carried-forward records"
+      },
+      "assert": "count(ANL01FL='Y' AND AVISITN=24) == count(distinct subjects with ABLFL='Y' AND >=1 post-baseline record), per parameter. Any shortfall is a derivation defect, not a data property."
+    },
+    {
+      "id": "MANDATORY-3",
+      "name": "SITEGR1 pooling counts RANDOMIZED (ITTFL='Y') subjects",
+      "rule": "Pool a site into SITEGR1='900' when ANY planned arm at that site has < 3 randomized (ITTFL='Y') subjects. Count randomized subjects, NOT all enrolled — enrolled includes screen failures.",
+      "why": "Counting all-enrolled produces the wrong site groups and a different ANCOVA result.",
+      "study_specific": "WARNING: with 17 randomized subjects across 6 sites (701/704/708/710/711/718) and 3 arms, NO site can have >=3 randomized subjects in every arm. This rule will pool EVERY site into 900, leaving SITEGR1 with a single level. A single-level factor is rank-deficient and will be dropped from the ANCOVA model. sdtm-to-adam MUST apply the rule as written, report the resulting group count, and let the generator handle the degenerate covariate (refit without SITEGR1 and footnote it). Do NOT weaken the threshold to manufacture variation.",
+      "location": "ADSL; cascades to every table using site as a covariate or stratifier.",
+      "assert": "Report the number of distinct SITEGR1 values. Expected here: 1 (all pooled). Any other value means the rule was not applied on randomized counts."
+    }
+  ],
+  "data_quality_gate": {
+    "id": "N-GATE",
+    "rule": "After derivation, assert each analysis set's N against its ADSL population flag count and against the per-table analysis record count. Warn LOUDLY on any shortfall — the visit-windowing bug (MANDATORY-1) would otherwise pass silently and corrupt every downstream number.",
+    "assertions": [
+      {
+        "id": "NG-1",
+        "check": "count(ADSL) == 18 and count(ADSL where ITTFL='Y') == 17",
+        "severity": "error",
+        "note": "18 DM records = 17 randomized + 1 screen failure."
+      },
+      {
+        "id": "NG-2",
+        "check": "count(ADSL where ITTFL='Y') by TRT01P == Placebo 5 / Zanomaline Low Dose (54 mg) 5 / Zanomaline High Dose (81 mg) 7",
+        "severity": "error"
+      },
+      {
+        "id": "NG-3",
+        "check": "count(ADSL where SAFFL='Y') == count(ADSL where ITTFL='Y')",
+        "severity": "warning",
+        "note": "All randomized subjects were dosed in this study."
+      },
+      {
+        "id": "NG-4",
+        "check": "For ADQSPHQ PARAMCD='PHQTOT': count(distinct USUBJID where ANL01FL='Y' AND AVISITN=24) == count(distinct USUBJID where ABLFL='Y' AND has >=1 post-baseline record)",
+        "severity": "error",
+        "note": "Directly tests MANDATORY-2. Expected ~13. A value of 2 means LOCF was not applied."
+      },
+      {
+        "id": "NG-5",
+        "check": "For every BDS dataset: no source record with a non-missing result is absent from the derived dataset",
+        "severity": "error",
+        "note": "Directly tests MANDATORY-1. EARLY DISCONTINUATION RETRIEVAL and UNSCHEDULED records must survive."
+      },
+      {
+        "id": "NG-6",
+        "check": "count(distinct SITEGR1) is reported",
+        "severity": "warning",
+        "note": "Expected 1 (every site pooled to 900) given 17 subjects over 6 sites. Report, do not force."
+      },
+      {
+        "id": "NG-7",
+        "check": "For every BDS dataset and endpoint: exactly one record per subject per parameter with ANL01FL='Y' at the endpoint visit",
+        "severity": "error"
+      },
+      {
+        "id": "NG-8",
+        "check": "count(ADAE where AEOUT='FATAL' distinct USUBJID) == count(ADSL where DTHFL='Y')",
+        "severity": "warning",
+        "note": "Expected 3. A mismatch is a source-data consistency finding worth reporting, not a derivation bug."
+      }
+    ],
+    "study_level_warning": "*** THIS STUDY FAILS A CONVENTIONAL N-GATE BY DESIGN *** 17 randomized subjects (5/5/7) is far below any threshold at which LS-means, contrasts, CMH or log-rank statistics are interpretable, and the efficacy set is at most 13. The gate above therefore asserts DERIVATION CORRECTNESS (did we lose records?) rather than STATISTICAL ADEQUACY (do we have enough subjects?). The run must proceed with every inferential result labelled illustrative. Do not suppress this warning."
+  },
+  "spec_dependencies_requiring_human_input": [
+    {
+      "id": "SD-1",
+      "dataset": "ADQSSWL",
+      "issue": "SWLS has no total-score record in SDTM.",
+      "resolution": "Derive SWLSTOT as the sum of the 5 items with an all-items-present completeness rule.",
+      "status": "resolved in spec"
+    },
+    {
+      "id": "SD-2",
+      "dataset": "ADFTAVLT",
+      "issue": "AVLT-REY has no BASELINE visit.",
+      "resolution": "Use SCREENING 2 as baseline (ABLFL). Document the deviation.",
+      "status": "resolved in spec"
+    },
+    {
+      "id": "SD-3",
+      "dataset": "ADRSHAMD",
+      "issue": "HAMD 17 has no SCHEDULED post-baseline visit. (The original spec wrongly concluded there is no post-baseline DATA.)",
+      "resolution": "CORRECTED AT DERIVATION: the EARLY DISCONTINUATION RETRIEVAL records fall at study days 167-173 and window into Week 24, so 6 subjects have both a baseline and a Week-24 value and a change-from-baseline analysis IS derivable. BASE/CHG are now derived. The consuming display T-14-2.02 remains a baseline summary in section 14-2 per the reviewed plan; the available CFB analysis is reported in issues.md as an option, not silently substituted.",
+      "status": "corrected at derivation — reviewer decision available"
+    },
+    {
+      "id": "SD-4",
+      "dataset": "ADLB",
+      "issue": "'Clinically significant change' has no SDTM flag and no SAP-defined criterion.",
+      "resolution": "NOT RESOLVABLE without sponsor input. Derive CSCFL as all-missing; T-14-6.03 footnotes that the criterion is undefined. Do NOT invent a threshold.",
+      "status": "OPEN — requires sponsor input"
+    },
+    {
+      "id": "SD-5",
+      "dataset": "ADCM",
+      "issue": "CM is not WHO-DD coded (no CMDECOD/CMCLAS).",
+      "resolution": "Summarize verbatim CMTRT with a footnote. Therapeutic-class hierarchy not producible.",
+      "status": "accepted limitation"
+    },
+    {
+      "id": "SD-6",
+      "dataset": "ADSL",
+      "issue": "MANDATORY-3 will pool every site into 900, leaving SITEGR1 single-level and rank-deficient in the ANCOVA.",
+      "resolution": "Apply the rule as written and report the group count; the generator refits without SITEGR1 and footnotes it. OUTCOME: confirmed at derivation — all 6 sites pooled to 900, distinct SITEGR1 count = 1.",
+      "status": "accepted limitation"
+    },
+    {
+      "id": "SD-7",
+      "dataset": "ADFTAVLT",
+      "issue": "AVLT-REY 'List A Total' is scored per trial (FTREPNUM 1-7), not once per visit.",
+      "resolution": "AVLATOT = sum of trials 1-5 (Total Learning); AVLADEL = trial 7 (delayed recall).",
+      "status": "resolved at derivation — spec updated"
+    }
+  ],
+  "notes": [
+    "Every dataset here is DEMAND-DRIVEN by a producible TLF. Nothing is derived speculatively.",
+    "USDM-derived efficacy datasets (ADQSADAS, ADQSCIBC, ADQSNPIX) are deliberately ABSENT: their source instruments do not exist in the delivered SDTM and all 13 consuming tables are blocked in the plan.",
+    "Spec revised 2026-07-29 after derivation: ADSL variable list completed (TRTP et al.), ADFTAVLT parameters corrected (SD-7), COMPLFL expected N corrected 6 -> 3, SD-3 corrected. Derived Ns recorded on populations[].derived_n."
+  ]
+}

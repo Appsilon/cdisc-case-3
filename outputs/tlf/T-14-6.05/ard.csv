@@ -1,0 +1,26 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","Overall|NORMAL","LOW","shift","n",2
+"Placebo","Overall|NORMAL","NORMAL","shift","n",113
+"Placebo","Overall|NORMAL","HIGH","shift","n",9
+"Placebo","Overall|HIGH","LOW","shift","n",0
+"Placebo","Overall|HIGH","NORMAL","shift","n",1
+"Placebo","Overall|HIGH","HIGH","shift","n",2
+"Zanomaline Low Dose (54 mg)","Overall|LOW","LOW","shift","n",1
+"Zanomaline Low Dose (54 mg)","Overall|LOW","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Overall|LOW","HIGH","shift","n",0
+"Zanomaline Low Dose (54 mg)","Overall|NORMAL","LOW","shift","n",2
+"Zanomaline Low Dose (54 mg)","Overall|NORMAL","NORMAL","shift","n",118
+"Zanomaline Low Dose (54 mg)","Overall|NORMAL","HIGH","shift","n",8
+"Zanomaline Low Dose (54 mg)","Overall|HIGH","LOW","shift","n",0
+"Zanomaline Low Dose (54 mg)","Overall|HIGH","NORMAL","shift","n",0
+"Zanomaline Low Dose (54 mg)","Overall|HIGH","HIGH","shift","n",2
+"Zanomaline High Dose (81 mg)","Overall|LOW","LOW","shift","n",2
+"Zanomaline High Dose (81 mg)","Overall|LOW","NORMAL","shift","n",2
+"Zanomaline High Dose (81 mg)","Overall|LOW","HIGH","shift","n",0
+"Zanomaline High Dose (81 mg)","Overall|NORMAL","LOW","shift","n",3
+"Zanomaline High Dose (81 mg)","Overall|NORMAL","NORMAL","shift","n",153
+"Zanomaline High Dose (81 mg)","Overall|NORMAL","HIGH","shift","n",2
+"Zanomaline High Dose (81 mg)","Overall|HIGH","LOW","shift","n",0
+"Zanomaline High Dose (81 mg)","Overall|HIGH","NORMAL","shift","n",0
+"Zanomaline High Dose (81 mg)","Overall|HIGH","HIGH","shift","n",3
+,"Overall|CMH","Cochran-Mantel-Haenszel","cmh","p.value",

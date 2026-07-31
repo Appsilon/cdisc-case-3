@@ -1,0 +1,84 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","BASE",,"descriptive","N",2
+"Placebo","BASE",,"descriptive","mean",24
+"Placebo","BASE",,"descriptive","sd",2.82842712474619
+"Placebo","BASE",,"descriptive","median",24
+"Placebo","BASE",,"descriptive","min",22
+"Placebo","BASE",,"descriptive","max",26
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","N",3
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","mean",23.6666666666667
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","sd",6.65832811847939
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","median",27
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","min",16
+"Zanomaline Low Dose (54 mg)","BASE",,"descriptive","max",28
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","N",4
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","mean",24.5
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","sd",5
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","median",25
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","min",18
+"Zanomaline High Dose (81 mg)","BASE",,"descriptive","max",30
+"Placebo","AVAL",,"descriptive","N",2
+"Placebo","AVAL",,"descriptive","mean",24.5
+"Placebo","AVAL",,"descriptive","sd",2.12132034355964
+"Placebo","AVAL",,"descriptive","median",24.5
+"Placebo","AVAL",,"descriptive","min",23
+"Placebo","AVAL",,"descriptive","max",26
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","N",3
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","mean",22.6666666666667
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","sd",6.02771377334171
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","median",22
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","min",17
+"Zanomaline Low Dose (54 mg)","AVAL",,"descriptive","max",29
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","N",4
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","mean",24.75
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","sd",5.1234753829798
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","median",25.5
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","min",18
+"Zanomaline High Dose (81 mg)","AVAL",,"descriptive","max",30
+"Placebo","CHG",,"descriptive","N",2
+"Placebo","CHG",,"descriptive","mean",0.5
+"Placebo","CHG",,"descriptive","sd",0.707106781186548
+"Placebo","CHG",,"descriptive","median",0.5
+"Placebo","CHG",,"descriptive","min",0
+"Placebo","CHG",,"descriptive","max",1
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","N",3
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","mean",-1
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","sd",4.35889894354067
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","median",1
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","min",-6
+"Zanomaline Low Dose (54 mg)","CHG",,"descriptive","max",2
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","N",4
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","mean",0.25
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","sd",0.5
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","median",0
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","min",0
+"Zanomaline High Dose (81 mg)","CHG",,"descriptive","max",1
+"Placebo","PROVENANCE",,"provenance","n_observed",1
+"Placebo","PROVENANCE",,"provenance","n_locf",1
+"Zanomaline Low Dose (54 mg)","PROVENANCE",,"provenance","n_observed",3
+"Zanomaline Low Dose (54 mg)","PROVENANCE",,"provenance","n_locf",0
+"Zanomaline High Dose (81 mg)","PROVENANCE",,"provenance","n_observed",4
+"Zanomaline High Dose (81 mg)","PROVENANCE",,"provenance","n_locf",0
+"Placebo","LSMEAN",,"ancova","lsmean",0.48220064724919
+"Placebo","LSMEAN",,"ancova","lsmean_se",1.86680668553374
+"Zanomaline Low Dose (54 mg)","LSMEAN",,"ancova","lsmean",-1.07119741100324
+"Zanomaline Low Dose (54 mg)","LSMEAN",,"ancova","lsmean_se",1.52676005123727
+"Zanomaline High Dose (81 mg)","LSMEAN",,"ancova","lsmean",0.312297734627831
+"Zanomaline High Dose (81 mg)","LSMEAN",,"ancova","lsmean_se",1.32226036996294
+,"CONTRAST","Zanomaline Low Dose - Placebo","ancova","diff",-1.55339805825243
+,"CONTRAST","Zanomaline Low Dose - Placebo","ancova","diff_se",2.41079945273754
+,"CONTRAST","Zanomaline Low Dose - Placebo","ancova","conf.low",-7.75055534082152
+,"CONTRAST","Zanomaline Low Dose - Placebo","ancova","conf.high",4.64375922431666
+,"CONTRAST","Zanomaline Low Dose - Placebo","ancova","p.value",0.547739805553844
+,"CONTRAST","Zanomaline High Dose - Placebo","ancova","diff",-0.16990291262136
+,"CONTRAST","Zanomaline High Dose - Placebo","ancova","diff_se",2.28841603719251
+,"CONTRAST","Zanomaline High Dose - Placebo","ancova","conf.low",-6.05246361020725
+,"CONTRAST","Zanomaline High Dose - Placebo","ancova","conf.high",5.71265778496453
+,"CONTRAST","Zanomaline High Dose - Placebo","ancova","p.value",0.943694441248883
+,"CONTRAST","Zanomaline High Dose - Zanomaline Low Dose","ancova","diff",1.38349514563107
+,"CONTRAST","Zanomaline High Dose - Zanomaline Low Dose","ancova","diff_se",2.02321571480553
+,"CONTRAST","Zanomaline High Dose - Zanomaline Low Dose","ancova","conf.low",-3.81734642042197
+,"CONTRAST","Zanomaline High Dose - Zanomaline Low Dose","ancova","conf.high",6.58433671168411
+,"CONTRAST","Zanomaline High Dose - Zanomaline Low Dose","ancova","p.value",0.524491784898735
+,"DOSERESPONSE","TRT01PN (continuous dose)","doseresponse","estimate",-0.00216625726391771
+,"DOSERESPONSE","TRT01PN (continuous dose)","doseresponse","p.value",0.939278533142731

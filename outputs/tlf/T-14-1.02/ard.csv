@@ -1,0 +1,49 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","EOSSTT","COMPLETED","frequency","n",1
+"Placebo","EOSSTT","COMPLETED","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","EOSSTT","COMPLETED","frequency","n",0
+"Zanomaline Low Dose (54 mg)","EOSSTT","COMPLETED","frequency","pct",0
+"Zanomaline High Dose (81 mg)","EOSSTT","COMPLETED","frequency","n",2
+"Zanomaline High Dose (81 mg)","EOSSTT","COMPLETED","frequency","pct",28.5714285714286
+"Placebo","EOSSTT","DISCONTINUED","frequency","n",4
+"Placebo","EOSSTT","DISCONTINUED","frequency","pct",80
+"Zanomaline Low Dose (54 mg)","EOSSTT","DISCONTINUED","frequency","n",5
+"Zanomaline Low Dose (54 mg)","EOSSTT","DISCONTINUED","frequency","pct",100
+"Zanomaline High Dose (81 mg)","EOSSTT","DISCONTINUED","frequency","n",5
+"Zanomaline High Dose (81 mg)","EOSSTT","DISCONTINUED","frequency","pct",71.4285714285714
+"Placebo","DCSREAS","ADVERSE EVENT","frequency","n",0
+"Placebo","DCSREAS","ADVERSE EVENT","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","ADVERSE EVENT","frequency","n",3
+"Zanomaline Low Dose (54 mg)","DCSREAS","ADVERSE EVENT","frequency","pct",60
+"Zanomaline High Dose (81 mg)","DCSREAS","ADVERSE EVENT","frequency","n",3
+"Zanomaline High Dose (81 mg)","DCSREAS","ADVERSE EVENT","frequency","pct",42.8571428571429
+"Placebo","DCSREAS","COMPLETED","frequency","n",1
+"Placebo","DCSREAS","COMPLETED","frequency","pct",20
+"Zanomaline Low Dose (54 mg)","DCSREAS","COMPLETED","frequency","n",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","COMPLETED","frequency","pct",0
+"Zanomaline High Dose (81 mg)","DCSREAS","COMPLETED","frequency","n",2
+"Zanomaline High Dose (81 mg)","DCSREAS","COMPLETED","frequency","pct",28.5714285714286
+"Placebo","DCSREAS","DEATH","frequency","n",2
+"Placebo","DCSREAS","DEATH","frequency","pct",40
+"Zanomaline Low Dose (54 mg)","DCSREAS","DEATH","frequency","n",1
+"Zanomaline Low Dose (54 mg)","DCSREAS","DEATH","frequency","pct",20
+"Zanomaline High Dose (81 mg)","DCSREAS","DEATH","frequency","n",0
+"Zanomaline High Dose (81 mg)","DCSREAS","DEATH","frequency","pct",0
+"Placebo","DCSREAS","LACK OF EFFICACY","frequency","n",0
+"Placebo","DCSREAS","LACK OF EFFICACY","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","LACK OF EFFICACY","frequency","n",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","LACK OF EFFICACY","frequency","pct",0
+"Zanomaline High Dose (81 mg)","DCSREAS","LACK OF EFFICACY","frequency","n",1
+"Zanomaline High Dose (81 mg)","DCSREAS","LACK OF EFFICACY","frequency","pct",14.2857142857143
+"Placebo","DCSREAS","PHYSICIAN DECISION","frequency","n",2
+"Placebo","DCSREAS","PHYSICIAN DECISION","frequency","pct",40
+"Zanomaline Low Dose (54 mg)","DCSREAS","PHYSICIAN DECISION","frequency","n",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","PHYSICIAN DECISION","frequency","pct",0
+"Zanomaline High Dose (81 mg)","DCSREAS","PHYSICIAN DECISION","frequency","n",0
+"Zanomaline High Dose (81 mg)","DCSREAS","PHYSICIAN DECISION","frequency","pct",0
+"Placebo","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","n",0
+"Placebo","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","pct",0
+"Zanomaline Low Dose (54 mg)","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","n",1
+"Zanomaline Low Dose (54 mg)","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","pct",20
+"Zanomaline High Dose (81 mg)","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","n",1
+"Zanomaline High Dose (81 mg)","DCSREAS","WITHDRAWAL BY SUBJECT","frequency","pct",14.2857142857143

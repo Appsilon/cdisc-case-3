@@ -1,0 +1,46 @@
+"group1","variable","variable_level","context","stat_name","stat"
+"Placebo","OVERALL","Any event","incidence","n_subjects",2
+"Placebo","OVERALL","Any event","incidence","pct_subjects",40
+"Placebo","OVERALL","Any event","incidence","n_events",2
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","n_subjects",1
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","pct_subjects",20
+"Zanomaline Low Dose (54 mg)","OVERALL","Any event","incidence","n_events",1
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","n_subjects",0
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","pct_subjects",0
+"Zanomaline High Dose (81 mg)","OVERALL","Any event","incidence","n_events",0
+"Placebo","SOC","(uncoded)","incidence","n_subjects",2
+"Placebo","SOC","(uncoded)","incidence","pct_subjects",40
+"Placebo","SOC","(uncoded)","incidence","n_events",2
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded)","incidence","n_subjects",1
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded)","incidence","pct_subjects",20
+"Zanomaline Low Dose (54 mg)","SOC","(uncoded)","incidence","n_events",1
+"Zanomaline High Dose (81 mg)","SOC","(uncoded)","incidence","n_subjects",0
+"Zanomaline High Dose (81 mg)","SOC","(uncoded)","incidence","pct_subjects",0
+"Zanomaline High Dose (81 mg)","SOC","(uncoded)","incidence","n_events",0
+"Placebo","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_subjects",1
+"Placebo","PT|(uncoded)","COMPLETED SUICIDE","incidence","pct_subjects",20
+"Placebo","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_events",1
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_subjects",0
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","pct_subjects",0
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_events",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","pct_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","COMPLETED SUICIDE","incidence","n_events",0
+"Placebo","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_subjects",1
+"Placebo","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","pct_subjects",20
+"Placebo","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_events",1
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_subjects",0
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","pct_subjects",0
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_events",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","pct_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","MYOCARDIAL INFARCTION","incidence","n_events",0
+"Placebo","PT|(uncoded)","SUDDEN DEATH","incidence","n_subjects",0
+"Placebo","PT|(uncoded)","SUDDEN DEATH","incidence","pct_subjects",0
+"Placebo","PT|(uncoded)","SUDDEN DEATH","incidence","n_events",0
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","n_subjects",1
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","pct_subjects",20
+"Zanomaline Low Dose (54 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","n_events",1
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","n_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","pct_subjects",0
+"Zanomaline High Dose (81 mg)","PT|(uncoded)","SUDDEN DEATH","incidence","n_events",0
