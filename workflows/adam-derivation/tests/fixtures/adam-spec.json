@@ -1,0 +1,137 @@
+{
+ "protocol": "CDISCPILOT01",
+ "datasets": [
+  {
+   "name": "ADSL",
+   "class": "ADSL",
+   "sdtm_source": [
+    "DM",
+    "EX"
+   ],
+   "used_by_tables": [
+    "T-14.1.1",
+    "T-14.3.1"
+   ],
+   "parameters": [],
+   "variables": [
+    {
+     "name": "STUDYID"
+    },
+    {
+     "name": "USUBJID"
+    },
+    {
+     "name": "SUBJID"
+    },
+    {
+     "name": "SITEID"
+    },
+    {
+     "name": "AGE"
+    },
+    {
+     "name": "SEX"
+    },
+    {
+     "name": "TRT01P"
+    },
+    {
+     "name": "TRT01PN"
+    },
+    {
+     "name": "TRTSDT"
+    },
+    {
+     "name": "ITTFL"
+    },
+    {
+     "name": "SAFFL"
+    }
+   ]
+  },
+  {
+   "name": "ADAE",
+   "class": "OCCDS",
+   "sdtm_source": [
+    "AE"
+   ],
+   "used_by_tables": [
+    "T-14.3.1"
+   ],
+   "parameters": [],
+   "variables": [
+    {
+     "name": "STUDYID"
+    },
+    {
+     "name": "USUBJID"
+    },
+    {
+     "name": "AETERM"
+    },
+    {
+     "name": "AESEV"
+    },
+    {
+     "name": "ASTDT"
+    },
+    {
+     "name": "TRTEMFL"
+    },
+    {
+     "name": "TRT01P",
+     "source": "ADSL"
+    },
+    {
+     "name": "SAFFL",
+     "source": "ADSL"
+    }
+   ]
+  },
+  {
+   "name": "ADVS",
+   "class": "BDS",
+   "sdtm_source": [
+    "VS"
+   ],
+   "used_by_tables": [
+    "T-14.4.1"
+   ],
+   "parameters": [
+    {
+     "paramcd": "WEIGHT",
+     "param": "Weight (kg)"
+    }
+   ],
+   "variables": [
+    {
+     "name": "STUDYID"
+    },
+    {
+     "name": "USUBJID"
+    },
+    {
+     "name": "PARAMCD"
+    },
+    {
+     "name": "AVAL"
+    },
+    {
+     "name": "ADY"
+    }
+   ]
+  }
+ ],
+ "populations": [
+  {
+   "flag": "SAFFL",
+   "label": "Safety",
+   "derived_n": 17
+  },
+  {
+   "flag": "ITTFL",
+   "label": "ITT",
+   "derived_n": 17
+  }
+ ]
+}

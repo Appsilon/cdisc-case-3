@@ -1,0 +1,82 @@
+Authorities:
+- Organization: Mediforce
+  Standards:
+  - Name: ADaMIG
+    Version: '1.3'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-003
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.2.4: subject-level population flags
+          are Y/N and never null.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.2.4
+  - Name: ADaMIG
+    Version: '1.2'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-003
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.2.4: subject-level population flags
+          are Y/N and never null.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.2.4
+  - Name: ADaMIG
+    Version: '1.1'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-003
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.2.4: subject-level population flags
+          are Y/N and never null.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.2.4
+  - Name: ADaMIG
+    Version: '1.0'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-003
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.2.4: subject-level population flags
+          are Y/N and never null.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.2.4
+Check:
+  all:
+  - name: ITTFL
+    operator: is_not_contained_by
+    value:
+    - Y
+    - N
+Core:
+  Id: MF-ADAM-003
+  Status: Draft
+  Version: '1'
+Description: The intent-to-treat population flag ITTFL is populated with Y or N for
+  every subject.
+Executability: Fully Executable
+Outcome:
+  Message: ITTFL is not Y or N.
+  Output Variables:
+  - ITTFL
+Rule Type: Record Data
+Scope:
+  Classes:
+    Include:
+    - ALL
+  Domains:
+    Include:
+    - ADSL
+Sensitivity: Record
