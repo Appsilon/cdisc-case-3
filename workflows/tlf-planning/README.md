@@ -23,7 +23,7 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► pla
 | `audit-plan` | **agent** | `tlf-plan-critic` skill in a fresh context, reads only the plan, study model and gate result: coverage matrix, completeness heuristics, clarification items, verdict → `audit/coverage-report.md`. Never edits the plan. |
 | `review-plan` | human review (`statistician`) | Approve, or request changes with a comment. |
 | `record-review` | script | Appends the comment to `review-feedback.jsonl` (the planner reads the last line; skill learning reads all) and resets the gate's attempts. |
-| `return-result` | script | `outcome` `planned` (publishes `study-model`, `tlf-plan` ×3 — json, md, html — `coverage-report`, `review-feedback`) or `failed` (the planner's files attached, package plan unchanged). |
+| `return-result` | script | `outcome` `planned` (publishes `study-model`, `tlf-plan` ×3 — json, md, html — `coverage-report`, `review-feedback-tlf-planning`) or `failed` (the planner's files attached, package plan unchanged). |
 
 ## The AI / deterministic boundary
 

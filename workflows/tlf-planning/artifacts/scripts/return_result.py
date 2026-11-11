@@ -61,7 +61,7 @@ def main() -> None:
 
     extra = [entry for entry in [
         publish(AUDIT_DIR / "coverage-report.md", "coverage-report"),
-        publish(REVIEW_FEEDBACK_PATH, "review-feedback"),
+        publish(REVIEW_FEEDBACK_PATH, f"review-feedback-{WORKFLOW}"),
     ] if entry]
     rendered = publish(STEP_OUTPUTS_DIR / "check-plan" / "tlf-plan.html", "tlf-plan")
     files = plan_files + ([rendered] if rendered else []) + extra

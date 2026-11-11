@@ -203,7 +203,7 @@ def test_upload_and_review(work: Path) -> None:
     run.output("review-plan", {"verdict": "approve"})
     result = run.step("return-result", "return_result.py")
     kinds = {item["name"]: item["kind"] for item in result["package"]["files"]}
-    assert kinds["usdm.json"] == "usdm" and kinds["dm.xpt"] == "sdtm" and kinds["review-feedback.jsonl"] == "review-feedback", kinds
+    assert kinds["usdm.json"] == "usdm" and kinds["dm.xpt"] == "sdtm" and kinds["review-feedback.jsonl"] == "review-feedback-tlf-planning", kinds
     uploaded = [item for item in result["package"]["files"] if item["name"] == "usdm.json"][0]
     assert uploaded["producedBy"]["step"] == "upload-inputs" and "localPath" not in uploaded
 
