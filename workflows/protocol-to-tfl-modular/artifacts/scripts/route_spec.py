@@ -6,7 +6,8 @@ It reads its own previous decision to know which of the two just finished.
   after validate-sdtm            -> specify from the validated package, no request
   after generate (spec change)   -> specify again from generate's package with the
                                     reviewer's request, while rounds remain,
-                                    else exhausted (a human takes over)
+                                    else exhausted (a human takes over); a request
+                                    without a comment also stops for a human
 
 The SDTM does not change in a spec-change round, so the loop goes straight back
 to specify -> derive-adam -> generate; CORE SDTMIG validation is not repeated.
@@ -47,9 +48,11 @@ def main() -> None:
 
     output = child_output(step_input, "generate")
     request = str(output.get("request") or "").strip()
-    if not request:
-        raise StepFailure("The TLF review asked for a spec change without saying what to change.")
     round_number = int(previous["round"]) + 1
+    if not request:
+        write_result({"target": "exhausted", "round": round_number, "package": output["package"], "request": "",
+                      "summary": "The TLF review asked for a spec change without saying what to change; stopping for a human."})
+        return
     if round_number > MAX_CHANGE_ROUNDS:
         write_result({"target": "exhausted", "round": round_number, "package": output["package"], "request": request,
                       "summary": f"The TLF review asked for a spec change again after {MAX_CHANGE_ROUNDS} round(s); stopping for a human: {request[:200]}"})

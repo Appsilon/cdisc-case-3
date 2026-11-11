@@ -13,6 +13,7 @@ Then:  pnpm exec mediforce workflow register --file=dist/<name>.wd.json --namesp
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -36,8 +37,27 @@ def artifact_files(folder: Path) -> list[dict]:
     return files
 
 
+STEP_REFERENCE = re.compile(r"\$\{steps\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)")
+
+
+def reference_problems(definition: dict) -> list[str]:
+    """`${steps.<id>.output.x}` only for run-workflow steps (their child's result sits under `output`);
+    a script or agent step's own result fields are read directly: `${steps.<id>.x}`."""
+    kinds = {step["id"]: (step.get("action") or {}).get("kind") or step.get("executor") for step in definition["steps"]}
+    problems = []
+    for step_id, field in STEP_REFERENCE.findall(json.dumps(definition)):
+        if step_id not in kinds:
+            problems.append(f"${{steps.{step_id}...}} names no step")
+        elif (field == "output") is not (kinds[step_id] == "run-workflow"):
+            problems.append(f"${{steps.{step_id}.{field}...}}: {step_id} is a {kinds[step_id]} step")
+    return sorted(set(problems))
+
+
 def build(folder: Path) -> Path:
     definition = json.loads((folder / "workflow.json").read_text(encoding="utf-8"))
+    problems = reference_problems(definition)
+    if problems:
+        raise SystemExit(f"{folder.name}: bad step references: {problems}")
     files = artifact_files(folder)
     paths = [entry["path"] for entry in files]
     duplicates = {path for path in paths if paths.count(path) > 1}

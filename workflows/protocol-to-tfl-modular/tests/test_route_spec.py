@@ -53,7 +53,7 @@ def main() -> None:
 
         silent = {"status": "completed", "output": {"outcome": "upstream_change", "request": " ", "package": GENERATED}}
         code, result = route(work, {**validated, "route-spec": first, "generate": silent})
-        assert code != 0 and "without saying what to change" in result["error"], result
+        assert code == 0 and result["target"] == "exhausted" and "without saying what to change" in result["summary"], result
         code, result = route(work, {"validate-sdtm": {"status": "completed", "output": {}}})
         assert code != 0 and "validate-sdtm returned no study package" in result["error"], result
     print("ok  test_route_spec")

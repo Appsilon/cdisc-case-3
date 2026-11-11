@@ -23,9 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from mfpkg import StepFailure, read_input, run_main, sha256_of, verify_files, write_result  # noqa: E402
+from mfpkg import StepFailure, now_iso, read_input, run_main, sha256_of, verify_files, write_result  # noqa: E402
 from sdtminventory import sdtm_inventory  # noqa: E402
-from mfpkg import now_iso  # noqa: E402
 from speclib import INPUTS_DIR, LOOP, SPECS_DIR, WORK_DIR, planned_tables  # noqa: E402
 
 DATASET_SUFFIXES = (".xpt", ".sas7bdat")

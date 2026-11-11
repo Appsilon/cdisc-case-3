@@ -81,10 +81,10 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "analysis-specification",
-          "definitionVersion": 3,
+          "definitionVersion": 4,
           "payload": {
-            "package": "${steps.route-spec.output.package}",
-            "request": "${steps.route-spec.output.request}"
+            "package": "${steps.route-spec.package}",
+            "request": "${steps.route-spec.request}"
           },
           "timeout": "P30D",
           "step": "return-result"

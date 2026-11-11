@@ -32,13 +32,15 @@ STEP_OUTPUTS_DIR = Path(os.environ.get("MEDIFORCE_STEP_OUTPUTS_DIR", "/workspace
 
 # Replacing a kind makes everything derived from it stale. The master and every
 # sub-workflow go through `replace_files`, so stale downstream artifacts are
-# dropped in one place instead of being trusted by the next phase.
+# dropped in one place instead of being trusted by the next phase. ADaMIG
+# dispositions survive a re-derivation (the CORE loop carries them across fix
+# rounds) but not a new ADaM spec: they judged findings on a different design.
 DOWNSTREAM: dict[str, tuple[str, ...]] = {
     "usdm": ("study-model", "tlf-plan", "tlf-plan-view", "coverage-report", "analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
     "tlf-plan": ("analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
     "analysis-spec": ("ard", "tfl", "tfl-program", "tfl-log"),
     "ars": ("ard", "tfl", "tfl-program", "tfl-log"),
-    "adam-spec": ("adam", "adam-define", "adam-program", "adam-log", "lineage"),
+    "adam-spec": ("adam", "adam-define", "adam-program", "adam-log", "lineage", "core-issue-index-adamig", "core-dispositions-adamig"),
     "sdtm": ("adam", "adam-define", "adam-program", "adam-log", "lineage", "core-report-adamig"),
     "sdtm-define": ("core-report-sdtmig",),
     "adam": ("ard", "tfl", "tfl-program", "tfl-log", "core-report-adamig"),

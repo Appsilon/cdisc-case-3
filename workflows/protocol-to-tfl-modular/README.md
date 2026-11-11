@@ -25,7 +25,7 @@ the ADaM, then regenerates the TLFs.
 | `plan` | `tlf-planning` v4 | `${triggerPayload.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
 | `validate-sdtm` | `cdisc-core-validation` v3 | `${steps.plan.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
 | `route-spec` | script | First pass: validate-sdtm's package, no request. After `upstream_change`: generate's package and its `request`; a third request → `specs-change-requested`. |
-| `specify` | `analysis-specification` v3 | `${steps.route-spec.output.package}`, `request` = `${steps.route-spec.output.request}` (the child revises its previous specs when set) |
+| `specify` | `analysis-specification` v4 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
 | `derive-adam` | `adam-core-loop` v3 | `${steps.specify.output.package}`, `start=derive` |
 | `generate` | `ard-tfl-generation` v4 | `${steps.derive-adam.output.package}` |
 | `finish` | script | `manifest.json`: every deliverable with the run that produced it, and the package history |
