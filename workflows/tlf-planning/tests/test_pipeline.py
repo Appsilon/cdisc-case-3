@@ -183,9 +183,12 @@ def test_upload_and_review(work: Path) -> None:
     assert resolved["needsUpload"] is True
     sdtm = work / "dm.xpt"
     sdtm.write_bytes(b"not really xpt")
-    uploads = [entry(FIXTURES / "usdm.json", None), entry(FIXTURES / "cdiscpilot01-sap.txt", None), entry(sdtm, None)]
+    define = work / "define.xml"
+    define.write_text("<ODM/>")
+    uploads = [entry(FIXTURES / "usdm.json", None), entry(FIXTURES / "cdiscpilot01-sap.txt", None), entry(sdtm, None), entry(define, None)]
     staged = run.step("stage-inputs", "stage_inputs.py", files=uploads)
-    assert {item["name"]: item["kind"] for item in staged["inputFiles"]} == {"usdm.json": "usdm", "cdiscpilot01-sap.txt": "sap", "dm.xpt": "sdtm"}
+    assert {item["name"]: item["kind"] for item in staged["inputFiles"]} == {"usdm.json": "usdm", "cdiscpilot01-sap.txt": "sap", "dm.xpt": "sdtm",
+                                                                         "define.xml": "sdtm-define"}
     assert staged["sdtmDomains"] == ["DM"] and "1 unreadable: DM" in staged["summary"], staged
 
     run.planner(broken_plan(work))
@@ -206,7 +209,7 @@ def test_upload_and_review(work: Path) -> None:
     run.output("review-plan", {"verdict": "approve"})
     result = run.step("return-result", "return_result.py")
     kinds = {item["name"]: item["kind"] for item in result["package"]["files"]}
-    assert kinds["usdm.json"] == "usdm" and kinds["dm.xpt"] == "sdtm" and kinds["review-feedback.jsonl"] == "review-feedback-tlf-planning", kinds
+    assert kinds["usdm.json"] == "usdm" and kinds["dm.xpt"] == "sdtm" and kinds["define.xml"] == "sdtm-define" and kinds["review-feedback.jsonl"] == "review-feedback-tlf-planning", kinds
     uploaded = [item for item in result["package"]["files"] if item["name"] == "usdm.json"][0]
     assert uploaded["producedBy"]["step"] == "upload-inputs" and "localPath" not in uploaded
 

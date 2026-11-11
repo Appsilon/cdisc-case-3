@@ -16,7 +16,7 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► pla
 | Step | Executor | What it does |
 |---|---|---|
 | `resolve-inputs` | script | Package mode: picks `usdm` and the context kinds `sap`, `protocol`, `shells`, `sdtm`. No USDM → fails (points at protocol-digitization when a protocol is there). Standalone: routes to the upload. |
-| `upload-inputs` | human (`statistician`) | USDM JSON; optional SAP/protocol (PDF/text/docx; `sap` in the name = SAP, `shell` = shells, else protocol) and SDTM `.xpt`/`.sas7bdat`. |
+| `upload-inputs` | human (`statistician`) | USDM JSON; optional SAP/protocol (PDF/text/docx; `sap` in the name = SAP, `shell` = shells, else protocol) SDTM `.xpt`/`.sas7bdat` and the SDTM `define.xml` (kind `sdtm-define`, carried on in the package for CORE). |
 | `stage-inputs` | script | sha256-verifies and stages under `/workspace/tlf-planning/inputs`: `usdm.json`, `sap/`, `protocol/`, `shells/`, and `sdtm-inventory.json` — per SDTM domain the records, variables and distinct `--CAT/--SCAT/--TESTCD/--TEST/--PARMCD/--DECOD` values (R `haven`), so feasibility is judged on what the data holds, not on file names. |
 | `plan-tlfs` | **agent** | `tlf-planner` skill (carried in `artifacts/skills/`): study model, ICH E3 scaffolding, efficacy/safety/special-domain candidates, variants, feasibility, numbering. Writes `plan/{study-model.json, tlf-plan.json, tlf-index.md}`, runs `self_check.py` until PASS. |
 | `check-plan` | script | The deterministic gate (`planlib.check_plan`). Fails go back to the agent in `feedback.json`, three attempts per review round. On pass publishes the plan files and `tlf-plan.html`. |

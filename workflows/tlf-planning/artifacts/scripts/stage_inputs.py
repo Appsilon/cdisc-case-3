@@ -8,7 +8,8 @@ sdtm-inventory.json - per domain the record count, the variables and the
 distinct category / test / parameter codes - so feasibility is decided on what
 the data holds (QS split into QSPH + QSSL says nothing about which instrument
 is in it), not on file names. Uploads carry no kind, so they are classified by
-content (USDM JSON) and name (sap / shell in the file name, otherwise protocol).
+content (USDM JSON) and name (.xml = SDTM define, carried on for CORE; sap /
+shell in the file name; otherwise protocol).
 
 Result: { inputFiles: [{name, downloadUrl, sha256, kind}], sdtmDomains, summary }
 """
@@ -48,6 +49,8 @@ def classify(entry: dict) -> str:
     name = str(entry.get("name", "")).lower()
     if name.endswith(DATASET_SUFFIXES):
         return "sdtm"
+    if name.endswith(".xml"):
+        return "sdtm-define"
     if name.endswith(".json"):
         return "usdm" if is_usdm(Path(entry["localPath"])) else "ignored"
     if re.search(r"(^|[^a-z])sap([^a-z]|$)", name) or "statistical" in name:
