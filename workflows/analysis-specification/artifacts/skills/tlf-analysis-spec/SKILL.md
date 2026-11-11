@@ -84,7 +84,9 @@ A deterministic gate (`python3 /artifacts/scripts/self_check.py`, the same check
 runs after you) validates all three files and their cross-references. Run it until it prints
 PASS. If `/workspace/analysis-specification/feedback.json` exists, the gate rejected your last
 specs: fix exactly the problems it lists. If `/workspace/analysis-specification/review-feedback.jsonl`
-exists, its last line is the statistician's change request: change only what it asks.
+exists, its last line is the statistician's change request: change only what it asks. A request can
+also come from the TLF review downstream (`"source": "TLF review (upstream change)"`): the approved
+specs are then already in `specs/`; revise them in place, keep every unaffected entry unchanged.
 
 ## Workflow
 

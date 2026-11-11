@@ -15,9 +15,9 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► bui
 
 | Step | Executor | What it does |
 |---|---|---|
-| `resolve-inputs` | script | Package mode: picks `tlf-plan.json` (kind `tlf-plan`), `study-model`, `sdtm`, and the context kinds `sdtm-define`, `sap`, `usdm`. No plan → fails (run tlf-planning first). Standalone: routes to the upload. |
+| `resolve-inputs` | script | Package mode: picks `tlf-plan.json` (kind `tlf-plan`), `study-model`, `sdtm`, and the context kinds `sdtm-define`, `sap`, `usdm`. No plan → fails (run tlf-planning first). With a `request` trigger input (a spec change from the TLF review, set by the master) it also picks the previous `analysis-spec.json`, `adam-spec.json`, `reporting-event.json`; missing ones fail. Standalone: routes to the upload. |
 | `upload-inputs` | human (`statistician`) | `tlf-plan.json`, `study-model.json`, SDTM `.xpt`; optionally define.xml, SAP, USDM. JSON is classified by content. |
-| `stage-inputs` | script | sha256-verifies and stages under `/workspace/analysis-specification/inputs`, including `sdtm-inventory.json` (shared `sdtminventory.py`: codes per SDTM domain). |
+| `stage-inputs` | script | sha256-verifies and stages under `/workspace/analysis-specification/inputs`, including `sdtm-inventory.json` (shared `sdtminventory.py`: codes per SDTM domain). With a `request`: restores the previous specs into `specs/` and writes the request as the first `review-feedback.jsonl` line, so the agent revises them like a review round. |
 | `build-specs` | **agent** | `tlf-analysis-spec` skill (carried): `analysis-spec.json`, `adam-spec.json`, `reporting-event.json` in `specs/`. Writes specs only. Runs `self_check.py` until PASS. |
 | `check-specs` | script | The deterministic gate (`speclib.check_specs`), below. Fails go back to the agent in `feedback.json`, three attempts per review round. On pass publishes the specs and `specs.html`. |
 | `review-specs` | human review (`statistician`) | Approve, or request changes with a comment. |
@@ -54,5 +54,5 @@ composite PARAMCD); `tests/fixtures/specs` is that set corrected and keyed by `f
 python3 tests/test_pipeline.py    # needs R with haven + jsonlite, Python jsonschema
 ```
 
-Covers package mode, seven seeded defects through three attempts to `failed`, and upload mode
+Covers package mode, a change request (previous specs restored, request recorded; no previous specs → fails), seven seeded defects through three attempts to `failed`, and upload mode
 with a review round. The plan comes from `../tlf-planning/tests/fixtures`.

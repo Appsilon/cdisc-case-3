@@ -7,6 +7,7 @@ fixture; the specs are the UC3 run's specs with its gate findings corrected
 (tests/fixtures/specs). The ARS check uses the carried LDM schema.
 
   1. package mode, clean specs   -> gate passes, specs.html, outcome specified, package kinds
+  1b. change request            -> previous specs restored into specs/, request is review-feedback line 1
   2. defects (schema, dangling id, missing output, unknown variable, undelivered SDTM,
      non-literal PARAMCD) -> each reported; three attempts -> failed
   3. upload mode + review round  -> classification, comment recorded, attempts reset
@@ -146,6 +147,30 @@ def test_specified(work: Path) -> None:
     assert published["adam-spec.json"].endswith("/output/check-specs/adam-spec.json"), "publish the copy the gate checked"
 
 
+def test_change_request(work: Path) -> None:
+    run = Run(work / "change")
+    files = package_files(work) + [entry(FIXTURES / "specs" / name, kind) for name, kind in
+                                   (("analysis-spec.json", "analysis-spec"), ("adam-spec.json", "adam-spec"), ("reporting-event.json", "ars"))]
+    request = "T-14-3.01 must use the ITT population, not efficacy."
+    resolved = run.step("resolve-inputs", "resolve_inputs.py", {"package": {"files": without_local(files)}, "request": request})
+    assert resolved["request"] == request and "reporting-event.json" in {item["name"] for item in resolved["files"]}, resolved
+    staged = run.step("stage-inputs", "stage_inputs.py", files=with_local(resolved["files"], files))
+    assert staged["request"] == request, staged
+    specs = run.workspace / "analysis-specification" / "specs"
+    assert (specs / "adam-spec.json").read_bytes() == (FIXTURES / "specs" / "adam-spec.json").read_bytes()
+    feedback = [json.loads(line) for line in (run.workspace / "analysis-specification" / "review-feedback.jsonl").read_text().splitlines()]
+    assert len(feedback) == 1 and feedback[0]["comment"] == request and feedback[0]["iteration"] == 1, feedback
+
+    plain = Run(work / "change-without-specs")
+    try:
+        plain.step("resolve-inputs", "resolve_inputs.py", {"package": {"files": without_local(package_files(work))}, "request": request})
+    except AssertionError as error:
+        assert "the package lacks adam-spec.json, analysis-spec.json, reporting-event.json" in str(error), error
+    else:
+        raise AssertionError("a change request without previous specs must fail")
+    assert run.step("resolve-inputs", "resolve_inputs.py", {"package": {"files": without_local(files)}, "request": ""})["request"] == ""
+
+
 def broken_specs(work: Path) -> Path:
     target = work / "broken-specs"
     shutil.rmtree(target, ignore_errors=True)
@@ -215,7 +240,7 @@ def test_upload_and_review(work: Path) -> None:
 def main() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        for test in (test_specified, test_gate_failure, test_upload_and_review):
+        for test in (test_specified, test_change_request, test_gate_failure, test_upload_and_review):
             test(work)
             print(f"ok  {test.__name__}")
 

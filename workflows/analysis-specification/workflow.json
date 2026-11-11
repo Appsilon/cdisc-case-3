@@ -13,6 +13,13 @@
       "required": false,
       "default": {},
       "description": "Study package from a parent workflow: { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kinds tlf-plan (tlf-plan.json) and study-model, plus sdtm (for the inventory) and optionally sdtm-define, sap, usdm. Leave empty to upload by hand."
+    },
+    {
+      "name": "request",
+      "type": "string",
+      "required": false,
+      "default": "",
+      "description": "A change request for specs already in the package (from a TLF review that found the analysis itself wrong). The previous analysis-spec.json, adam-spec.json and reporting-event.json are restored and the agent changes only what the request asks. Leave empty to specify from the plan."
     }
   ],
   "steps": [
@@ -29,7 +36,8 @@
         "timeoutMinutes": 5
       },
       "stepParams": {
-        "package": "${triggerPayload.package}"
+        "package": "${triggerPayload.package}",
+        "request": "${triggerPayload.request}"
       }
     },
     {
