@@ -19,7 +19,7 @@ generate: outcome upstream_change ─► specs-change-requested
 | `specify` | `analysis-specification` v2 | `${steps.plan.output.package}` |
 | `validate-sdtm` | `cdisc-core-validation` v2 | `${steps.specify.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
 | `derive-adam` | `adam-core-loop` v2 | `${steps.validate-sdtm.output.package}`, `start=derive` |
-| `generate` | `ard-tfl-generation` v3 | `${steps.derive-adam.output.package}` |
+| `generate` | `ard-tfl-generation` v4 | `${steps.derive-adam.output.package}` |
 | `finish` | script | `manifest.json`: every deliverable with the run that produced it, and the package history |
 
 A run-workflow step's output is `{instanceId, definitionName, status, error,

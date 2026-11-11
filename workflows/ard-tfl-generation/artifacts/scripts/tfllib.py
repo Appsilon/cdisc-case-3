@@ -221,10 +221,11 @@ def describe_ard_row(row: dict) -> str:
 
 def shows_stat(bound: str, token: str, stat: float, percent: bool = False) -> bool:
     """Does the displayed token (with an optional < > ≤ ≥ bound) show this stat? A proportion may be shown x100:
-    always when the number is followed by %, otherwise only an exact (unbounded) fraction strictly between -1 and 1."""
+    always when the number is followed by %, otherwise only for an exact (unbounded) proportion that is a fraction or is
+    shown with decimals (1 as 100.0, never a count of 1 as 100)."""
     digits = len(token.split(".")[1]) if "." in token else 0
     target = float(token)
-    fraction = bound == "" and abs(stat) < 1.0 and stat != int(stat)
+    fraction = bound == "" and abs(stat) <= 1.0 and (stat != int(stat) or digits > 0)
     candidates = [stat, stat * 100] if percent is True or fraction is True else [stat]
     comparisons = {"<": lambda value: value < target, "≤": lambda value: value <= target,
                    ">": lambda value: value > target, "≥": lambda value: value >= target,

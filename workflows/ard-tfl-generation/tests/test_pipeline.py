@@ -219,6 +219,7 @@ def test_cell_checks(work: Path) -> None:
     assert problems("<td data-ard='7'>100</td>") == ["shows 100, but ARD row 7 (variable=AE, stat_name=n) is 1"], \
         "a count of 1 is not 100 unless the cell says %"
     assert problems("<td data-ard='7'>100.0%</td>") == []
+    assert problems("<td data-ard='7'>100.0</td>") == [], "a proportion of 1 in a % column shows as 100.0"
     assert problems("<td data-ard='²'>1</td>") == ["data-ard='²' is not a comma-separated list of 0-based ARD row indices"]
     (work / "listing.html").write_text("<table><tr><td>01-701-1015</td><td>2014-01-02</td><td data-ard='0'>73.7</td></tr></table>")
     listed = reconcile_output("L-1", work / "listing.html", work / "cells.json", listing=True)["unmatched"]
