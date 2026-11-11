@@ -23,7 +23,7 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► pla
 | `audit-plan` | **agent** | `tlf-plan-critic` skill in a fresh context, reads only the plan, study model and gate result: coverage matrix, completeness heuristics, clarification items, verdict → `audit/coverage-report.md`. Never edits the plan. |
 | `review-plan` | human review (`statistician`) | Approve, or request changes with a comment. |
 | `record-review` | script | Appends the comment to `review-feedback.jsonl` (the planner reads the last line; skill learning reads all) and resets the gate's attempts. |
-| `return-result` | script | `outcome` `planned` (publishes `study-model`, `tlf-plan` ×3 — json, md, html — `coverage-report`, `review-feedback-tlf-planning`) or `failed` (the planner's files attached, package plan unchanged). |
+| `return-result` | script | `outcome` `planned` — publishes the files exactly as `check-plan` checked them: `study-model`, `tlf-plan` (`tlf-plan.json` only), `tlf-plan-view` (`tlf-index.md`, `tlf-plan.html`), plus `coverage-report` and `review-feedback-tlf-planning` — or `failed` (the planner's drafts attached, package plan unchanged). |
 
 ## The AI / deterministic boundary
 
@@ -40,7 +40,7 @@ missing. The gate is a script and decides what can be decided for certain:
 - every resolved endpoint is traced by a candidate — planned, or blocked with a
   reason (the result lists `blockedEndpoints`: resolved endpoints with no
   producible output, e.g. the instrument is absent from the delivered SDTM);
-- `tlf-index.md` lists every planned output.
+- `tlf-index.md` lists every planned output (matched as a whole id, so `T-14-1` is not found inside `T-14-1.01`).
 
 ## Test
 

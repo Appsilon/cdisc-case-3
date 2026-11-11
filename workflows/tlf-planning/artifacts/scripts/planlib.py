@@ -30,17 +30,15 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from gate import GateLoop
+
 WORKSPACE_DIR = Path(os.environ.get("MEDIFORCE_WORKSPACE_DIR", "/workspace"))
 WORK_DIR = WORKSPACE_DIR / "tlf-planning"
 INPUTS_DIR = WORK_DIR / "inputs"
 PLAN_DIR = WORK_DIR / "plan"
 AUDIT_DIR = WORK_DIR / "audit"
 PLAN_CHECK_PATH = WORK_DIR / "plan-check.json"
-FEEDBACK_PATH = WORK_DIR / "feedback.json"
-REVIEW_FEEDBACK_PATH = WORK_DIR / "review-feedback.jsonl"
-ATTEMPTS_PATH = WORK_DIR / "attempts.json"
-MAX_ATTEMPTS = 3
-SELF_CHECK = os.environ.get("PLAN_SELF_CHECK") == "1"
+LOOP = GateLoop(WORK_DIR)
 
 STUDY_MODEL = "study-model.json"
 TLF_PLAN = "tlf-plan.json"
@@ -157,7 +155,7 @@ def check_plan(plan_dir: Path = PLAN_DIR) -> dict:
                             "(plan it, or keep it as blocked with a status_reason - never drop it)")
 
     index_text = index_path.read_text(encoding="utf-8") if index_path.is_file() else ""
-    missing_from_index = sorted(final_ids.keys() - {key for key in final_ids if key in index_text})
+    missing_from_index = sorted(key for key in final_ids if re.search(rf"(?<![\w.-]){re.escape(key)}(?![\w.-])", index_text) is None)
     if missing_from_index:
         problems.append(f"{TLF_INDEX} does not list planned output(s) {', '.join(missing_from_index[:10])}")
 
@@ -174,21 +172,3 @@ def check_plan(plan_dir: Path = PLAN_DIR) -> dict:
                                    if item.get("id") in traced and item.get("id") not in planned_endpoints),
     }
     return {"problems": problems, "counts": counts}
-
-
-def attempts() -> int:
-    if ATTEMPTS_PATH.is_file() is False:
-        return 0
-    return int(json.loads(ATTEMPTS_PATH.read_text(encoding="utf-8")).get("attempts", 0))
-
-
-def count_attempt() -> int:
-    WORK_DIR.mkdir(parents=True, exist_ok=True)
-    attempt = attempts() + 1
-    ATTEMPTS_PATH.write_text(json.dumps({"attempts": attempt}), encoding="utf-8")
-    return attempt
-
-
-def reset_attempts() -> None:
-    ATTEMPTS_PATH.unlink(missing_ok=True)
-    FEEDBACK_PATH.unlink(missing_ok=True)

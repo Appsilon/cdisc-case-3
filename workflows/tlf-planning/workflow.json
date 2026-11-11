@@ -1,7 +1,7 @@
 {
   "name": "tlf-planning",
   "title": "TLF planning from USDM",
-  "description": "Plan the exhaustive, traceable list of Tables, Listings and Figures a study needs from its USDM study definition (plus SAP, protocol and shells as context, and the delivered SDTM domains for feasibility). The AI planner interprets objectives and endpoints, adds the ICH E3 scaffolding, expands analysis variants and numbers the outputs; a deterministic gate checks the schema, every trace, the numbering and that every resolved endpoint is accounted for (failures go back to the AI, three attempts); an independent AI critic audits completeness; the statistician approves or sends the plan back with a comment. Runs standalone (upload) or inside a parent workflow (study package in the trigger).",
+  "description": "Plan the exhaustive, traceable list of Tables, Listings and Figures a study needs from its USDM study definition (plus SAP, protocol and shells as context, and an inventory of what the delivered SDTM holds for feasibility). The AI planner interprets objectives and endpoints, adds the ICH E3 scaffolding, expands analysis variants and numbers the outputs; a deterministic gate checks the schema, every trace, the numbering and that every resolved endpoint is accounted for (failures go back to the AI, three attempts); an independent AI critic audits completeness; the statistician approves or sends the plan back with a comment. Runs standalone (upload) or inside a parent workflow (study package in the trigger).",
   "preamble": "CDISC and ICH terms (USDM, SDTM, ADaM, ICH E3 section 14, estimands, endpoints, LOCF, MMRM, ANCOVA, adverse events, deaths) are technical workflow content.",
   "roles": [
     "statistician"
@@ -12,7 +12,7 @@
       "type": "object",
       "required": false,
       "default": {},
-      "description": "Study package from a parent workflow: { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kind usdm, optionally sap, protocol, shells, and sdtm (only the domain names are used). Leave empty to upload by hand."
+      "description": "Study package from a parent workflow: { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kind usdm, optionally sap, protocol, shells, and sdtm (summarised into a feasibility inventory). Leave empty to upload by hand."
     }
   ],
   "steps": [
@@ -36,7 +36,7 @@
       "id": "upload-inputs",
       "name": "Upload USDM and context",
       "type": "creation",
-      "description": "Upload the USDM study-definition JSON. Optionally the SAP and protocol (PDF/text; a file name containing 'sap' is read as the SAP), sponsor table shells ('shell' in the name), and the SDTM datasets (.xpt, used only for their domain names to check feasibility).",
+      "description": "Upload the USDM study-definition JSON. Optionally the SAP and protocol (PDF/text; a file name containing 'sap' is read as the SAP), sponsor table shells ('shell' in the name), and the SDTM datasets (.xpt; summarised into an inventory of the codes each domain holds, for feasibility).",
       "executor": "human",
       "allowedRoles": [
         "statistician"
@@ -68,7 +68,7 @@
       "id": "stage-inputs",
       "name": "Stage inputs",
       "type": "creation",
-      "description": "Deterministic. sha256-verifies the inputs and stages them under /workspace/tlf-planning/inputs (usdm.json, sap/, protocol/, shells/, sdtm-domains.json).",
+      "description": "Deterministic. sha256-verifies the inputs and stages them under /workspace/tlf-planning/inputs (usdm.json, sap/, protocol/, shells/, sdtm-inventory.json: the codes each SDTM domain holds).",
       "executor": "script",
       "plugin": "script-container",
       "script": {
@@ -181,7 +181,7 @@
       "id": "return-result",
       "name": "Return result",
       "type": "creation",
-      "description": "Deterministic. outcome = planned (publishes study-model, tlf-plan json/md/html, coverage-report, review feedback into the study package) or failed (the gate still fails after the last attempt; the planner's files are attached, the package's plan is unchanged).",
+      "description": "Deterministic. outcome = planned (publishes the gate-checked study-model, tlf-plan, tlf-plan-view (index md + html), the coverage report and review feedback into the study package) or failed (the gate still fails after the last attempt; the planner's files are attached, the package's plan is unchanged).",
       "executor": "script",
       "plugin": "script-container",
       "script": {

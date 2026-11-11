@@ -1,0 +1,46 @@
+[
+ {
+  "candidate_id": "reg-demog",
+  "type": "Table",
+  "category": "demographics",
+  "title": "Age by Treatment",
+  "status": "planned",
+  "final_id": "T-14-2.01",
+  "traces_to": {
+   "objective_ids": [],
+   "endpoint_ids": [],
+   "regulatory_rule": "ICH E3 14.1"
+  }
+ },
+ {
+  "candidate_id": "saf-ae-fig",
+  "type": "Figure",
+  "category": "safety-ae",
+  "title": "Subjects with TEAEs",
+  "status": "planned",
+  "final_id": "F-14-1",
+  "traces_to": {
+   "objective_ids": [],
+   "endpoint_ids": [
+    "Endpoint_3"
+   ],
+   "regulatory_rule": null
+  }
+ },
+ {
+  "candidate_id": "eff-blocked",
+  "type": "Table",
+  "category": "efficacy",
+  "title": "Blocked",
+  "status": "blocked",
+  "status_reason": "no data",
+  "final_id": null,
+  "traces_to": {
+   "objective_ids": [
+    "Objective_1"
+   ],
+   "endpoint_ids": [],
+   "regulatory_rule": null
+  }
+ }
+]

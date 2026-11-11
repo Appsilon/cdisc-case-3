@@ -32,7 +32,7 @@ under `terminologyExtensions` (see the skeleton).
 Every `analyses[].methodId` → a `methods[].id`; every `analysisSetId` → an `analysisSets[].id`;
 every `dataSubsetId` → a `dataSubsets[].id`; every `orderedGroupings[].groupingId` → an
 `analysisGroupings[].id`; every `mainListOfContents` `analysisId`/`outputId` → a defined
-analysis/output. Keep ids derived from `table_id` (`AN.<id>`, `OUT.<id>`, `D.<id>`) so the
+analysis/output. Keep ids derived from the `final_id` (`AN.T-14-3.01`, `OUT.T-14-3.01`, `D.T-14-3.01`) so the
 traceability graph can bridge ARS ↔ TLF.
 
 ## Minimal valid skeleton (one efficacy + one safety analysis)
@@ -71,31 +71,31 @@ traceability graph can bridge ARS ↔ TLF.
       "sponsorTerms": [ { "id": "SPT.SAFETY", "submissionValue": "SAFETY" } ] }
   ],
   "analyses": [
-    { "id": "AN.14-3.01", "name": "ADAS-Cog(11) change at Week 24 (ANCOVA)",
+    { "id": "AN.T-14-3.01", "name": "ADAS-Cog(11) change at Week 24 (ANCOVA)",
       "reason": { "controlledTerm": "SPECIFIED IN SAP" },
       "purpose": { "controlledTerm": "PRIMARY OUTCOME MEASURE" },
       "methodId": "MTH.ANCOVA", "analysisSetId": "AS.EFF", "dataset": "ADQSADAS",
       "orderedGroupings": [ { "order": 1, "groupingId": "GRP.TRT", "resultsByGroup": true } ] },
-    { "id": "AN.14-5.01", "name": "Incidence of TEAEs by treatment",
+    { "id": "AN.T-14-5.01", "name": "Incidence of TEAEs by treatment",
       "reason": { "controlledTerm": "SPECIFIED IN SAP" },
       "purpose": { "sponsorTermId": "SPT.SAFETY" },
       "methodId": "MTH.INCID", "analysisSetId": "AS.SAF", "dataset": "ADAE",
       "orderedGroupings": [ { "order": 1, "groupingId": "GRP.TRT", "resultsByGroup": true } ] }
   ],
   "outputs": [
-    { "id": "OUT.14-3.01", "name": "Table 14-3.01",
-      "displays": [ { "order": 1, "display": { "id": "D.14-3.01",
+    { "id": "OUT.T-14-3.01", "name": "Table T-14-3.01",
+      "displays": [ { "order": 1, "display": { "id": "D.T-14-3.01",
         "name": "ADAS-Cog(11) change at Week 24" } } ] },
-    { "id": "OUT.14-5.01", "name": "Table 14-5.01",
-      "displays": [ { "order": 1, "display": { "id": "D.14-5.01",
+    { "id": "OUT.T-14-5.01", "name": "Table 14-5.01",
+      "displays": [ { "order": 1, "display": { "id": "D.T-14-5.01",
         "name": "Incidence of TEAEs by treatment" } } ] }
   ],
   "mainListOfContents": {
     "name": "Main list of contents",
     "contentsList": {
       "listItems": [
-        { "level": 1, "order": 1, "name": "Efficacy — ADAS-Cog(11)", "outputId": "OUT.14-3.01" },
-        { "level": 1, "order": 2, "name": "Safety — TEAEs", "outputId": "OUT.14-5.01" }
+        { "level": 1, "order": 1, "name": "Efficacy — ADAS-Cog(11)", "outputId": "OUT.T-14-3.01" },
+        { "level": 1, "order": 2, "name": "Safety — TEAEs", "outputId": "OUT.T-14-5.01" }
       ]
     }
   }

@@ -3,12 +3,12 @@
 The ARS-*aligned* (not full CDISC ARS JSON) analysis recipe for one TLF. Produced by
 **tlf-analysis-spec**, consumed by **tlf-generator**. Generalized from the
 `T-14-3.01` spike (`testing-tlf-planner/spike-T-14-3.01/analysis-spec.json`).
-One file per TLF (or an array keyed by `table_id`).
+An array, one entry per planned TLF, keyed by `table_id` (= the plan's `final_id`).
 
 ```jsonc
 {
   "id": "AN-14-3.01",
-  "table_id": "14-3.01",              // matches the tlf-plan.json final_id (minus T-/F-/L- prefix)
+  "table_id": "T-14-3.01",            // the tlf-plan.json final_id, prefix included
   "title": "…",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP | GAP-FILL | CONVENTION",
@@ -96,5 +96,5 @@ method type from this catalog (from `adam-to-tlf-design.md` §5; ⚠️ = assemb
 - Every displayed statistic must be COMPUTED from ADaM — never copied from a CSR.
 - `groupingFactor.levels` order + `isReference` drive column order AND contrast sign (dose − reference).
 - Prefer `emmeans` directly for LS-means/contrasts; `cardx::ard_emmeans_contrast` was broken in the
-  tested dev build (see `../../tlf-generator/references/generation-idioms.md`).
+  tested dev build.
 - Keep field names ARS-aligned so this can later feed CDISC ARS tooling without a rewrite.

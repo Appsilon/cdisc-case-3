@@ -16,6 +16,7 @@ Result: { inputFiles: [{name, downloadUrl, sha256, kind}], sdtmDomains, summary 
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -24,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import StepFailure, read_input, run_main, sha256_of, verify_files, write_result  # noqa: E402
 from sdtminventory import sdtm_inventory  # noqa: E402
-from planlib import INPUTS_DIR, WORK_DIR, reset_attempts  # noqa: E402
+from planlib import INPUTS_DIR, WORK_DIR  # noqa: E402
 
 DATASET_SUFFIXES = (".xpt", ".sas7bdat")
 DOCUMENT_KINDS = ("sap", "protocol", "shells")
@@ -49,7 +50,7 @@ def classify(entry: dict) -> str:
         return "sdtm"
     if name.endswith(".json"):
         return "usdm" if is_usdm(Path(entry["localPath"])) else "ignored"
-    if "sap" in name or "statistical" in name:
+    if re.search(r"(^|[^a-z])sap([^a-z]|$)", name) or "statistical" in name:
         return "sap"
     if "shell" in name or "mock" in name:
         return "shells"
@@ -62,7 +63,6 @@ def main() -> None:
 
     shutil.rmtree(WORK_DIR, ignore_errors=True)
     INPUTS_DIR.mkdir(parents=True)
-    reset_attempts()
 
     kinds = [(entry, classify(entry)) for entry in files]
     usdm = [entry for entry, kind in kinds if kind == "usdm"]

@@ -124,23 +124,26 @@ def test_specified(work: Path) -> None:
     assert [item["name"] for item in resolved["files"][:2]] == ["tlf-plan.json", "study-model.json"], resolved
     assert "tlf-index.md" not in {item["name"] for item in resolved["files"]}
     staged = run.step("stage-inputs", "stage_inputs.py", files=with_local(resolved["files"], files))
-    assert staged["plannedOutputs"] == 29 and "QSPH" in staged["sdtmDomains"], staged
+    assert staged["plannedOutputs"] == 30 and "QSPH" in staged["sdtmDomains"], staged
 
     run.agent(FIXTURES / "specs")
     checked = run.self_check()
     assert checked.returncode == 0 and checked.stdout.startswith("PASS"), checked.stdout
     assert (run.workspace / "analysis-specification" / "attempts.json").is_file() is False
     gate = run.step("check-specs", "check_specs.py")
-    assert gate["needsFix"] is False and gate["counts"]["analyses"] == 29, gate
+    assert gate["needsFix"] is False and gate["counts"]["analyses"] == 30, gate
     page = (run.steps_dir / "check-specs" / "specs.html").read_text()
-    assert "14-3.01" in page and "ADQSPHQ" in page and "<script" not in page
+    assert "T-14-3.01" in page and "L-14-5.01" in page and "ADQSPHQ" in page and "<script" not in page
 
     run.output("review-specs", {"verdict": "approve"})
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "specified", result
     kinds = {item["name"]: item["kind"] for item in result["package"]["files"]}
     assert kinds["analysis-spec.json"] == "analysis-spec" and kinds["reporting-event.json"] == "ars" and kinds["adam-spec.json"] == "adam-spec", kinds
-    assert kinds["tlf-plan.json"] == "tlf-plan" and kinds["specs.html"] == "analysis-spec"
+    assert kinds["tlf-plan.json"] == "tlf-plan" and kinds["specs.html"] == "analysis-spec-view"
+    assert [item["name"] for item in result["package"]["files"] if item["kind"] == "analysis-spec"] == ["analysis-spec.json"]
+    published = {item["name"]: item["downloadUrl"] for item in result["files"]}
+    assert published["adam-spec.json"].endswith("/output/check-specs/adam-spec.json"), "publish the copy the gate checked"
 
 
 def broken_specs(work: Path) -> Path:
@@ -155,11 +158,12 @@ def broken_specs(work: Path) -> Path:
     spec = json.loads((target / "adam-spec.json").read_text())
     adlb = [item for item in spec["datasets"] if item["name"] == "ADLB"][0]
     adlb["parameters"].append({"paramcd": "ALT/AST"})
-    adlb["sdtm_source"].append("MB")
+    adlb["sdtm_source"] += ["MB", "ADSL"]
     (target / "adam-spec.json").write_text(json.dumps(spec))
     entries = json.loads((target / "analysis-spec.json").read_text())
     entries[0]["groupingFactor"]["variable"] = "TRTZZ"
-    entries = [item for item in entries if item["table_id"] != "14-5.01"]
+    entries = [item for item in entries if item["table_id"] != "L-14-5.01"]
+    entries[1]["analysisVariables"] = {"value": {"variable": "AVAL (LOCF)"}, "flags": {"variable": "ITTFL/SAFFL where PARAMCD='X'"}}
     (target / "analysis-spec.json").write_text(json.dumps(entries))
     return target
 
@@ -175,8 +179,11 @@ def test_gate_failure(work: Path) -> None:
         assert gate["needsFix"] is True and gate["attempt"] == attempt and gate["retry"] is (attempt < 3), gate
     text = "\n".join(gate["problems"])
     for expected in ("MTH.NOPE", "no output OUT.T-14-3.01", "analysisSets/0/level", "'ALT/AST'", "sdtm_source MB was not delivered",
-                     "TRTZZ", "no entry for planned output(s) 14-5.01"):
+                     "TRTZZ", "no entry for planned output(s) L-14-5.01"):
         assert expected in text, (expected, text)
+    uses = [line for line in text.splitlines() if ": uses " in line]
+    assert not [line for line in uses if "LOCF" in line or "PARAMCD" in line or "where" in line], "free text in a variable field is not a variable"
+    assert "ADLB: sdtm_source MB was not delivered" in text, "ADaM names in sdtm_source are not SDTM domains"
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "failed" and "adam-spec" not in {item["kind"] for item in result["package"]["files"]}, result
 

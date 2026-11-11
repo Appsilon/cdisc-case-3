@@ -1,0 +1,31 @@
+{
+ "variables": [
+  {
+   "dataset": "ADSL",
+   "variable": "AGE",
+   "origin": "Predecessor",
+   "program": "adsl.R",
+   "lines": [
+    12,
+    14
+   ],
+   "sources": [
+    "DM.AGE"
+   ]
+  },
+  {
+   "dataset": "ADSL",
+   "variable": "SAFFL",
+   "origin": "Derived",
+   "program": "adsl.R",
+   "lines": [
+    30,
+    31
+   ],
+   "sources": [
+    "EX.EXDOSE"
+   ]
+  }
+ ],
+ "consumers": {}
+}

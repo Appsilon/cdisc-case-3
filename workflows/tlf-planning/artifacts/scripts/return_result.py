@@ -2,7 +2,9 @@
 
 outcome:
   planned  the gate passed, the critic audited it and the statistician approved;
-           publishes study-model, tlf-plan (json, index, html) and coverage-report.
+           publishes the files exactly as the gate checked them (check-plan's
+           output): study-model, tlf-plan (json), tlf-plan-view (index md + html),
+           plus the critic's coverage-report and the review feedback.
   failed   the gate still failed after the last attempt; publishes what the
            planner wrote, for a human to pick up, and leaves the package's plan as it was.
 
@@ -12,25 +14,17 @@ Result: { outcome, counts, verdict, summary, files, package }
 from __future__ import annotations
 
 import os
-import shutil
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from mfpkg import OUTPUT_DIR, STEP_OUTPUTS_DIR, published_file, read_input, replace_files, run_main, step_output, with_history, write_result  # noqa: E402
-from planlib import AUDIT_DIR, PLAN_DIR, REVIEW_FEEDBACK_PATH, STUDY_MODEL, TLF_INDEX, TLF_PLAN  # noqa: E402
+from gate import publish_copy  # noqa: E402
+from mfpkg import read_input, replace_files, run_main, step_file, step_output, with_history, write_result  # noqa: E402
+from planlib import AUDIT_DIR, LOOP, PLAN_DIR, STUDY_MODEL, TLF_INDEX, TLF_PLAN  # noqa: E402
 
 WORKFLOW = "tlf-planning"
-PLAN_KINDS = ((STUDY_MODEL, "study-model"), (TLF_PLAN, "tlf-plan"), (TLF_INDEX, "tlf-plan"))
-
-
-def publish(source: Path, kind: str) -> dict | None:
-    if source.is_file() is False:
-        return None
-    target = OUTPUT_DIR / source.name
-    shutil.copyfile(source, target)
-    return published_file(target, kind, WORKFLOW)
+PLAN_KINDS = ((STUDY_MODEL, "study-model"), (TLF_PLAN, "tlf-plan"), (TLF_INDEX, "tlf-plan-view"), ("tlf-plan.html", "tlf-plan-view"))
 
 
 def main() -> None:
@@ -48,23 +42,22 @@ def main() -> None:
         ]
         package = replace_files(package, uploaded)
 
-    plan_files = [entry for entry in (publish(PLAN_DIR / name, kind) for name, kind in PLAN_KINDS) if entry]
     if gate.get("needsFix") is True:
         problems = gate.get("problems") or []
+        drafts = [entry for entry in (publish_copy(PLAN_DIR / name, kind, WORKFLOW) for name, kind in PLAN_KINDS[:3]) if entry]
         write_result({
             "outcome": "failed", "counts": gate.get("counts") or {}, "verdict": None, "problems": problems,
             "summary": f"FAILED: the plan gate still reports {len(problems)} problem(s) after {gate.get('attempt')} attempt(s), first: "
                        + (problems[0] if problems else "unknown") + ". The planner's files are attached.",
-            "files": plan_files, "package": with_history(package, WORKFLOW, "failed"),
+            "files": drafts, "package": with_history(package, WORKFLOW, "failed"),
         })
         return
 
-    extra = [entry for entry in [
-        publish(AUDIT_DIR / "coverage-report.md", "coverage-report"),
-        publish(REVIEW_FEEDBACK_PATH, f"review-feedback-{WORKFLOW}"),
-    ] if entry]
-    rendered = publish(STEP_OUTPUTS_DIR / "check-plan" / "tlf-plan.html", "tlf-plan")
-    files = plan_files + ([rendered] if rendered else []) + extra
+    checked = [step_file("check-plan", name, kind, WORKFLOW) for name, kind in PLAN_KINDS]
+    audit_report = step_file("audit-plan", "coverage-report.md", "coverage-report", WORKFLOW) \
+        or publish_copy(AUDIT_DIR / "coverage-report.md", "coverage-report", WORKFLOW)
+    feedback = publish_copy(LOOP.review_feedback_path, f"review-feedback-{WORKFLOW}", WORKFLOW)
+    files = [entry for entry in checked + [audit_report, feedback] if entry]
     counts = gate.get("counts") or {}
     verdict = audit.get("verdict")
     write_result({

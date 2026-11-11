@@ -133,10 +133,13 @@ def test_planned(work: Path) -> None:
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "planned" and result["verdict"] == "clean-with-caveats", result
     kinds = sorted({item["kind"] for item in result["package"]["files"]})
-    assert kinds == ["coverage-report", "sap", "sdtm", "study-model", "tlf-plan", "usdm"], kinds
+    assert kinds == ["coverage-report", "sap", "sdtm", "study-model", "tlf-plan", "tlf-plan-view", "usdm"], kinds
+    assert [item["name"] for item in result["package"]["files"] if item["kind"] == "tlf-plan"] == ["tlf-plan.json"]
     names = {item["name"] for item in result["files"]}
     assert {"study-model.json", "tlf-plan.json", "tlf-index.md", "tlf-plan.html", "coverage-report.md"} <= names, names
-    assert all(item["downloadUrl"].startswith("/api/runs/run-planned/files/.mediforce/output/return-result/") for item in result["files"])
+    published = {item["name"]: item["downloadUrl"] for item in result["files"]}
+    assert published["tlf-plan.json"].endswith("/output/check-plan/tlf-plan.json"), "publish the copy the gate checked"
+    assert published["coverage-report.md"].endswith("/output/return-result/coverage-report.md"), published
     assert result["package"]["history"][-1]["outcome"] == "planned"
 
 

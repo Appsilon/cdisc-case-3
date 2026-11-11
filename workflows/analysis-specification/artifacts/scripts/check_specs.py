@@ -22,9 +22,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import OUTPUT_DIR, StepFailure, run_main, write_result  # noqa: E402
-from speclib import (  # noqa: E402
-    ADAM_SPEC, ANALYSIS_SPEC, FEEDBACK_PATH, MAX_ATTEMPTS, SPEC_FILES, SPECS_DIR, check_specs, count_attempt,
-)
+from gate import MAX_ATTEMPTS  # noqa: E402
+from speclib import ADAM_SPEC, ANALYSIS_SPEC, LOOP, SPEC_FILES, SPECS_DIR, check_specs  # noqa: E402
 
 STYLE = """
 :root { color-scheme: light dark; --fg:#1d2433; --muted:#5b6475; --line:#d9dee7; --bg:#fff; --chip:#eef2f8; }
@@ -69,21 +68,18 @@ def render(entries: list[dict], spec: dict, counts: dict) -> str:
 
 
 def main() -> None:
-    attempt = count_attempt()
+    attempt = LOOP.count()
     try:
         result = check_specs()
     except RuntimeError as error:
         raise StepFailure(str(error)) from error
     problems = result["problems"]
+    routing = LOOP.route("check-specs", problems)
     if problems:
-        FEEDBACK_PATH.write_text(json.dumps({"step": "check-specs", "attempt": attempt, "problems": problems}, indent=2), encoding="utf-8")
-        write_result({
-            "needsFix": True, "retry": attempt < MAX_ATTEMPTS, "attempt": attempt, "problems": problems, "counts": result["counts"],
-            "summary": f"Spec gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}",
-        })
+        write_result({**routing, "counts": result["counts"],
+                      "summary": f"Spec gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}"})
         return
 
-    FEEDBACK_PATH.unlink(missing_ok=True)
     for name in SPEC_FILES:
         shutil.copyfile(SPECS_DIR / name, OUTPUT_DIR / name)
     entries = json.loads((SPECS_DIR / ANALYSIS_SPEC).read_text(encoding="utf-8"))
@@ -91,7 +87,7 @@ def main() -> None:
     counts = result["counts"]
     (OUTPUT_DIR / "specs.html").write_text(render(entries, spec, counts), encoding="utf-8")
     write_result({
-        "needsFix": False, "retry": False, "attempt": attempt, "problems": [], "counts": counts,
+        **routing, "counts": counts,
         "summary": f"Spec gate passed: {counts['analyses']} analyses, ADaM spec of {', '.join(counts['datasets'])} "
                    f"({counts['variables']} variables), ARS ReportingEvent schema-valid.",
     })

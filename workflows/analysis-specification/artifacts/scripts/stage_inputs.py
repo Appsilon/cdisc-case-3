@@ -4,8 +4,9 @@ Files arrive as top-level `files` (package or upload), already downloaded with
 `localPath`. Each is sha256-verified and staged under
 /workspace/analysis-specification/inputs: tlf-plan.json, study-model.json,
 define.xml, sap/, usdm/, and sdtm-inventory.json (what the delivered SDTM
-holds). Uploads carry no kind, so JSON is classified by content and the rest
-by extension.
+holds). Uploads carry no kind, so JSON is classified by content, datasets and
+define.xml by extension, and a document is the SAP only when its name says so
+('sap', 'statistical'); anything else is ignored.
 
 Result: { inputFiles: [{name, downloadUrl, sha256, kind}], sdtmDomains, plannedOutputs, summary }
 """
@@ -13,6 +14,7 @@ Result: { inputFiles: [{name, downloadUrl, sha256, kind}], sdtmDomains, plannedO
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -21,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import StepFailure, read_input, run_main, sha256_of, verify_files, write_result  # noqa: E402
 from sdtminventory import sdtm_inventory  # noqa: E402
-from speclib import INPUTS_DIR, WORK_DIR, planned_tables, reset_attempts  # noqa: E402
+from speclib import INPUTS_DIR, WORK_DIR, planned_tables  # noqa: E402
 
 DATASET_SUFFIXES = (".xpt", ".sas7bdat")
 SINGLE_FILES = {"tlf-plan": "tlf-plan.json", "study-model": "study-model.json", "sdtm-define": "define.xml"}
@@ -52,14 +54,15 @@ def classify(entry: dict) -> str:
         return "sdtm-define"
     if name.endswith(".json"):
         return sniff_json(Path(entry["localPath"]))
-    return "sap"
+    if re.search(r"(^|[^a-z])sap([^a-z]|$)", name) or "statistical" in name:
+        return "sap"
+    return "ignored"
 
 
 def main() -> None:
     files = verify_files(read_input().get("files") or [])
     shutil.rmtree(WORK_DIR, ignore_errors=True)
     INPUTS_DIR.mkdir(parents=True)
-    reset_attempts()
 
     kinds = [(entry, classify(entry)) for entry in files]
     for kind, target in SINGLE_FILES.items():

@@ -21,9 +21,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import OUTPUT_DIR, run_main, write_result  # noqa: E402
-from planlib import (  # noqa: E402
-    FEEDBACK_PATH, MAX_ATTEMPTS, PLAN_CHECK_PATH, PLAN_DIR, PLAN_FILES, STUDY_MODEL, TLF_PLAN, check_plan, count_attempt,
-)
+from gate import MAX_ATTEMPTS  # noqa: E402
+from planlib import LOOP, PLAN_CHECK_PATH, PLAN_DIR, PLAN_FILES, STUDY_MODEL, TLF_PLAN, check_plan  # noqa: E402
 
 STYLE = """
 :root { color-scheme: light dark; --fg:#1d2433; --muted:#5b6475; --line:#d9dee7; --bg:#fff; --chip:#eef2f8; --warn:#9a5b00; }
@@ -85,19 +84,16 @@ def render(model: dict, plan: list[dict], counts: dict) -> str:
 
 
 def main() -> None:
-    attempt = count_attempt()
+    attempt = LOOP.count()
     result = check_plan()
     problems = result["problems"]
     PLAN_CHECK_PATH.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    routing = LOOP.route("check-plan", problems)
     if problems:
-        FEEDBACK_PATH.write_text(json.dumps({"step": "check-plan", "attempt": attempt, "problems": problems}, indent=2), encoding="utf-8")
-        write_result({
-            "needsFix": True, "retry": attempt < MAX_ATTEMPTS, "attempt": attempt, "problems": problems, "counts": result["counts"],
-            "summary": f"Plan gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}",
-        })
+        write_result({**routing, "counts": result["counts"],
+                      "summary": f"Plan gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}"})
         return
 
-    FEEDBACK_PATH.unlink(missing_ok=True)
     for name in PLAN_FILES:
         shutil.copyfile(PLAN_DIR / name, OUTPUT_DIR / name)
     model = json.loads((PLAN_DIR / STUDY_MODEL).read_text(encoding="utf-8"))
@@ -105,7 +101,7 @@ def main() -> None:
     counts = result["counts"]
     (OUTPUT_DIR / "tlf-plan.html").write_text(render(model, plan, counts), encoding="utf-8")
     write_result({
-        "needsFix": False, "retry": False, "attempt": attempt, "problems": [], "counts": counts,
+        **routing, "counts": counts,
         "summary": f"Plan gate passed: {counts['tables']} tables, {counts['listings']} listings, {counts['figures']} figures planned, "
                    f"{counts['flagged']} flagged; every resolved endpoint traced"
                    + (f" ({len(counts['blockedEndpoints'])} with no producible output: {', '.join(counts['blockedEndpoints'])})."

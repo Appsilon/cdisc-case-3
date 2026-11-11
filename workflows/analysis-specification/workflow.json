@@ -103,7 +103,7 @@
       "id": "check-specs",
       "name": "Check the specifications",
       "type": "creation",
-      "description": "Deterministic gate: reporting-event.json validates against the CDISC ARS LDM JSON Schema and every internal reference resolves; every planned output has exactly one analysis-spec entry and one ARS analysis + output; every dataset and variable an analysis uses is in the ADaM spec; the ADaM spec is what adam-derivation consumes (names, classes, literal PARAMCDs, used_by_tables, mandatory rules, N-gate) and reads only delivered SDTM. Failures go back to the agent (three attempts per review round). On pass publishes the specs and specs.html.",
+      "description": "Deterministic gate: reporting-event.json validates against the CDISC ARS LDM JSON Schema and every internal reference resolves; every planned output has exactly one analysis-spec entry (table_id = final_id) and one ARS analysis AN.<final_id> + output OUT.<final_id>; every dataset and variable an analysis uses is in the ADaM spec; the ADaM spec is what adam-derivation consumes (names, classes, literal PARAMCDs, used_by_tables, mandatory rules, N-gate) and reads only delivered SDTM. Failures go back to the agent (three attempts per review round). On pass publishes the specs and specs.html.",
       "executor": "script",
       "plugin": "script-container",
       "script": {
@@ -163,7 +163,7 @@
       "id": "return-result",
       "name": "Return result",
       "type": "creation",
-      "description": "Deterministic. outcome = specified (publishes analysis-spec, ars, adam-spec and specs.html into the study package) or failed (the gate still fails after the last attempt; the agent's files are attached, the package's specs are unchanged).",
+      "description": "Deterministic. outcome = specified (publishes the gate-checked analysis-spec, ars, adam-spec and analysis-spec-view (specs.html) into the study package) or failed (the gate still fails after the last attempt; the agent's files are attached, the package's specs are unchanged).",
       "executor": "script",
       "plugin": "script-container",
       "script": {

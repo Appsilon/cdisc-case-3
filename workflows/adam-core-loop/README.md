@@ -25,8 +25,10 @@ Inputs (both defaulted, see the platform rule on `stepParams`):
   `start=validate`: also `adam`, `adam-program`, `lineage` (+ `adam-define`), e.g. a sponsor's existing delivery.
 - `start` — `derive` (default) or `validate`.
 
-Child versions are pinned in `workflow.json` (`definitionVersion`); bump them
-when a child is re-registered.
+Child versions are pinned in `workflow.json` (`definitionVersion`). Versions are
+per namespace: the pins are those of **staging `vedha`** (adam-derivation v1,
+cdisc-core-validation v2). Bump them when a child is re-registered, and change
+them before registering into another namespace.
 
 ## Test
 

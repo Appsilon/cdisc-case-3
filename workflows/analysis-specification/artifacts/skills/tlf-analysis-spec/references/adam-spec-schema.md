@@ -16,7 +16,7 @@ caught at review, not after it has silently corrupted every downstream number.
       "name": "ADQSADAS",
       "class": "BDS",                       // ADSL | BDS | OCCDS | TTE
       "sdtm_source": ["QS"],
-      "used_by_tables": ["14-3.01","14-3.03","14-3.05","14-3.07","14-3.08","14-3.09","14-3.10","14-3.11"],
+      "used_by_tables": ["T-14-3.01","T-14-3.03","T-14-3.05","T-14-3.07","T-14-3.08","T-14-3.09","T-14-3.10","T-14-3.11"],
       "parameters": [
         {"paramcd": "ACTOT11", "param": "ADAS-Cog(11) Total", "note": "NOT 'ACTOT' (subscore)"}
       ],

@@ -34,14 +34,14 @@ STEP_OUTPUTS_DIR = Path(os.environ.get("MEDIFORCE_STEP_OUTPUTS_DIR", "/workspace
 # sub-workflow go through `replace_files`, so stale downstream artifacts are
 # dropped in one place instead of being trusted by the next phase.
 DOWNSTREAM: dict[str, tuple[str, ...]] = {
-    "usdm": ("study-model", "tlf-plan", "coverage-report", "analysis-spec", "ars", "adam-spec"),
-    "tlf-plan": ("analysis-spec", "ars", "adam-spec"),
-    "analysis-spec": ("ard", "tfl", "tfl-program"),
-    "ars": ("ard", "tfl", "tfl-program"),
+    "usdm": ("study-model", "tlf-plan", "tlf-plan-view", "coverage-report", "analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
+    "tlf-plan": ("analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
+    "analysis-spec": ("ard", "tfl", "tfl-program", "tfl-log"),
+    "ars": ("ard", "tfl", "tfl-program", "tfl-log"),
     "adam-spec": ("adam", "adam-define", "adam-program", "adam-log", "lineage"),
     "sdtm": ("adam", "adam-define", "adam-program", "adam-log", "lineage", "core-report-adamig"),
     "sdtm-define": ("core-report-sdtmig",),
-    "adam": ("ard", "tfl", "tfl-program", "core-report-adamig"),
+    "adam": ("ard", "tfl", "tfl-program", "tfl-log", "core-report-adamig"),
 }
 
 

@@ -22,7 +22,7 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► bui
 | `check-specs` | script | The deterministic gate (`speclib.check_specs`), below. Fails go back to the agent in `feedback.json`, three attempts per review round. On pass publishes the specs and `specs.html`. |
 | `review-specs` | human review (`statistician`) | Approve, or request changes with a comment. |
 | `record-review` | script | Appends the comment to `review-feedback.jsonl` and resets the gate's attempts. |
-| `return-result` | script | `outcome` `specified` (publishes `analysis-spec` — json + html — `ars`, `adam-spec`, `review-feedback-analysis-specification`) or `failed` (the agent's files attached, package specs unchanged). |
+| `return-result` | script | `outcome` `specified` — publishes the files exactly as `check-specs` checked them: `analysis-spec`, `ars`, `adam-spec`, `analysis-spec-view` (`specs.html`), plus `review-feedback-analysis-specification` — or `failed` (the agent's drafts attached, package specs unchanged). |
 
 ## The gate
 
@@ -31,19 +31,22 @@ resolve-inputs ─needsUpload─► upload-inputs ─► stage-inputs ─► bui
   image) — repeated errors are collapsed per collection — and every `methodId`, `analysisSetId`,
   `dataSubsetId`, `groupingId` and contents-list `analysisId`/`outputId` resolves.
 - Every planned output (`status planned` + `final_id`) has exactly one `analysis-spec.json` entry
-  (`table_id` = `final_id` without `T-/L-/F-`) and one ARS analysis `AN.<final_id>` and output
-  `OUT.<final_id>`; nothing blocked or flagged is specified.
+  with `table_id` = the full `final_id` (numbering restarts per type, so `T-14-5.01` and
+  `L-14-5.01` both exist) and one ARS analysis `AN.<final_id>` and output `OUT.<final_id>`;
+  nothing blocked or flagged is specified.
 - Every entry has methods and an analysis-set condition, its `dataSubset.dataset` is in the ADaM
-  spec, and every variable it names (analysis variables, grouping) is in that dataset or ADSL.
+  spec, and every variable named in an analysis-variable or grouping `variable` field (split on
+  `/`, `,`, spaces; free text ignored) is in that dataset or ADSL.
 - The ADaM spec is what `adam-derivation` consumes: ADSL present, `AD…` dataset names, classes
   ADSL/BDS/OCCDS/TTE, upper-case ≤ 8-character variable names without repeats, literal PARAMCDs
   (`ALT/AST` is rejected; `<LBTESTCD>`-style placeholders pass), `used_by_tables` naming planned
   outputs and covering all of them, `mandatory_derivation_rules` and `data_quality_gate` present,
-  and every `sdtm_source` domain delivered (when SDTM was supplied).
+  and every `sdtm_source` SDTM domain delivered (when SDTM was supplied; ADaM names such as ADSL
+  are skipped).
 
-Run on the original UC3 specs, the gate finds 9 real defects (ARS `dataSubsets` shape, a
-contents-list `name`, a duplicated 14-5.01 entry without methods, MHTERM with no ADMH, a
-composite PARAMCD); `tests/fixtures/specs` is that set with the defects corrected.
+Run on the original UC3 specs, the gate finds real defects (ARS `dataSubsets` shape, a
+contents-list `name`, a deaths listing L-14-5.01 without methods, MHTERM with no ADMH, a
+composite PARAMCD); `tests/fixtures/specs` is that set corrected and keyed by `final_id`.
 
 ## Test
 

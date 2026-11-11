@@ -1,7 +1,7 @@
 [
  {
   "id": "AN-14-1.01",
-  "table_id": "14-1.01",
+  "table_id": "T-14-1.01",
   "title": "Summary of Populations",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -89,7 +89,7 @@
  },
  {
   "id": "AN-14-1.02",
-  "table_id": "14-1.02",
+  "table_id": "T-14-1.02",
   "title": "Summary of End of Study Data",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -179,7 +179,7 @@
  },
  {
   "id": "AN-14-1.03",
-  "table_id": "14-1.03",
+  "table_id": "T-14-1.03",
   "title": "Summary of Number of Subjects by Site",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -269,7 +269,7 @@
  },
  {
   "id": "AN-14-1.04",
-  "table_id": "14-1.04",
+  "table_id": "T-14-1.04",
   "title": "Summary of Medical History",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -358,7 +358,7 @@
  },
  {
   "id": "AN-14-2.01",
-  "table_id": "14-2.01",
+  "table_id": "T-14-2.01",
   "title": "Summary of Demographic and Baseline Characteristics",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -500,7 +500,7 @@
  },
  {
   "id": "AN-14-2.02",
-  "table_id": "14-2.02",
+  "table_id": "T-14-2.02",
   "title": "Summary of HAMD 17 Total Score at Baseline",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -599,7 +599,7 @@
  },
  {
   "id": "AN-14-3.01",
-  "table_id": "14-3.01",
+  "table_id": "T-14-3.01",
   "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - LOCF",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -796,7 +796,7 @@
  },
  {
   "id": "AN-14-3.02",
-  "table_id": "14-3.02",
+  "table_id": "T-14-3.02",
   "title": "Change from Baseline to Week 24 in Satisfaction With Life Scale (SWLS) Total Score - LOCF",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -991,7 +991,7 @@
  },
  {
   "id": "AN-14-3.03",
-  "table_id": "14-3.03",
+  "table_id": "T-14-3.03",
   "title": "Change from Baseline to Week 24 in AVLT-REY List A Total Score - LOCF",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1187,7 +1187,7 @@
  },
  {
   "id": "AN-14-3.04",
-  "table_id": "14-3.04",
+  "table_id": "T-14-3.04",
   "title": "Repeated Measures Analysis of Change from Baseline to Week 24 in PHQ-9 Total Score",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1358,7 +1358,7 @@
  },
  {
   "id": "AN-14-3.05",
-  "table_id": "14-3.05",
+  "table_id": "T-14-3.05",
   "title": "PHQ-9 Total Score - Mean and Mean Change from Baseline Over Time",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -1469,7 +1469,7 @@
  },
  {
   "id": "AN-14-4.01",
-  "table_id": "14-4.01",
+  "table_id": "T-14-4.01",
   "title": "Summary of Planned Exposure to Study Drug",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -1584,7 +1584,7 @@
  },
  {
   "id": "AN-14-5.01",
-  "table_id": "14-5.01",
+  "table_id": "T-14-5.01",
   "title": "Incidence of Treatment-Emergent Adverse Events by System Organ Class and Preferred Term",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1688,7 +1688,7 @@
  },
  {
   "id": "AN-14-5.02",
-  "table_id": "14-5.02",
+  "table_id": "T-14-5.02",
   "title": "Incidence of Treatment-Emergent Serious Adverse Events by System Organ Class and Preferred Term",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1791,7 +1791,7 @@
  },
  {
   "id": "AN-14-5.03",
-  "table_id": "14-5.03",
+  "table_id": "T-14-5.03",
   "title": "Incidence of Adverse Events Leading to Study Drug Discontinuation",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1894,7 +1894,7 @@
  },
  {
   "id": "AN-14-5.04",
-  "table_id": "14-5.04",
+  "table_id": "T-14-5.04",
   "title": "Incidence of Adverse Events with a Fatal Outcome (Deaths)",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -1998,7 +1998,7 @@
  },
  {
   "id": "AN-14-5.05",
-  "table_id": "14-5.05",
+  "table_id": "T-14-5.05",
   "title": "Incidence of Treatment-Emergent Adverse Events by Maximum Severity",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2105,7 +2105,7 @@
  },
  {
   "id": "AN-14-5.06",
-  "table_id": "14-5.06",
+  "table_id": "T-14-5.06",
   "title": "Incidence of Treatment-Emergent Adverse Events by Relationship to Study Drug",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2210,8 +2210,102 @@
   ]
  },
  {
+  "id": "AN-L-14-5.01",
+  "table_id": "L-14-5.01",
+  "title": "Listing of Deaths",
+  "protocol": "CDISCPILOT01",
+  "reason": "CONVENTION",
+  "purpose": "ICH E3 \u00a712.3 subject-level listing of deaths with primary cause.",
+  "analysisSet": {
+   "id": "AnalysisSet.Safety",
+   "label": "Safety Population",
+   "condition": "SAFFL = 'Y'",
+   "source": "ADSL.SAFFL"
+  },
+  "groupingFactor": {
+   "id": "Grouping.TRTP",
+   "variable": "TRTP",
+   "dataType": "character",
+   "levels": [
+    {
+     "value": "Placebo",
+     "order": 1,
+     "isReference": true,
+     "dose": 0
+    },
+    {
+     "value": "Zanomaline Low Dose (54 mg)",
+     "order": 2,
+     "dose": 54
+    },
+    {
+     "value": "Zanomaline High Dose (81 mg)",
+     "order": 3,
+     "dose": 81
+    }
+   ]
+  },
+  "subgroup": null,
+  "dataSubset": {
+   "id": "DataSubset.14-5.01L",
+   "dataset": "ADSL",
+   "condition": "DTHFL = 'Y'"
+  },
+  "analysisVariables": {
+   "subject": {
+    "variable": "USUBJID",
+    "label": "Subject"
+   },
+   "treatment": {
+    "variable": "TRT01A",
+    "label": "Actual treatment"
+   },
+   "death_date": {
+    "variable": "DTHDT",
+    "label": "Date of death"
+   },
+   "study_day": {
+    "variable": "DTHDY",
+    "label": "Study day of death"
+   },
+   "cause": {
+    "variable": "DTHCAUS",
+    "label": "Primary cause of death (SDTM DD)"
+   }
+  },
+  "methods": [
+   {
+    "id": "MTH.LISTING",
+    "type": "Listing",
+    "label": "Subject listing",
+    "operations": [
+     "list"
+    ]
+   }
+  ],
+  "rounding": {
+   "rule": "SAS ROUND (half away from zero) at each statistic's display precision",
+   "note": "R's round() uses banker's rounding \u2014 the generator MUST implement half-away-from-zero explicitly."
+  },
+  "output": {
+   "ard": "listing.json",
+   "display": "L-14-5.01.generated.md"
+  },
+  "traces_to": {
+   "objective_ids": [],
+   "endpoint_ids": [],
+   "regulatory_rule": "ICH E3 \u00a712.3"
+  },
+  "notes": [
+   "LISTING \u2014 no statistical method, no summarization. One row per death (3 expected).",
+   "DTHCAUS sourced from SDTM DD (DDTESTCD for primary cause of death); joined to ADSL by USUBJID.",
+   "Listings are rendered directly from the subsetted ADaM, not via an ARD of statistics.",
+   "N-GATE CAVEAT: this study has 17 randomized subjects (Placebo 5 / Low 5 / High 7). All inferential statistics are illustrative and must not be interpreted."
+  ]
+ },
+ {
   "id": "AN-14-6.01",
-  "table_id": "14-6.01",
+  "table_id": "T-14-6.01",
   "title": "Summary Statistics for Continuous Laboratory Values and Change from Baseline",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2328,7 +2422,7 @@
  },
  {
   "id": "AN-14-6.02",
-  "table_id": "14-6.02",
+  "table_id": "T-14-6.02",
   "title": "Frequency of Normal and Abnormal (Beyond Normal Range) Laboratory Values During Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2442,7 +2536,7 @@
  },
  {
   "id": "AN-14-6.03",
-  "table_id": "14-6.03",
+  "table_id": "T-14-6.03",
   "title": "Frequency of Normal and Abnormal (Clinically Significant Change from Previous Visit) Laboratory Values During Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2552,7 +2646,7 @@
  },
  {
   "id": "AN-14-6.04",
-  "table_id": "14-6.04",
+  "table_id": "T-14-6.04",
   "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges, by Visit",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2672,7 +2766,7 @@
  },
  {
   "id": "AN-14-6.05",
-  "table_id": "14-6.05",
+  "table_id": "T-14-6.05",
   "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2792,7 +2886,7 @@
  },
  {
   "id": "AN-14-6.06",
-  "table_id": "14-6.06",
+  "table_id": "T-14-6.06",
   "title": "Shifts of Hy's Law Values During Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -2903,7 +2997,7 @@
  },
  {
   "id": "AN-14-7.01",
-  "table_id": "14-7.01",
+  "table_id": "T-14-7.01",
   "title": "Summary of Vital Signs at Baseline and End of Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -3014,7 +3108,7 @@
  },
  {
   "id": "AN-14-7.02",
-  "table_id": "14-7.02",
+  "table_id": "T-14-7.02",
   "title": "Summary of Vital Signs Change from Baseline at End of Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -3125,7 +3219,7 @@
  },
  {
   "id": "AN-14-7.03",
-  "table_id": "14-7.03",
+  "table_id": "T-14-7.03",
   "title": "Summary of Weight Change from Baseline at End of Treatment",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",
@@ -3236,7 +3330,7 @@
  },
  {
   "id": "AN-14-7.04",
-  "table_id": "14-7.04",
+  "table_id": "T-14-7.04",
   "title": "Summary of Concomitant Medications",
   "protocol": "CDISCPILOT01",
   "reason": "CONVENTION",
@@ -3335,7 +3429,7 @@
  },
  {
   "id": "AN-F-14-1",
-  "table_id": "14-1",
+  "table_id": "F-14-1",
   "title": "Time to First Injection-Site Reaction by Treatment Group (Kaplan-Meier)",
   "protocol": "CDISCPILOT01",
   "reason": "SPECIFIED IN SAP",

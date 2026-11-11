@@ -16,8 +16,8 @@ Every step of a run mounts the same worktree at /workspace:
 
 The gate checks what a script can check for certain, across the three files:
 the ARS ReportingEvent is schema-valid and every internal reference resolves;
-every planned TLF has exactly one analysis-spec entry and one ARS analysis and
-output, and nothing else does; every dataset and variable an analysis uses is
+every planned TLF has exactly one analysis-spec entry (table_id = final_id) and
+one ARS analysis AN.<final_id> and output OUT.<final_id>, and nothing else does; every dataset and variable an analysis uses is
 in the ADaM spec; the ADaM spec is what adam-derivation consumes (dataset and
 variable names SAS V5 can hold, classes, PARAMCDs, the mandatory derivation
 rules and the N-gate) and reads only SDTM that was delivered.
@@ -31,16 +31,14 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from gate import GateLoop
+
 WORKSPACE_DIR = Path(os.environ.get("MEDIFORCE_WORKSPACE_DIR", "/workspace"))
 WORK_DIR = WORKSPACE_DIR / "analysis-specification"
 INPUTS_DIR = WORK_DIR / "inputs"
 SPECS_DIR = WORK_DIR / "specs"
-FEEDBACK_PATH = WORK_DIR / "feedback.json"
-REVIEW_FEEDBACK_PATH = WORK_DIR / "review-feedback.jsonl"
-ATTEMPTS_PATH = WORK_DIR / "attempts.json"
+LOOP = GateLoop(WORK_DIR)
 SCHEMA_PATH = Path(os.environ.get("ARS_SCHEMA_PATH", str(Path(__file__).resolve().parent.parent / "schemas" / "ars_ldm.schema.json")))
-MAX_ATTEMPTS = 3
-
 ANALYSIS_SPEC = "analysis-spec.json"
 ADAM_SPEC = "adam-spec.json"
 REPORTING_EVENT = "reporting-event.json"
@@ -50,7 +48,7 @@ CLASSES = ("ADSL", "BDS", "OCCDS", "TTE")
 DATASET_NAME = re.compile(r"^AD[A-Z0-9]{1,6}$")
 VARIABLE_NAME = re.compile(r"^[A-Z][A-Z0-9_]{0,7}$")
 PARAMCD = re.compile(r"^[A-Z][A-Z0-9]{0,7}$")
-IDENTIFIER = re.compile(r"\b[A-Z][A-Z0-9]{1,7}\b")
+VARIABLE_SEPARATORS = re.compile(r"[/,\s]+")
 SDTM_DOMAIN = re.compile(r"^(SUPP)?[A-Z]{2}[A-Z0-9]{0,4}$")
 LIST_ITEM_KEYS = ("analysisId", "outputId")
 
@@ -66,14 +64,18 @@ def load_json(path: Path, problems: list[str]):
         return None
 
 
-def table_id_of(final_id: str) -> str:
-    return re.sub(r"^[TLF]-", "", final_id)
-
-
 def planned_tables(plan: list) -> dict[str, dict]:
-    """table_id -> candidate, for every planned and numbered output of the plan."""
-    return {table_id_of(str(item["final_id"])): item for item in plan
+    """final_id -> candidate, for every planned and numbered output of the plan.
+
+    Specs key on the full final_id (table_id = final_id): without the T-/L-/F- prefix
+    T-14-5.01 and L-14-5.01 would collide, since numbering restarts per type."""
+    return {str(item["final_id"]): item for item in plan
             if isinstance(item, dict) and item.get("status") == "planned" and item.get("final_id")}
+
+
+def named_variables(value) -> list[str]:
+    """Variable names in an analysisVariables / groupingFactor `variable` field ('AVAL', 'ITTFL/SAFFL'); free text is ignored."""
+    return [part for part in VARIABLE_SEPARATORS.split(str(value or "")) if VARIABLE_NAME.match(part)]
 
 
 def ars_schema_problems(event: dict) -> list[str]:
@@ -170,7 +172,8 @@ def adam_spec_problems(spec: dict, tables: set[str], delivered_domains: set[str]
         consumed |= used_by
         if delivered_domains:
             sources = [str(source).upper() for source in dataset.get("sdtm_source") or []]
-            absent = sorted(source for source in sources if SDTM_DOMAIN.match(source) and source not in delivered_domains)
+            absent = sorted(source for source in sources
+                            if SDTM_DOMAIN.match(source) and source.startswith("AD") is False and source not in delivered_domains)
             if absent:
                 problems.append(f"{ADAM_SPEC} {name}: sdtm_source {', '.join(absent)} was not delivered "
                                 f"(delivered: {', '.join(sorted(delivered_domains))}); block the outputs that need it in the plan instead")
@@ -213,10 +216,8 @@ def analysis_problems(entries: list, tables: dict[str, dict], spec: dict) -> lis
         available = variables_of[dataset] | adsl
         named = []
         for role in (entry.get("analysisVariables") or {}).values():
-            named += IDENTIFIER.findall(str((role or {}).get("variable", "")) if isinstance(role, dict) else str(role))
-        grouping = (entry.get("groupingFactor") or {}).get("variable")
-        if grouping:
-            named.append(str(grouping))
+            named += named_variables(role.get("variable") if isinstance(role, dict) else role)
+        named += named_variables((entry.get("groupingFactor") or {}).get("variable"))
         unknown = sorted({variable for variable in named if variable not in available})
         if unknown:
             problems.append(f"{ANALYSIS_SPEC} {label}: uses {', '.join(unknown)}, not in {ADAM_SPEC} {dataset} or ADSL variables")
@@ -228,11 +229,10 @@ def coverage_problems(event: dict, tables: dict[str, dict]) -> list[str]:
     analyses = {str(item.get("id")) for item in event.get("analyses") or [] if isinstance(item, dict)}
     outputs = {str(item.get("id")) for item in event.get("outputs") or [] if isinstance(item, dict)}
     problems = []
-    for table_id, candidate in tables.items():
-        final_id = str(candidate["final_id"])
-        if not {f"AN.{final_id}", f"AN.{table_id}"} & analyses:
+    for final_id in tables:
+        if f"AN.{final_id}" not in analyses:
             problems.append(f"{REPORTING_EVENT}: planned output {final_id} has no analysis AN.{final_id}")
-        if not {f"OUT.{final_id}", f"OUT.{table_id}"} & outputs:
+        if f"OUT.{final_id}" not in outputs:
             problems.append(f"{REPORTING_EVENT}: planned output {final_id} has no output OUT.{final_id}")
     return problems
 
@@ -271,21 +271,3 @@ def check_specs(specs_dir: Path = SPECS_DIR, inputs_dir: Path = INPUTS_DIR) -> d
         "methods": dict(methods.most_common(12)),
     }
     return {"problems": problems, "counts": counts}
-
-
-def attempts() -> int:
-    if ATTEMPTS_PATH.is_file() is False:
-        return 0
-    return int(json.loads(ATTEMPTS_PATH.read_text(encoding="utf-8")).get("attempts", 0))
-
-
-def count_attempt() -> int:
-    WORK_DIR.mkdir(parents=True, exist_ok=True)
-    attempt = attempts() + 1
-    ATTEMPTS_PATH.write_text(json.dumps({"attempts": attempt}), encoding="utf-8")
-    return attempt
-
-
-def reset_attempts() -> None:
-    ATTEMPTS_PATH.unlink(missing_ok=True)
-    FEEDBACK_PATH.unlink(missing_ok=True)

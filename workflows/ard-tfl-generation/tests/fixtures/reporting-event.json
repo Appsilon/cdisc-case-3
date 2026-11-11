@@ -1,0 +1,20 @@
+{
+ "id": "RE.FIXTURE",
+ "name": "fixture",
+ "analyses": [
+  {
+   "id": "AN.T-14-2.01"
+  },
+  {
+   "id": "AN.F-14-1"
+  }
+ ],
+ "outputs": [
+  {
+   "id": "OUT.T-14-2.01"
+  },
+  {
+   "id": "OUT.F-14-1"
+  }
+ ]
+}

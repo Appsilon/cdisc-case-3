@@ -70,12 +70,12 @@ All under `/workspace/analysis-specification/inputs/` (read-only for you):
 Write to `/workspace/analysis-specification/specs/`:
 
 - `analysis-spec.json` — a JSON **array** of analysis-spec objects, exactly one per planned TLF,
-  each conforming to `references/analysis-spec-schema.md` and keyed by `table_id` (the
-  `final_id` minus the `T-`/`F-`/`L-` prefix). No entries for blocked / flagged candidates.
+  each conforming to `references/analysis-spec-schema.md` and keyed by `table_id`, which is
+  the full `final_id` (`T-14-5.01`; never strip the prefix — `T-14-5.01` and `L-14-5.01` both exist). No entries for blocked / flagged candidates.
 - `adam-spec.json` — a single object conforming to `references/adam-spec-schema.md`, plus
   `mandatory_derivation_rules` and `data_quality_gate`. The `adam-derivation` workflow consumes
   it as is: dataset names `AD…` (≤ 8), variable names upper case ≤ 8, literal PARAMCDs (list
-  each parameter separately — never `ALT/AST`), `used_by_tables` naming planned `table_id`s.
+  each parameter separately — never `ALT/AST`), `used_by_tables` naming planned `final_id`s.
 - `reporting-event.json` — the CDISC ARS ReportingEvent (Phase 2.5): analysis `AN.<final_id>`
   and output `OUT.<final_id>` for every planned TLF. It is validated against the real ARS LDM
   JSON Schema (`/artifacts/schemas/ars_ldm.schema.json`).
@@ -102,7 +102,7 @@ dose) and the population definitions once — they are reused by every entry.
 ### Phase 1 — Per-TLF analysis-spec entry
 For each producible candidate, author one analysis-spec object:
 
-1. **Header** — `id` = `AN-{table_id}`, `table_id` = `final_id` minus prefix, `title` (from the
+1. **Header** — `id` = `AN.{final_id}`, `table_id` = `final_id`, `title` (from the
    candidate), `protocol`, `reason` (SPECIFIED IN SAP if it traces to an objective/endpoint,
    CONVENTION/GAP-FILL if scaffolding-driven), `purpose`.
 2. **`analysisSet`** — map `analysis.population` → flag condition:
@@ -150,13 +150,13 @@ For each producible candidate, author one analysis-spec object:
 For the ANCOVA `model`/`lsmeans`/`contrasts` sub-objects use the validated pattern in
 `references/analysis-spec-schema.md` (model `CHG ~ TRTP + SITEGR1 + BASE`, explicit contrast coef
 lists, `adjust:"none"`). Prefer `emmeans` directly — `cardx::ard_emmeans_contrast` was broken in
-the tested build (see `../tlf-generator/references/generation-idioms.md`).
+the tested build.
 
 ### Phase 2 — Aggregate the ADaM spec
 Build one `adam-spec.json` from the **union** of all producible candidates' data needs:
 
 1. **Datasets** — group by ADaM dataset name across `data_requirements.adam`. For each: `class`
-   (ADSL/BDS/OCCDS/TTE), `sdtm_source`, `used_by_tables` (every `table_id` that consumes it),
+   (ADSL/BDS/OCCDS/TTE), `sdtm_source`, `used_by_tables` (every `final_id` that consumes it),
    `parameters` (the PARAMCDs each consuming table selects — apply the known CDISCPILOT01 gotchas:
    ADAS-Cog(11) total is **`ACTOT11`**, not `ACTOT`), and `variables` (the union of columns the
    consuming tables need: analysis/baseline/change values, `AVISIT`/`AVISITN`, `ABLFL`, the
@@ -194,7 +194,7 @@ back to this step with the exact failures — so build it to conform. Read
   `groupingVariable:"TRTP"`, and a `groups[]` entry per arm (`id`, `name`, `level`, `order`).
 - **`methods[]`** — one per distinct statistical method (Descriptive/ANCOVA/Incidence/KaplanMeier/
   MMRM/…): `id`, `name`, and `operations[]` where each operation has `id`, `order`, `name`.
-- **`analyses[]`** — **one per producible TLF**: `id` (`AN.<table_id>`), `name`, `methodId` (→ a
+- **`analyses[]`** — **one per producible TLF**: `id` (`AN.<final_id>`), `name`, `methodId` (→ a
   `methods[].id`), `analysisSetId` (→ an `analysisSets[].id`), `orderedGroupings:[{order:1,
   groupingId, resultsByGroup:true}]`, `dataset`, and the two required controlled terms:
   - `reason` = `{controlledTerm:"SPECIFIED IN SAP"}` (or `"SPECIFIED IN PROTOCOL"` / `"DATA
@@ -204,13 +204,13 @@ back to this step with the exact failures — so build it to conform. Read
     use a **sponsor purpose** `{"sponsorTermId":"SPT.SAFETY"}` and declare it once in
     `terminologyExtensions:[{id:"TE.PURPOSE", enumeration:"AnalysisPurposeEnum",
     sponsorTerms:[{id:"SPT.SAFETY", submissionValue:"SAFETY"}]}]`.
-- **`outputs[]`** — one per TLF display: `id` (`OUT.<table_id>`), `name`, `displays:[{order:1,
-  display:{id:"D.<table_id>", name}}]`.
+- **`outputs[]`** — one per TLF display: `id` (`OUT.<final_id>`), `name`, `displays:[{order:1,
+  display:{id:"D.<final_id>", name}}]`.
 - **`mainListOfContents`** — `{name, contentsList:{listItems:[{level:1, order:N, name, outputId}
   …]}}`; every `analysisId`/`outputId` referenced must resolve to a defined analysis/output.
 
 Every `methodId`, `analysisSetId`, `groupingId`, `analysisId`, and `outputId` must resolve — the
-gate rejects dangling references. Keep ids stable and derived from `table_id` so the traceability
+gate rejects dangling references. Keep ids stable and derived from `final_id` so the traceability
 graph can bridge ARS ↔ TLF.
 
 ### Phase 3 — Write and hand off
@@ -247,11 +247,10 @@ by SOC and PT, engine `cards::ard_hierarchical`); `rounding` = SAS. In the ADaM 
 - `references/analysis-spec-schema.md` — the per-TLF analysis-spec object + method catalog.
 - `references/adam-spec-schema.md` — the aggregated ADaM variable spec + mandatory rules + N-gate.
 
-**Upstream contracts this skill CONSUMES:**
-- `../tlf-planner/references/tlf-candidate-schema.md` — the TLF candidate object.
-- `../tlf-planner/references/pipeline-contract.md` — directories, §14 numbering, populations.
-- `../tlf-planner/references/study-model-schema.md` — arms, populations, endpoints.
+**Upstream contracts this skill consumes** (from the tlf-planning workflow, summarised in Inputs above):
+`tlf-plan.json` candidates (`final_id`, `status`, `analysis`, `data_requirements`, `traces_to`) and
+`study-model.json` (arms, populations, endpoints).
 
-**Downstream (for context on how the specs are used):**
-- `../tlf-generator/references/generation-idioms.md` — cards/cardx/emmeans idioms and gotchas.
-- the protocol-to-tfl adam-to-tlf design note (repo root) — the Steps 2-3 design; §5 method map, §6 accuracy watch-list.
+**Downstream:**
+- `adam-derivation` derives ADaM from `adam-spec.json`; `ard-tfl-generation` writes one R program per
+  `analysis-spec.json` entry that computes the ARD and renders the display from it.
