@@ -55,7 +55,7 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "adam-derivation",
-          "definitionVersion": 4,
+          "definitionVersion": 1,
           "payload": {
             "package": "${steps.route.package}"
           },
@@ -74,7 +74,7 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "cdisc-core-validation",
-          "definitionVersion": 10,
+          "definitionVersion": 1,
           "payload": {
             "package": "${steps.route.package}",
             "standard": "adamig",
