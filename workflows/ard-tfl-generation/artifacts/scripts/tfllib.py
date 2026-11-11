@@ -28,7 +28,13 @@ Program contract (enforced by execute-programs and reconcile):
   * writes the display to file.path(Sys.getenv("TFL_DIR"), "<final_id>.html") (tables and
     listings: an HTML <table>), figures to "<final_id>.png" (an .html is optional);
   * computes every number into the ARD first and renders the display from the ARD only,
-    rounding half away from zero at display time - reconcile checks every displayed number.
+    rounding half away from zero at display time - reconcile checks every displayed number;
+  * every table body cell that shows numbers names their ARD rows: <td data-ard="12,13">73.6 (9.94)</td>
+    = 0-based indices into the ARD array, one per number in the cell, in order. The number must be
+    that row's stat rounded half away from zero at the shown decimals (a proportion may be shown
+    x100 - always when followed by %); "<0.001" / ">0.999" must bound it. The first cell of a row
+    (its label) and <th>-only header rows carry none. Listings show ADaM records, not statistics:
+    their cells need no data-ard (any that carry one are checked).
 """
 
 from __future__ import annotations
@@ -55,7 +61,8 @@ MAX_PROBLEMS_PER_OUTPUT = 8
 
 TAG = re.compile(r"^\s*#\s*@tlf\s+(?P<id>[TLF]-[0-9A-Za-z.\-]+)(?P<rest>.*)$")
 FIELD = re.compile(r"(?P<key>analysis|uses)=(?P<value>\S+)")
-NUMBER = re.compile(r"(?<![\w.<>≤≥])-?\d+(?:\.\d+)?(?![\w.])")
+NUMBER = re.compile(r"(?:(?P<bound>[<>≤≥])\s?|(?<![\w.]))(?P<value>[-−]?\d+(?:\.\d+)?)(?![\w.])(?P<percent>\s?%)?")
+ARD_INDEX = re.compile(r"[0-9]+")
 ADAM_VARIABLE = re.compile(r"^(AD[A-Z0-9]{1,6})\.([A-Z][A-Z0-9_]{0,7})$")
 
 
@@ -136,14 +143,15 @@ def ard_problems(final_id: str, ard_path: Path) -> list[str]:
 
 
 class TableCells(HTMLParser):
-    """Body cells of every <table>: (row label, column position, text). Header rows (<th> only) are kept as label rows."""
+    """Cells of every <table>, per row: (tag, text, data-ard attribute or None)."""
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
-        self.rows: list[list[tuple[str, str]]] = []
-        self.current: list[tuple[str, str]] | None = None
+        self.rows: list[list[tuple[str, str, str | None]]] = []
+        self.current: list[tuple[str, str, str | None]] | None = None
         self.cell: list[str] | None = None
         self.cell_tag = ""
+        self.cell_refs: str | None = None
         self.skip = 0
 
     def handle_starttag(self, tag, attrs):
@@ -152,13 +160,13 @@ class TableCells(HTMLParser):
         elif tag == "tr":
             self.current = []
         elif tag in ("td", "th") and self.current is not None:
-            self.cell, self.cell_tag = [], tag
+            self.cell, self.cell_tag, self.cell_refs = [], tag, dict(attrs).get("data-ard")
 
     def handle_endtag(self, tag):
         if tag in ("script", "style"):
             self.skip = max(0, self.skip - 1)
         elif tag in ("td", "th") and self.cell is not None and self.current is not None:
-            self.current.append((self.cell_tag, " ".join("".join(self.cell).split())))
+            self.current.append((self.cell_tag, " ".join("".join(self.cell).split()), self.cell_refs))
             self.cell = None
         elif tag == "tr" and self.current is not None:
             self.rows.append(self.current)
@@ -169,18 +177,21 @@ class TableCells(HTMLParser):
             self.cell.append(data)
 
 
-def displayed_numbers(html_text: str) -> list[tuple[str, str]]:
-    """(where, token) for every number in a table body cell; row labels (first cell) and pure header rows excluded."""
+def displayed_cells(html_text: str) -> list[dict]:
+    """Every table body cell that shows numbers: {where, text, numbers: [(bound, token, percent)], refs}.
+    Row labels (first cell) and pure header rows are excluded."""
     parser = TableCells()
     parser.feed(html_text)
     found = []
     for row in parser.rows:
-        if not row or all(tag == "th" for tag, _ in row):
+        if not row or all(tag == "th" for tag, _, _ in row):
             continue
         label = row[0][1]
-        for position, (_, text) in enumerate(row[1:], start=2):
-            for match in NUMBER.finditer(text):
-                found.append((f"row '{label[:40]}', column {position}", match.group(0)))
+        for position, (_, text, refs) in enumerate(row[1:], start=2):
+            numbers = [(match.group("bound") or "", match.group("value").replace("−", "-"), match.group("percent") is not None)
+                       for match in NUMBER.finditer(text)]
+            if numbers:
+                found.append({"where": f"row '{label[:40]}', column {position}", "text": text, "numbers": numbers, "refs": refs})
     return found
 
 
@@ -190,35 +201,68 @@ def sas_round(value: float, digits: int) -> float:
     return rounded if value >= 0 else -rounded
 
 
-def ard_numbers(rows: list[dict]) -> list[float]:
-    values = []
-    for row in rows:
-        stat = row.get("stat")
-        candidates = stat if isinstance(stat, list) else [stat]
-        for candidate in candidates:
-            if isinstance(candidate, bool):
-                continue
-            try:
-                number = float(candidate)
-            except (TypeError, ValueError):
-                continue
-            values.append(number)
-            if -1.0 <= number <= 1.0:
-                values.append(number * 100)
-    return values
+def ard_stat(row) -> float | None:
+    """The row's stat as one number, or None (missing, text, boolean, several values)."""
+    stat = row.get("stat") if isinstance(row, dict) else None
+    if isinstance(stat, list) and len(stat) == 1:
+        stat = stat[0]
+    if stat is None or isinstance(stat, (bool, list, dict)):
+        return None
+    try:
+        return float(stat)
+    except (TypeError, ValueError):
+        return None
 
 
-def matches_ard(token: str, values: list[float]) -> bool:
+def describe_ard_row(row: dict) -> str:
+    keys = ("group1_level", "variable", "variable_level", "context", "stat_name")
+    return ", ".join(f"{key}={row[key]}" for key in keys if row.get(key) not in (None, "", []))
+
+
+def shows_stat(bound: str, token: str, stat: float, percent: bool = False) -> bool:
+    """Does the displayed token (with an optional < > ≤ ≥ bound) show this stat? A proportion may be shown x100:
+    always when the number is followed by %, otherwise only an exact (unbounded) fraction strictly between -1 and 1."""
     digits = len(token.split(".")[1]) if "." in token else 0
     target = float(token)
-    return any(abs(sas_round(value, digits) - target) < 1e-9 for value in values)
+    fraction = bound == "" and abs(stat) < 1.0 and stat != int(stat)
+    candidates = [stat, stat * 100] if percent is True or fraction is True else [stat]
+    comparisons = {"<": lambda value: value < target, "≤": lambda value: value <= target,
+                   ">": lambda value: value > target, "≥": lambda value: value >= target,
+                   "": lambda value: abs(sas_round(value, digits) - target) < 1e-9}
+    return any(comparisons[bound](candidate) for candidate in candidates)
 
 
-def reconcile_output(final_id: str, html_path: Path, ard_path: Path) -> dict:
-    """Every number a table shows must be an ARD statistic rounded half away from zero."""
+def cell_problems(cell: dict, rows: list) -> list[str]:
+    """Why this cell's numbers are not exactly the ARD rows its data-ard names (empty when they are)."""
+    numbers, refs = cell["numbers"], cell["refs"]
+    if refs is None:
+        return [f"shows '{cell['text'][:40]}' without data-ard (the 0-based ARD row of each number)"]
+    references = [reference.strip() for reference in refs.split(",") if reference.strip()]
+    if all(ARD_INDEX.fullmatch(reference) is not None for reference in references) is False:
+        return [f"data-ard='{refs}' is not a comma-separated list of 0-based ARD row indices"]
+    if len(references) != len(numbers):
+        return [f"shows '{cell['text'][:40]}': {len(numbers)} number(s) but data-ard='{refs}' names {len(references)} ARD row(s)"]
+    problems = []
+    for (bound, token, percent), reference in zip(numbers, references):
+        index = int(reference)
+        if index >= len(rows):
+            problems.append(f"data-ard index {index} is outside the ARD (rows 0-{len(rows) - 1})")
+            continue
+        stat = ard_stat(rows[index])
+        if stat is None:
+            problems.append(f"shows {bound}{token}, but ARD row {index} ({describe_ard_row(rows[index])}) has no single numeric stat")
+        elif shows_stat(bound, token, stat, percent) is False:
+            problems.append(f"shows {bound}{token}, but ARD row {index} ({describe_ard_row(rows[index])}) is {stat:g}")
+    return problems
+
+
+def reconcile_output(final_id: str, html_path: Path, ard_path: Path, listing: bool = False) -> dict:
+    """Every number a table shows must be the ARD row its cell names, rounded half away from zero.
+    A listing shows ADaM records, not statistics: only its cells that carry data-ard are checked."""
     if html_path.is_file() is False:
         return {"output": final_id, "checked": 0, "unmatched": [], "skipped": "no HTML display (figure)"}
-    values = ard_numbers(read_json(ard_path))
-    shown = displayed_numbers(html_path.read_text(encoding="utf-8", errors="replace"))
-    unmatched = [{"where": where, "value": token} for where, token in shown if matches_ard(token, values) is False]
-    return {"output": final_id, "checked": len(shown), "unmatched": unmatched, "skipped": None}
+    rows = read_json(ard_path)
+    cells = [cell for cell in displayed_cells(html_path.read_text(encoding="utf-8", errors="replace"))
+             if listing is False or cell["refs"] is not None]
+    unmatched = [{"where": cell["where"], "value": cell["text"], "problem": problem} for cell in cells for problem in cell_problems(cell, rows)]
+    return {"output": final_id, "checked": sum(len(cell["numbers"]) for cell in cells), "unmatched": unmatched, "skipped": None}

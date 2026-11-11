@@ -8,7 +8,10 @@ the contract (tests/fixtures/programs).
 
   1. package mode, clean programs -> executed, every displayed number reconciled, viewer, outcome generated
   2. a number typed into the display, a bad tag, a missing program -> sent back; three attempts -> failed
-  3. upload mode, a review round, then 'spec-change' -> outcome upstream_change with the request
+  3. a cell showing another arm's mean (a value the ARD holds, in the wrong row) -> rejected
+  4. upload mode, a review round, then 'spec-change' -> outcome upstream_change with the request
+  5. the cell checks on their own: missing / miscounted / out-of-range data-ard, an off-by-one digit
+     that equals another ARD stat, bounds (<0.001) and percentages
 
 Needs R with haven, jsonlite and ggplot2:
   python3 tests/test_pipeline.py
@@ -125,7 +128,8 @@ def test_generated(work: Path) -> None:
     reconciled = run.step("reconcile", "reconcile.py")
     assert reconciled["needsFix"] is False and reconciled["checked"] == 9 and reconciled["unmatched"] == 0, reconciled
     page = (run.steps_dir / "reconcile" / "tlf-viewer.html").read_text()
-    for expected in ("AN.T-14-2.01", "adsl.R lines [12, 14]", "data:image/png;base64,", "srcdoc=", "@tlf F-14-1", "stat_name"):
+    for expected in ("AN.T-14-2.01", "adsl.R lines [12, 14]", "data:image/png;base64,", "srcdoc=", "@tlf F-14-1", "stat_name",
+                     "title=&quot;ARD #4: group1_level=Drug Low, variable=AGE, context=continuous, stat_name=mean"):
         assert expected in page, expected
 
     run.output("review-tlfs", {"verdict": "approve"})
@@ -164,11 +168,67 @@ def test_failures(work: Path) -> None:
     assert executed["needsFix"] is False, executed
     reconciled = run.step("reconcile", "reconcile.py")
     assert reconciled["needsFix"] is True and reconciled["retry"] is False and reconciled["unmatched"] == 3, reconciled
-    assert "T-14-2.01: shows 99.9 (row 'Mean (SD)', column 2) but no ARD statistic rounds to it" in reconciled["problems"][0], reconciled
+    assert reconciled["problems"][0].startswith(
+        "T-14-2.01: row 'Mean (SD)', column 2: shows 99.9, but ARD row 1 (group1_level=Placebo, variable=AGE, context=continuous, "
+        "stat_name=mean) is "), reconciled
     feedback = json.loads((run.workspace / "ard-tfl-generation" / "feedback.json").read_text())
     assert feedback["step"] == "reconcile" and feedback["problems"] == reconciled["problems"]
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "failed" and "ard" not in {item["kind"] for item in result["package"]["files"]}, result
+
+
+def test_wrong_row(work: Path) -> None:
+    run = staged_run(work / "wrong-row")
+    target = work / "wrong-row-programs"
+    shutil.copytree(FIXTURES / "programs", target)
+    table = target / "T-14-2.01.R"
+    table.write_text(table.read_text().replace('fmt(cell(arm, "mean"), 1)', 'fmt(cell(arms[match(arm, arms) %% 3 + 1], "mean"), 1)'))
+    run.agent(target)
+    run.step("execute-programs", "execute_programs.py")
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["needsFix"] is True and reconciled["unmatched"] == 3, reconciled
+    assert "row 'Mean (SD)', column 2: shows " in reconciled["problems"][0] and "ARD row 1 (" in reconciled["problems"][0], reconciled
+
+
+def test_cell_checks(work: Path) -> None:
+    sys.path[:0] = [str(ARTIFACTS / "scripts"), str(SHARED)]
+    from tfllib import reconcile_output
+
+    ard = [{"variable": "AGE", "stat_name": "mean", "stat": 73.64}, {"variable": "AGE", "stat_name": "mean", "stat": 73.74},
+           {"variable": "AE", "stat_name": "p", "stat": 0.29411}, {"variable": "AE", "stat_name": "p.value", "stat": 0.0004},
+           {"variable": "AE", "stat_name": "label", "stat": "n (%)"}, {"variable": "AE", "stat_name": "diff", "stat": "-1.5"},
+           {"variable": "AE", "stat_name": "diff", "stat": [-2]}, {"variable": "AE", "stat_name": "n", "stat": 1}]
+    (work / "cells.json").write_text(json.dumps(ard))
+
+    def problems(cells: str) -> list[str]:
+        (work / "cells.html").write_text(f"<table><tr><th></th><th>A</th></tr><tr><td>label</td>{cells}</tr></table>")
+        return [item["problem"] for item in reconcile_output("T-1", work / "cells.html", work / "cells.json")["unmatched"]]
+
+    assert problems("<td data-ard='0'>73.6</td><td data-ard='2,3'>29.4 &lt;0.001</td><td>NE</td>") == []
+    assert problems("<td data-ard='0'>73.7</td>") == ["shows 73.7, but ARD row 0 (variable=AGE, stat_name=mean) is 73.64"], \
+        "an off-by-one digit must fail even though ARD row 1 rounds to it"
+    assert problems("<td>73.6</td>") == ["shows '73.6' without data-ard (the 0-based ARD row of each number)"]
+    assert problems("<td data-ard='0'>73.6 (29.4)</td>") == ["shows '73.6 (29.4)': 2 number(s) but data-ard='0' names 1 ARD row(s)"]
+    assert problems("<td data-ard='9'>1</td>") == ["data-ard index 9 is outside the ARD (rows 0-7)"]
+    assert problems("<td data-ard='a'>1</td>") == ["data-ard='a' is not a comma-separated list of 0-based ARD row indices"]
+    assert problems("<td data-ard='4'>1</td>") == ["shows 1, but ARD row 4 (variable=AE, stat_name=label) has no single numeric stat"]
+    assert problems("<td data-ard='2'>&lt;0.001</td>") == ["shows <0.001, but ARD row 2 (variable=AE, stat_name=p) is 0.29411"]
+    assert problems("<td data-ard='2'>&gt;0.999</td>") == ["shows >0.999, but ARD row 2 (variable=AE, stat_name=p) is 0.29411"], \
+        "a bound must not pass through the x100 reading"
+    assert problems("<td data-ard='3'>p&lt;0.001</td><td data-ard='2,5,6'>29.41% -1.5 −2</td>") == []
+    assert problems("<td data-ard='7'>100</td>") == ["shows 100, but ARD row 7 (variable=AE, stat_name=n) is 1"], \
+        "a count of 1 is not 100 unless the cell says %"
+    assert problems("<td data-ard='7'>100.0%</td>") == []
+    assert problems("<td data-ard='²'>1</td>") == ["data-ard='²' is not a comma-separated list of 0-based ARD row indices"]
+    (work / "listing.html").write_text("<table><tr><td>01-701-1015</td><td>2014-01-02</td><td data-ard='0'>73.7</td></tr></table>")
+    listed = reconcile_output("L-1", work / "listing.html", work / "cells.json", listing=True)["unmatched"]
+    assert [item["problem"] for item in listed] == ["shows 73.7, but ARD row 0 (variable=AGE, stat_name=mean) is 73.64"], listed
+
+    from reconcile import linked_display
+    linked = linked_display("<html><HEAD></HEAD><table><tr><td>a</td><td data-ard=4>x</td></tr></table></html>",
+                            [*ard[:4], {"variable": "AE", "stat_name": "label", "stat": "<\"n\">"}])
+    assert "<td data-ard=4 title=\"ARD #4: variable=AE, stat_name=label, stat=&lt;&quot;n&quot;&gt;\">" in linked, linked
+    assert "<style>[data-ard]:hover" in linked.split("</HEAD>")[0], linked
 
 
 def test_upload_review_and_upstream(work: Path) -> None:
@@ -195,7 +255,7 @@ def test_upload_review_and_upstream(work: Path) -> None:
 def main() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        for test in (test_generated, test_failures, test_upload_review_and_upstream):
+        for test in (test_generated, test_failures, test_wrong_row, test_upload_review_and_upstream, test_cell_checks):
             test(work)
             print(f"ok  {test.__name__}")
 

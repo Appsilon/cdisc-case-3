@@ -109,7 +109,7 @@
       "id": "reconcile",
       "name": "Reconcile displays with the ARD",
       "type": "creation",
-      "description": "Deterministic. Every number in a table body must equal an ARD statistic of that output rounded half away from zero at the shown precision; anything else goes back to the agent. On pass builds tlf-viewer.html: each display with its ARD, program and trace to the ADaM derivation lines.",
+      "description": "Deterministic. Every table body cell that shows numbers names their ARD rows (data-ard, 0-based) and each number must equal exactly that row's stat rounded half away from zero at the shown precision; anything else goes back to the agent. On pass builds tlf-viewer.html: each display with its ARD, program and trace to the ADaM derivation lines.",
       "executor": "script",
       "plugin": "script-container",
       "script": {

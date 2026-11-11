@@ -1,15 +1,17 @@
 """Reconcile every displayed number with the ARD, and build the TLF viewer.
 
-Deterministic. For each table and listing, every number in a body cell of the
-rendered HTML must equal an ARD statistic of that output rounded half away
-from zero at the shown precision (proportions may be shown x100). A number with
-no ARD source was computed or typed in the renderer - the failure the
-numbers-then-display discipline exists to prevent - and goes back to the agent
-while attempts remain.
+Deterministic. For each table and listing, every body cell that shows numbers
+names their ARD rows (data-ard="i,j", 0-based) and each number must equal its
+row's stat rounded half away from zero at the shown precision (proportions may
+be shown x100). Matching against exactly the named row - not any ARD value - is
+what makes the check bite on large ARDs, where a wrong number usually equals
+some other statistic. A number without its row was computed or typed in the
+renderer - the failure the numbers-then-display discipline exists to prevent -
+and goes back to the agent while attempts remain.
 
 On pass writes tlf-viewer.html: one self-contained page with, per output, the
-rendered display, its ARD, the program that made both, and the trace - ARS
-analysis, analysis set, record subset, methods, and each ADaM variable the
+rendered display (hovering a cell shows the ARD rows it was rendered from), its
+ARD, the program that made both, and the trace - ARS analysis, analysis set, record subset, methods, and each ADaM variable the
 program reads with the derivation program lines from the ADaM lineage.
 
 Result: { needsFix, retry, attempt, problems, checked, unmatched, summary }
@@ -20,6 +22,7 @@ from __future__ import annotations
 import base64
 import html
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -27,7 +30,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import OUTPUT_DIR, STEP_OUTPUTS_DIR, run_main, write_result  # noqa: E402
 from tfllib import (  # noqa: E402
-    INPUTS_DIR, LOOP, MAX_PROBLEMS_PER_OUTPUT, PROGRAMS_DIR, RUN_DIR, SELF_CHECK, planned_outputs, read_json, reconcile_output,
+    ARD_INDEX, INPUTS_DIR, LOOP, MAX_PROBLEMS_PER_OUTPUT, PROGRAMS_DIR, RUN_DIR, SELF_CHECK, describe_ard_row, planned_outputs, read_json,
+    reconcile_output,
 )
 
 STYLE = """
@@ -46,6 +50,9 @@ pre { background: var(--panel); padding: 8px; overflow-x: auto; font-size: 12px;
 @media (max-width: 700px) { body { display: block; } nav { display: none; } }
 """
 ARD_ROWS_SHOWN = 300
+CELL_REFS = re.compile(r"<t[dh]\b[^>]*?\sdata-ard\s*=\s*(?:(?P<quote>[\"'])(?P<quoted>[^\"']*)(?P=quote)|(?P<bare>[^\s>]+))", re.IGNORECASE)
+HEAD_END = re.compile(r"</head>", re.IGNORECASE)
+CELL_HOVER_STYLE = "<style>[data-ard]:hover{outline:2px solid #2f5fd0;cursor:help}</style>"
 
 
 def chips(values) -> str:
@@ -61,10 +68,21 @@ def lineage_index() -> dict[str, dict]:
 
 def ard_table(rows: list[dict]) -> str:
     columns = ["group1", "group1_level", "variable", "variable_level", "context", "stat_name", "stat"]
-    body = "".join("<tr>" + "".join(f"<td>{html.escape(str(row.get(column, '')))}</td>" for column in columns) + "</tr>"
-                   for row in rows[:ARD_ROWS_SHOWN])
+    body = "".join(f"<tr><td>{index}</td>" + "".join(f"<td>{html.escape(str(row.get(column, '')))}</td>" for column in columns) + "</tr>"
+                   for index, row in enumerate(rows[:ARD_ROWS_SHOWN]))
     more = f"<p class='meta'>{len(rows) - ARD_ROWS_SHOWN} more rows in the ARD file.</p>" if len(rows) > ARD_ROWS_SHOWN else ""
-    return f"<table class='ard'><tr>{''.join(f'<th>{column}</th>' for column in columns)}</tr>{body}</table>{more}"
+    return f"<table class='ard'><tr><th>#</th>{''.join(f'<th>{column}</th>' for column in columns)}</tr>{body}</table>{more}"
+
+
+def linked_display(display_html: str, rows: list[dict]) -> str:
+    """The display with a tooltip on every data-ard cell naming the ARD rows it was rendered from."""
+    def titled(match: re.Match) -> str:
+        lines = [f"ARD #{index}: {describe_ard_row(rows[int(index)])}, stat={rows[int(index)].get('stat')}"
+                 for index in (reference.strip() for reference in (match.group("quoted") or match.group("bare") or "").split(","))
+                 if ARD_INDEX.fullmatch(index) is not None and int(index) < len(rows)]
+        return match.group(0) + f' title="{html.escape(chr(10).join(lines))}"'
+    linked = CELL_REFS.sub(titled, display_html)
+    return HEAD_END.sub(lambda end: CELL_HOVER_STYLE + end.group(0), linked, count=1) if HEAD_END.search(linked) else linked + CELL_HOVER_STYLE
 
 
 def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, folder: Path, check: dict) -> str:
@@ -72,8 +90,10 @@ def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, fol
     display = ""
     if png_path.is_file():
         display += f"<img alt='{html.escape(final_id)}' src='data:image/png;base64,{base64.b64encode(png_path.read_bytes()).decode()}'>"
+    ard_rows = read_json(folder / "ard" / f"{final_id}.json")
     if html_path.is_file():
-        display += f"<iframe sandbox title='{html.escape(final_id)}' srcdoc=\"{html.escape(html_path.read_text(encoding='utf-8', errors='replace'))}\"></iframe>"
+        linked = linked_display(html_path.read_text(encoding="utf-8", errors="replace"), ard_rows)
+        display += f"<iframe sandbox title='{html.escape(final_id)}' srcdoc=\"{html.escape(linked)}\"></iframe>"
     trace_rows = []
     for variable in tag.get("uses") or []:
         entry = lineage.get(variable)
@@ -83,7 +103,6 @@ def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, fol
     methods = [method.get("type") or method.get("id") for method in spec.get("methods") or [] if isinstance(method, dict)]
     program = PROGRAMS_DIR / f"{final_id}.R"
     code = program.read_text(encoding="utf-8") if program.is_file() else ""
-    ard_rows = read_json(folder / "ard" / f"{final_id}.json")
     checked = f"{check['checked']} displayed numbers reconciled with the ARD" if check.get("skipped") is None else check["skipped"]
     return f"""<section id="{html.escape(final_id)}"><h2>{html.escape(final_id)} {html.escape(str(meta.get('title') or ''))}</h2>
 <p class="meta">{html.escape(checked)} · {len(ard_rows)} ARD rows</p>
@@ -106,7 +125,7 @@ def viewer(outputs: dict, tags: dict, folder: Path, checks: dict) -> str:
     numbers = sum(item["checked"] for item in checks.values())
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>TLF viewer</title><style>{STYLE}</style></head><body>
 <nav>{nav}</nav><main><h1>Tables, listings and figures</h1>
-<p class="meta">{len(ordered)} outputs · {numbers} displayed numbers, each traced to an ARD statistic · every ARD computed by the program shown, from ADaM traced to its derivation lines</p>
+<p class="meta">{len(ordered)} outputs · {numbers} displayed numbers, each matched to the ARD row its cell names (hover a cell) · every ARD computed by the program shown, from ADaM traced to its derivation lines</p>
 {body}</main></body></html>"""
 
 
@@ -117,11 +136,12 @@ def main() -> None:
         path.stem: {"id": path.stem} for path in (folder / "ard").glob("*.json")}
     checks, problems = {}, []
     for final_id in sorted(tags):
-        check = reconcile_output(final_id, folder / "tfl" / f"{final_id}.html", folder / "ard" / f"{final_id}.json")
+        listing = str(outputs.get(final_id, {}).get("type") or "").lower().startswith("listing")
+        check = reconcile_output(final_id, folder / "tfl" / f"{final_id}.html", folder / "ard" / f"{final_id}.json", listing)
         checks[final_id] = check
         for item in check["unmatched"][:MAX_PROBLEMS_PER_OUTPUT]:
-            problems.append(f"{final_id}: shows {item['value']} ({item['where']}) but no ARD statistic rounds to it - "
-                            "compute it into the ARD and render from there")
+            problems.append(f"{final_id}: {item['where']}: {item['problem']} - compute it into the ARD, render from there "
+                            "and name its row in data-ard")
         if len(check["unmatched"]) > MAX_PROBLEMS_PER_OUTPUT:
             problems.append(f"{final_id}: {len(check['unmatched']) - MAX_PROBLEMS_PER_OUTPUT} more unmatched value(s)")
 
@@ -132,8 +152,8 @@ def main() -> None:
         (OUTPUT_DIR / "reconciliation.json").write_text(json.dumps(checks, indent=2), encoding="utf-8")
         if not problems:
             (OUTPUT_DIR / "tlf-viewer.html").write_text(viewer(outputs, tags, folder, checks), encoding="utf-8")
-    summary = (f"ARD reconciliation FAILED (attempt {routing['attempt']}): {unmatched} of {checked} displayed number(s) have no ARD source."
-               if problems else f"ARD reconciliation passed: {checked} displayed number(s) in {len(checks)} output(s) all trace to an ARD statistic.")
+    summary = (f"ARD reconciliation FAILED (attempt {routing['attempt']}): {unmatched} problem(s) in {checked} displayed number(s) - each must match the ARD row its cell names."
+               if problems else f"ARD reconciliation passed: {checked} displayed number(s) in {len(checks)} output(s) each match the ARD row their cell names.")
     write_result({**routing, "checked": checked, "unmatched": unmatched, "summary": summary})
 
 

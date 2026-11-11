@@ -1,6 +1,6 @@
 ---
 name: tlf-generator
-description: "Generate the actual Tables, Listings, and Figures (TLFs) from an ARS-aligned analysis spec + ADaM data, ARD-first: compute every statistic into Analysis Results Data (ARD) with {cards}/{cardx}/emmeans, then render the ARD to the target display shape with {gtsummary} (tables) and {ggsurvfit} (Kaplan-Meier figures), applying SAS rounding at display time. Use this skill when the user has an analysis-spec.json (from tlf-analysis-spec) plus ADaM datasets and wants to produce the numbers and the displays. Also trigger on: 'generate TLFs/tables/figures', 'produce ARD', 'analysis results data', 'cards/cardx tables', 'gtsummary tables from ADaM', 'ANCOVA LS-means table', 'Kaplan-Meier figure', 'ADaM to tables', or 'compute the numbers for the tables'. This is Stage-3 of the Protocol->TLF pipeline and REPLACES/UPGRADES the older adam-to-tlg skill with an ARD-native numbers-then-format approach; prefer this skill over adam-to-tlg when an analysis spec exists."
+description: "Generate the actual Tables, Listings, and Figures (TLFs) from an ARS-aligned analysis spec + ADaM data, ARD-first: compute every statistic into Analysis Results Data (ARD) with {cards}/{cardx}/emmeans, then render the ARD to the target display shape as HTML tables whose cells name their ARD rows and {ggsurvfit} (Kaplan-Meier figures), applying SAS rounding at display time. Use this skill when the user has an analysis-spec.json (from tlf-analysis-spec) plus ADaM datasets and wants to produce the numbers and the displays. Also trigger on: 'generate TLFs/tables/figures', 'produce ARD', 'analysis results data', 'cards/cardx tables', 'ANCOVA LS-means table', 'Kaplan-Meier figure', 'ADaM to tables', or 'compute the numbers for the tables'. This is Stage-3 of the Protocol->TLF pipeline and REPLACES/UPGRADES the older adam-to-tlg skill with an ARD-native numbers-then-format approach; prefer this skill over adam-to-tlg when an analysis spec exists."
 ---
 
 # TLF Generator
@@ -64,15 +64,34 @@ adsl <- haven::read_xpt(file.path(Sys.getenv("ADAM_DIR"), "adsl.xpt"))
 ...                                            # Phase A: numbers -> ard (long, one row per statistic)
 jsonlite::write_json(ard, file.path(Sys.getenv("ARD_DIR"), "T-14-3.01.json"), auto_unbox = TRUE, digits = NA)
 ...                                            # Phase B: display rendered FROM ard only
-gt::gtsave(table, file.path(Sys.getenv("TFL_DIR"), "T-14-3.01.html"))   # or writeLines(<html table>)
+writeLines(html, file.path(Sys.getenv("TFL_DIR"), "T-14-3.01.html"))   # hand-built <table>, cells carry data-ard
 ```
 
 - The ARD is a JSON array; every row has `variable`, `stat_name`, `stat` (+ `group1`, `group1_level`,
   `variable_level`, `context` where they apply). Write numbers at full precision (`digits = NA`).
-- Tables and listings: an HTML `<table>`; the first cell of each row is its label. **Every other
-  number in the table body must be an ARD statistic rounded half away from zero** (percentages may
-  be the ARD proportion × 100) — the reconcile step rejects anything else, so put N, n, %, CIs and
-  p-values in the ARD first. Headers (`<th>`-only rows) are not checked.
+- Tables and listings: an HTML `<table>` you build yourself (`gt`/`gtsummary` cannot set cell
+  attributes); the first cell of each row is its label. **Every other cell that shows numbers names
+  their ARD rows**: `<td data-ard="12,13">73.6 (9.94)</td>` — 0-based indices into the ARD array, one
+  per number in the cell, in order. Each number must be exactly that row's `stat` rounded half away
+  from zero at the shown decimals (a proportion may be shown × 100 — write `%` after it; `<0.001`
+  must bound it). Listings show ADaM records: their cells need no `data-ard`. The
+  reconcile step rejects a missing, miscounted or wrong index — matching some other ARD value does
+  not count — so put N, n, %, CIs and p-values in the ARD first. Headers (`<th>`-only rows) are not
+  checked. Look the index up from the ARD data frame you wrote, never count by hand:
+
+  ```r
+  ard_row <- function(ard, ...) {                 # 0-based row of the one ARD row matching column = value
+    wanted <- list(...)
+    index <- which(Reduce(`&`, Map(function(column, value) ard[[column]] == value, names(wanted), wanted)))
+    stopifnot(length(index) == 1)
+    index - 1
+  }
+  td <- function(text, rows) paste0("<td data-ard='", paste(rows, collapse = ","), "'>", text, "</td>")
+  td(paste0(fmt(mean, 1), " (", fmt(sd, 2), ")"), c(ard_row(ard, group1_level = arm, stat_name = "mean"),
+                                                    ard_row(ard, group1_level = arm, stat_name = "sd")))
+  ```
+
+  Write the ARD from that same data frame without reordering rows after the indices are taken.
 - Figures: `<final_id>.png` (`ggplot2::ggsave`, 150-300 dpi); the curve's numbers still go to the ARD.
 - `uses=` lists every ADaM `DATASET.VARIABLE` the program reads; it is the trace from each output to
   the ADaM derivation lines in the viewer.
@@ -172,14 +191,13 @@ Render the persisted ARD to the target row/column shape defined by the **analysi
 the method `display` block become the rows — following standard CSR table conventions. If a mock TLG
 shell was provided for the TLF, match its exact layout (row labels and footnote markers kept verbatim).
 
-- **Tables:** `gtsummary` (ARD-backed) for the standard shape, or emit markdown directly for
-  exact-match control (as the spike does). Either way, pull values from the ARD and apply `fmt()`
+- **Tables:** build the HTML `<table>` directly from the ARD (each numeric cell with its `data-ard`
+  rows — see the program contract above). Pull values from the ARD and apply `fmt()`
   (SAS rounding) at each statistic's **display precision** from the method's `display` block
   (e.g. mean to 1 dp, SD to 2 dp, median to 1 dp, range as integers, p-values to 3 dp).
 - **Column order and reference** come from `groupingFactor.levels`; **N in headers** from ADSL.
 - **Figures (KM):** `ggsurvfit` — see below.
-- `tfrmt` is the fallback if a specific mock shell must be pixel-matched; `rtables`/`rlistings` for
-  awkward nested safety tables/listings. Numbers matter more than pixel fidelity on the first build.
+- Numbers and their `data-ard` matter more than pixel fidelity on the first build.
 
 ---
 

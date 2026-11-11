@@ -107,7 +107,7 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "ard-tfl-generation",
-          "definitionVersion": 1,
+          "definitionVersion": 3,
           "payload": {
             "package": "${steps.derive-adam.output.package}"
           },

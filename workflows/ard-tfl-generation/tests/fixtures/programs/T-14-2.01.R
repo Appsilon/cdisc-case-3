@@ -9,9 +9,11 @@ ard <- do.call(rbind, lapply(arms, function(arm) {
 }))
 write_ard(ard, "T-14-2.01")
 cell <- function(arm, stat) ard$stat[ard$group1_level == arm & ard$stat_name == stat]
+row <- function(arm, stat) ard_row(ard, group1_level = arm, stat_name = stat)
 rows <- c(
-  paste0("<tr><td>n</td>", paste0("<td>", sapply(arms, function(arm) fmt(cell(arm, "N"), 0)), "</td>", collapse = ""), "</tr>"),
-  paste0("<tr><td>Mean (SD)</td>", paste0("<td>", sapply(arms, function(arm) paste0(fmt(cell(arm, "mean"), 1), " (", fmt(cell(arm, "sd"), 2), ")")), "</td>", collapse = ""), "</tr>")
+  paste0("<tr><td>n</td>", paste0(sapply(arms, function(arm) td(fmt(cell(arm, "N"), 0), row(arm, "N"))), collapse = ""), "</tr>"),
+  paste0("<tr><td>Mean (SD)</td>", paste0(sapply(arms, function(arm) td(paste0(fmt(cell(arm, "mean"), 1), " (", fmt(cell(arm, "sd"), 2), ")"),
+                                                                         c(row(arm, "mean"), row(arm, "sd")))), collapse = ""), "</tr>")
 )
 writeLines(c("<table>", paste0("<tr><th>Age (years)</th>", paste0("<th>", arms, "</th>", collapse = ""), "</tr>"), rows, "</table>"),
            file.path(Sys.getenv("TFL_DIR"), "T-14-2.01.html"))
