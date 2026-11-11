@@ -1,0 +1,594 @@
+{
+  "study_id": "CDISCPILOT01",
+  "study_name": "CDISC PILOT - LZZT",
+  "title": "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's",
+  "phase": "Phase II",
+  "usdm_version": "4.0.0",
+  "source_file": "inputs/usdm.json",
+  "objectives": [
+    {
+      "id": "Objective_1",
+      "name": "OBJ1",
+      "level": "Primary",
+      "description": "Main objective",
+      "text": "To determine if there is a statistically significant relationship (overall Type 1 erroralpha=0.05) between the change in both the ADAS-Cog (11) and CIBIC+ scores, and drug dose (0, 50 cm2 [54 mg], and 75 cm2 [81 mg]).",
+      "endpoint_ids": [
+        "Endpoint_1",
+        "Endpoint_2"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_2",
+      "name": "OBJ2",
+      "level": "Primary",
+      "description": "Safety",
+      "text": "To document the safety profile of the xanomeline TTS.",
+      "endpoint_ids": [
+        "Endpoint_3",
+        "Endpoint_4",
+        "Endpoint_5"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_3",
+      "name": "OBJ3",
+      "level": "Secondary",
+      "description": "Behaviour",
+      "text": "To assess the dose-dependent improvement in behavior. Improved scores on the Revised Neuropsychiatric Inventory (NPI-X) will indicate improvement in these areas.",
+      "endpoint_ids": [
+        "Endpoint_6",
+        "Endpoint_7",
+        "Endpoint_8"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_4",
+      "name": "OBJ4",
+      "level": "Secondary",
+      "description": "",
+      "text": "To assess the dose-dependent improvements in activities of daily living. Improved scores on the Disability Assessment for Dementia (DAD) will indicate improvement in these areas (see Attachment LZZT.5).",
+      "endpoint_ids": [
+        "Endpoint_9"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_5",
+      "name": "OBJ5",
+      "level": "Secondary",
+      "description": "",
+      "text": "To assess the dose-dependent improvements in an extended assessment of cognition that integrates attention/concentration tasks. The Alzheimer's Disease Assessment Scale-14 item Cognitive Subscale, hereafter referred to as ADAS-Cog (14), will be used for this assessment (see Attachment LZZT.2).",
+      "endpoint_ids": [
+        "Endpoint_10"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_6",
+      "name": "OBJ6",
+      "level": "Secondary",
+      "description": "",
+      "text": "To assess the treatment response as a function of Apo E genotype.",
+      "endpoint_ids": [
+        "Endpoint_11"
+      ],
+      "source": "USDM"
+    },
+    {
+      "id": "Objective_TS1",
+      "name": "OBJ-TS1",
+      "level": "Primary",
+      "source": "SDTM TS",
+      "description": "Efficacy — depression (delivered-data objective)",
+      "text": "To document the efficacy profile of Zanomaline. To assess the dose-dependent improvement in subject depression. Improved scores on the Patient Health Questionnaire (PHQ-9) and the Hamilton Depression Rating Scale (HAMD 17) will indicate improvements.",
+      "endpoint_ids": [
+        "Endpoint_TS1",
+        "Endpoint_TS2"
+      ]
+    },
+    {
+      "id": "Objective_TS2",
+      "name": "OBJ-TS2",
+      "level": "Secondary",
+      "source": "SDTM TS",
+      "description": "Efficacy — life satisfaction (delivered-data objective)",
+      "text": "To assess the dose-dependent improvements in satisfaction with subjects' lives as a whole. Improved scores on the Satisfaction With Life Survey (SWLS) will indicate improvements.",
+      "endpoint_ids": [
+        "Endpoint_TS3"
+      ]
+    },
+    {
+      "id": "Objective_TS3",
+      "name": "OBJ-TS3",
+      "level": "Secondary",
+      "source": "SDTM TS",
+      "description": "Efficacy — memory and learning (delivered-data objective)",
+      "text": "To assess the dose-dependent improvements in subject memory and learning. Improved scores on the Auditory Verbal Learning Test (AVLT-REY) will indicate improvements.",
+      "endpoint_ids": [
+        "Endpoint_TS4"
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "Endpoint_1",
+      "name": "END1",
+      "objective_id": "Objective_1",
+      "level": "Primary",
+      "text": "Alzheimer's Disease Assessment Scale - Cognitive Subscale, total of 11 items [ADAS-Cog (11)] at Week 24",
+      "parsed": {
+        "measure": "ADAS-Cog (11)",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-cognition"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_2",
+      "name": "END2",
+      "objective_id": "Objective_1",
+      "level": "Primary",
+      "text": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Week 24",
+      "parsed": {
+        "measure": "CIBIC+",
+        "measure_type": "global-impression",
+        "timepoints": [
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-global"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_3",
+      "name": "END3",
+      "objective_id": "Objective_2",
+      "level": "Primary",
+      "text": "Adverse events",
+      "parsed": {
+        "measure": "Adverse events",
+        "measure_type": "event",
+        "timepoints": [],
+        "domain_hint": "safety-ae"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_4",
+      "name": "END4",
+      "objective_id": "Objective_2",
+      "level": "Primary",
+      "text": "Vital signs (weight, standing and supine blood pressure, heart rate)",
+      "parsed": {
+        "measure": "Vital signs",
+        "measure_type": "continuous",
+        "timepoints": [],
+        "domain_hint": "safety-vs"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_5",
+      "name": "END5",
+      "objective_id": "Objective_2",
+      "level": "Primary",
+      "text": "Laboratory evaluations (Change from Baseline)",
+      "parsed": {
+        "measure": "Laboratory evaluations",
+        "measure_type": "continuous",
+        "timepoints": [],
+        "domain_hint": "safety-lab"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_6",
+      "name": "END6",
+      "objective_id": "Objective_3",
+      "level": "Secondary",
+      "text": "Alzheimer's Disease Assessment Scale - Cognitive Subscale, total of 11 items [ADAS-Cog (11)] at Weeks 8 and 16",
+      "parsed": {
+        "measure": "ADAS-Cog (11)",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 8",
+          "Week 16"
+        ],
+        "domain_hint": "efficacy-cognition"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_7",
+      "name": "END7",
+      "objective_id": "Objective_3",
+      "level": "Secondary",
+      "text": "Video-referenced Clinician’s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
+      "parsed": {
+        "measure": "CIBIC+",
+        "measure_type": "global-impression",
+        "timepoints": [
+          "Week 8",
+          "Week 16"
+        ],
+        "domain_hint": "efficacy-global"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_8",
+      "name": "END8",
+      "objective_id": "Objective_3",
+      "level": "Secondary",
+      "text": "Mean Revised Neuropsychiatric Inventory (NPI-X) from Week 4 to Week 24",
+      "parsed": {
+        "measure": "NPI-X",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 4",
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-behavior"
+      },
+      "resolved": true,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_9",
+      "name": "END9",
+      "objective_id": "Objective_4",
+      "level": "Secondary",
+      "text": "*** To be determined from protocol ***",
+      "parsed": {
+        "measure": null,
+        "measure_type": null,
+        "timepoints": [],
+        "domain_hint": null
+      },
+      "resolved": false,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_10",
+      "name": "END10",
+      "objective_id": "Objective_5",
+      "level": "Secondary",
+      "text": "*** To be determined from protocol ***",
+      "parsed": {
+        "measure": null,
+        "measure_type": null,
+        "timepoints": [],
+        "domain_hint": null
+      },
+      "resolved": false,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_11",
+      "name": "END11",
+      "objective_id": "Objective_6",
+      "level": "Secondary",
+      "text": "*** To be determined from protocol ***",
+      "parsed": {
+        "measure": null,
+        "measure_type": null,
+        "timepoints": [],
+        "domain_hint": null
+      },
+      "resolved": false,
+      "source": "USDM"
+    },
+    {
+      "id": "Endpoint_TS1",
+      "name": "END-TS1",
+      "objective_id": "Objective_TS1",
+      "level": "Primary",
+      "source": "SDTM TS",
+      "text": "Change from Baseline to Week 24 in PHQ-9 Total Score",
+      "parsed": {
+        "measure": "PHQ-9 Total Score",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-depression"
+      },
+      "resolved": true
+    },
+    {
+      "id": "Endpoint_TS2",
+      "name": "END-TS2",
+      "objective_id": "Objective_TS1",
+      "level": "Primary",
+      "source": "SDTM TS",
+      "text": "HAMD 17 Total Score",
+      "parsed": {
+        "measure": "HAMD 17 Total Score",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Baseline"
+        ],
+        "domain_hint": "efficacy-depression"
+      },
+      "resolved": true
+    },
+    {
+      "id": "Endpoint_TS3",
+      "name": "END-TS3",
+      "objective_id": "Objective_TS2",
+      "level": "Secondary",
+      "source": "SDTM TS",
+      "text": "Change from Baseline to Week 24 in Satisfaction With Life Scale (SWLS) Total Score",
+      "parsed": {
+        "measure": "SWLS Total Score",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-pro"
+      },
+      "resolved": true
+    },
+    {
+      "id": "Endpoint_TS4",
+      "name": "END-TS4",
+      "objective_id": "Objective_TS3",
+      "level": "Secondary",
+      "source": "SDTM TS",
+      "text": "Change from Baseline to Week 24 in AVLT-REY List A Total Score",
+      "parsed": {
+        "measure": "AVLT-REY List A Total",
+        "measure_type": "continuous",
+        "timepoints": [
+          "Week 24"
+        ],
+        "domain_hint": "efficacy-cognition"
+      },
+      "resolved": true
+    }
+  ],
+  "estimands": [
+    {
+      "id": "Estimand_1",
+      "name": "EST1",
+      "population_summary": "Group mean changes from baseline in the primary efficacy parameters",
+      "analysis_population_id": "AnalysisPopulation_1",
+      "variable_of_interest_endpoint_id": "Endpoint_1",
+      "intercurrent_events": [
+        {
+          "name": "DISTRUPTION",
+          "text": "Temporary Treatment Interruption",
+          "strategy": "Treatment Policy"
+        }
+      ]
+    }
+  ],
+  "analysis_populations": [
+    {
+      "id": "AnalysisPopulation_1",
+      "name": "AP_1",
+      "text": "Patients with Mild to Moderate Alzheimer’s Disease.",
+      "role": "other"
+    }
+  ],
+  "treatment_arms": [
+    {
+      "id": "StudyArm_1",
+      "name": "Placebo",
+      "type": "Placebo",
+      "dose": null
+    },
+    {
+      "id": "StudyArm_2",
+      "name": "Xanomeline Low Dose",
+      "type": "Active",
+      "dose": "54 mg"
+    },
+    {
+      "id": "StudyArm_3",
+      "name": "Xanomeline High Dose",
+      "type": "Active",
+      "dose": "81 mg"
+    }
+  ],
+  "visit_schedule": [
+    {
+      "name": "Screening 1",
+      "study_day": null,
+      "epoch": "Screening"
+    },
+    {
+      "name": "Screening 2",
+      "study_day": null,
+      "epoch": "Screening"
+    },
+    {
+      "name": "Baseline",
+      "study_day": null,
+      "epoch": "Screening"
+    },
+    {
+      "name": "Week 2",
+      "study_day": null,
+      "epoch": "Treatment 1"
+    },
+    {
+      "name": "Week 4",
+      "study_day": null,
+      "epoch": "Treatment 1"
+    },
+    {
+      "name": "Week 6",
+      "study_day": null,
+      "epoch": "Treatment 1"
+    },
+    {
+      "name": "Week 8",
+      "study_day": null,
+      "epoch": "Treatment 2"
+    },
+    {
+      "name": "Week 12",
+      "study_day": null,
+      "epoch": "Treatment 2"
+    },
+    {
+      "name": "Week 16",
+      "study_day": null,
+      "epoch": "Treatment 3"
+    },
+    {
+      "name": "Week 20",
+      "study_day": null,
+      "epoch": "Treatment 3"
+    },
+    {
+      "name": "Week 24",
+      "study_day": null,
+      "epoch": "Treatment 3"
+    },
+    {
+      "name": "Week 26",
+      "study_day": null,
+      "epoch": "Follow-Up"
+    }
+  ],
+  "unresolved_endpoints": [
+    "Endpoint_9",
+    "Endpoint_10",
+    "Endpoint_11"
+  ],
+  "study_profile": {
+    "phase": "Phase II",
+    "design": "parallel",
+    "therapeutic_area": "CNS",
+    "indication": "Alzheimer's Disease",
+    "blinding": "double-blind",
+    "arm_count": 3,
+    "control_type": "placebo",
+    "multi_site": true,
+    "flags": {
+      "needs_pk": false,
+      "needs_pd": false,
+      "needs_immunogenicity": false,
+      "needs_oncology_response": false,
+      "needs_pro_hrqol": false,
+      "needs_tte_safety_figure": true,
+      "needs_subgroup_by_sex": true,
+      "needs_subgroup_by_region": false
+    }
+  },
+  "delivered_data_inventory": {
+    "sdtm_domains_present": [
+      "AE",
+      "CM",
+      "DD",
+      "DI",
+      "DM",
+      "DS",
+      "EC",
+      "EX",
+      "FA",
+      "FT",
+      "IE",
+      "LB",
+      "MH",
+      "OE",
+      "QS(QSPH,QSSL)",
+      "RELREC",
+      "RS",
+      "SE",
+      "SUPPDM",
+      "SUPPEC",
+      "SV",
+      "TA",
+      "TE",
+      "TI",
+      "TS",
+      "TV",
+      "VS"
+    ],
+    "sdtm_domains_absent_relevant": [
+      "DV"
+    ],
+    "n_subjects_dm": 18,
+    "n_randomized": 17,
+    "arms_in_data": {
+      "Placebo": 5,
+      "Zanomaline Low Dose (54 mg)": 5,
+      "Zanomaline High Dose (81 mg)": 7,
+      "(screen failure, blank ARM)": 1
+    },
+    "instruments_in_data": [
+      "PHQ-9 (QSPH, incl. Total Score)",
+      "SWLS (QSSL, 5 items, no total)",
+      "HAMD 17 (RS, incl. Total Score — BASELINE + ED only)",
+      "AVLT-REY (FT, incl. List A Total)"
+    ],
+    "instruments_required_by_usdm_but_absent": [
+      "ADAS-Cog (11)",
+      "ADAS-Cog (14)",
+      "CIBIC+",
+      "NPI-X",
+      "DAD",
+      "Apo E genotype"
+    ],
+    "visits_in_data": [
+      "SCREENING 1",
+      "SCREENING 2",
+      "BASELINE",
+      "WEEK 2",
+      "WEEK 4",
+      "WEEK 6",
+      "WEEK 8",
+      "WEEK 12",
+      "WEEK 16",
+      "WEEK 20",
+      "WEEK 24",
+      "WEEK 26",
+      "EARLY DISCONTINUATION RETRIEVAL",
+      "(unscheduled variants)"
+    ],
+    "deaths": 3,
+    "sites": [
+      "701",
+      "704",
+      "708",
+      "710",
+      "711",
+      "718"
+    ]
+  },
+  "normalizer_notes": [
+    "Single study version and single study design in the USDM; used versions[0] / studyDesigns[0].",
+    "study_id taken from the well-known dataset alias CDISCPILOT01 (matches SDTM STUDYID); sponsor identifier is H2Q-MC-LZZT, registry identifier NCT12345678.",
+    "phase decoded from studyDesigns[0].studyPhase.standardCode = C15601 'Phase II Trial' -> 'Phase II'.",
+    "Endpoint_9/10/11 carry placeholder text '*** To be determined from protocol ***' -> resolved:false, parsed fields null. Not dropped.",
+    "AnalysisPopulation_1 (AP_1) is the only declared analysis population and its name is opaque; role set to 'other'. Downstream analysis populations (ITT / Safety / Efficacy / Completers) are conventional, not USDM-declared.",
+    "Arm doses are not carried on SD.arms[]; 54 mg / 81 mg derived from the OBJ1 objective text.",
+    "visit_schedule study_day left null throughout - encounters carry no direct study-day; derivation from scheduleTimelines timings was not attempted.",
+    "studyDesigns[0].subTypes includes 'Pharmacokinetic Study', but no PK objective, endpoint, or PC/PP domain exists -> needs_pk kept false; recorded as a discrepancy.",
+    "needs_subgroup_by_sex=true set by convention (no SAP supplied); flagged as an assumption. NOTE: with 17 randomized subjects a sex subgroup analysis is statistically vacuous.",
+    "needs_tte_safety_figure=true: parenteral/topical delivery with a local application-site AE signal. The delivered SDTM confirms this with an FA domain of category 'INJECTION SITE REACTION'.",
+    "*** CRITICAL STUDY-vs-DATA CONFLICT *** The USDM describes xanomeline TTS (transdermal) with ADAS-Cog (11)/(14), CIBIC+, NPI-X and DAD as the efficacy instruments. The delivered SDTM in inputs/sdtm/ carries STUDYID='CDISCPILOT01' but is the CDISC SDTM-MSG 'Zanomaline' sample study: subcutaneous injection, 18 subjects, arms Placebo / Zanomaline Low (54 mg) / Zanomaline High (81 mg), and the instruments actually collected are PHQ-9, SWLS, HAMD 17 and AVLT-REY. NONE of the USDM efficacy instruments are present in the data. Safety domains (AE, LB, VS, CM, EX, DS, DM, MH, DD) DO align. Consequence: every USDM-derived efficacy candidate is feasibility-status 'blocked'; safety and regulatory-scaffolding candidates are 'planned'. A parallel, clearly-marked block of data-aligned efficacy candidates (PHQ-9 / SWLS / AVLT-REY / HAMD 17) is carried at status 'needs-clarification' so a human can redirect the run without re-planning.",
+    "Sponsor/registry mismatch supporting the above: SDTM TS TITLE = 'Safety and Efficacy of Zanomaline in Patients with Mild to Moderate Alzheimers Disease.', TS TRT = 'Zanomaline', TS ROUTE = 'SUBCUTANEOUS', TS REGID = 'NCT00000000'.",
+    "SDTM DV (protocol deviations) domain is absent -> a deviations listing is blocked, not clarifiable.",
+    "Delivered SDTM has 18 DM records (17 randomized, 1 screen failure). This will not clear a conventional analysis-set N-gate; downstream stages must treat all inferential statistics as illustrative.",
+    "*** B-1 RESOLUTION (human review 2026-07-29) *** Objective_TS1/TS2/TS3 and Endpoint_TS1..TS4 are NOT from the USDM. They are transcribed from the delivered SDTM TS parameters OBJPRIM and OUTMSPRI and added as first-class, source-tagged entries so the promoted data-aligned efficacy tables have real Objective->Endpoint->ADaM->TLF provenance instead of an overloaded regulatory_rule field. Every entry carries source:'SDTM TS'; all USDM-derived entries carry source:'USDM'. Filter on `source` to recover the pure USDM view.",
+    "SDTM TS also declares a safety objective ('To document the safety profile of Zanomaline.') with outcome measures for adverse events and laboratory abnormalities. These are NOT added as separate entries because they align with the USDM's OBJ2 / END3-END5, which the safety TLFs already trace to.",
+    "R-3 RESOLUTION (human review 2026-07-29): the HAMD 17 summary was recategorized from `efficacy` (14-3) to `demographics` (14-2). RS carries HAMD 17 only at BASELINE and EARLY DISCONTINUATION RETRIEVAL, so the display is a baseline characteristic, not a treatment-effect analysis. Endpoint_TS2 remains covered by it."
+  ]
+}

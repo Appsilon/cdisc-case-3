@@ -74,7 +74,7 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "cdisc-core-validation",
-          "definitionVersion": 1,
+          "definitionVersion": 2,
           "payload": {
             "package": "${steps.route.package}",
             "standard": "adamig",

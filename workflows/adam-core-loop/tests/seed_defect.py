@@ -1,10 +1,14 @@
 """Build a seeded-defect ADaM delivery for the adam-core-loop acceptance run.
 
 Takes the programs of a green adam-derivation run, plants one derivation bug
-that the program's own checks miss but CORE (MF-ADAM-002) catches - SAFFL null
-instead of "N" for non-dosed subjects - and runs the seeded programs through the
-real adam-derivation scripts (execute -> lineage -> define), so the delivery is
-exactly what the platform would have produced from that code.
+that the program's own checks miss but CORE (MF-ADAM-008) catches - ADQSPHQ
+ANL01FL "N" instead of null on the non-endpoint records, an in-place edit that
+keeps every line number and record count - and runs the seeded programs through
+the real adam-derivation scripts (execute -> lineage -> define), so the delivery
+is exactly what the platform would have produced from that code.
+
+The strings match the programs of staging run 8785039f (adam-derivation v1);
+programs from another run need their own CORRECT line.
 
   SDTM_DIR=... python3 tests/seed_defect.py <programs-dir> <adam-spec.json> <out-dir>
 
@@ -23,8 +27,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "adam-derivation" /
 
 from test_pipeline import FIXTURES, Run, entry, package_for, r_libraries, without_local  # noqa: E402,F401
 
-CORRECT = 'adsl <- adsl %>% mutate(SAFFL = if_else(!is.na(TRTSDT), "Y", "N"))'
-SEEDED = 'adsl <- adsl %>% mutate(SAFFL = if_else(!is.na(TRTSDT), "Y", NA_character_))'
+PROGRAM = "adqsphq.R"
+CORRECT = 'ANL01FL = if_else(ANL02FL == "Y" & AVISITN == endpoint_avisitn, "Y", NA_character_))'
+SEEDED = 'ANL01FL = if_else(ANL02FL == "Y" & AVISITN == endpoint_avisitn, "Y", "N"))'
 
 
 def main() -> None:
@@ -32,11 +37,11 @@ def main() -> None:
     os.environ["R_LIBS"] = r_libraries()
     seeded = Path(tempfile.mkdtemp()) / "programs"
     shutil.copytree(programs, seeded)
-    adsl = seeded / "adsl.R"
-    text = adsl.read_text(encoding="utf-8")
+    program = seeded / PROGRAM
+    text = program.read_text(encoding="utf-8")
     if text.count(CORRECT) != 1:
-        raise SystemExit(f"Expected the SAFFL line exactly once in {adsl}")
-    adsl.write_text(text.replace(CORRECT, SEEDED), encoding="utf-8")
+        raise SystemExit(f"Expected the line to seed exactly once in {program}")
+    program.write_text(text.replace(CORRECT, SEEDED), encoding="utf-8")
 
     with tempfile.TemporaryDirectory() as temporary:
         run = Run(Path(temporary) / "seed")
