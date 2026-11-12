@@ -75,7 +75,8 @@ same codelists. CORE checks each against its DDF codelist, so a wrong one is cau
   (`versionIdentifier` = the protocol version or amendment letter) and one
   `InterventionalStudyDesign`.
 - `organizations[0]` = the sponsor; `studyIdentifiers[0]` = the protocol id, `scopeId` → the
-  sponsor. A registry id (NCT…) only when printed in the protocol, scoped to a `Study Registry`
+  sponsor. `roles` holds exactly one sponsor `StudyRole` (code C70793, `appliesToIds` → the
+  StudyVersion, `organizationIds` → the sponsor), as in the skeleton. A registry id (NCT…) only when printed in the protocol, scoped to a `Study Registry`
   organization.
 - `titles`: the official title from the title page; a brief title or acronym only if printed.
 
@@ -161,6 +162,8 @@ the main timeline — the gate checks both.
 ## Ids and references
 
 - `<Class>_<n>` ids, unique across the whole document.
+- `name` unique within a class (CORE checks it): two arms, encounters or activities never share a
+  name — qualify them ("Vital signs (screening)", "V2") rather than repeating one.
 - References are ids: `scopeId`, `armId`, `epochId`, `elementIds`, `criterionItemId`,
   `criterionIds`, `analysisPopulationId`, `interventionIds`, `variableOfInterestId`,
   `encounterId`, `activityIds`, `entryId`, `defaultConditionId`, `timelineExitId`,

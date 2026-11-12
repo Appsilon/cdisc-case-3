@@ -34,6 +34,32 @@
       "instanceType": "Organization"
      }
     ],
+    "roles": [
+     {
+      "id": "StudyRole_1",
+      "name": "Sponsor",
+      "label": null,
+      "description": null,
+      "code": {
+       "id": "Code_22",
+       "code": "C70793",
+       "codeSystem": "http://www.cdisc.org",
+       "codeSystemVersion": "2024-09-27",
+       "decode": "Sponsor",
+       "instanceType": "Code"
+      },
+      "appliesToIds": [
+       "StudyVersion_1"
+      ],
+      "assignedPersons": [],
+      "organizationIds": [
+       "Organization_1"
+      ],
+      "masking": null,
+      "notes": [],
+      "instanceType": "StudyRole"
+     }
+    ],
     "studyIdentifiers": [
      {
       "id": "StudyIdentifier_1",
