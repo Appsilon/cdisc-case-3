@@ -42,7 +42,7 @@
         "kind": "run-workflow",
         "config": {
           "definitionName": "protocol-digitization",
-          "definitionVersion": 2,
+          "definitionVersion": 3,
           "payload": {
             "package": "${steps.route-input.package}"
           },
@@ -166,12 +166,25 @@
       }
     },
     {
+      "id": "collect-deliverables",
+      "name": "Collect the deliverables to show",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Hands the files worth opening (TLF viewer, reconciliation, USDM / plan / spec review pages, CORE reports per standard, ADaM define.xml) out of the final study package on as downloaded files, so finish can show them in this run.",
+      "script": {
+        "command": "python3 /artifacts/scripts/collect_deliverables.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      }
+    },
+    {
       "id": "finish",
       "name": "Assemble the deliverables",
       "type": "creation",
       "executor": "script",
       "plugin": "script-container",
-      "description": "Deterministic. Lists the deliverables of every sub-workflow (TLF viewer, ARD, ADaM define and lineage, CORE reports and dispositions, plan and specs) with the run that produced each, in manifest.json.",
+      "description": "Deterministic. Shows the deliverables in this run - the TLF viewer (displays + ARD + programs + trace), reconciliation, the USDM, plan and spec review pages, the CORE reports and the ADaM define.xml, each sha256-verified - and lists every file of every sub-workflow with the run that produced it in manifest.json.",
       "script": {
         "command": "python3 /artifacts/scripts/finish.py",
         "image": "mediforce-built:5d4c205d6727",
@@ -316,8 +329,12 @@
     },
     {
       "from": "generate",
-      "to": "finish",
+      "to": "collect-deliverables",
       "when": "else"
+    },
+    {
+      "from": "collect-deliverables",
+      "to": "finish"
     },
     {
       "from": "finish",

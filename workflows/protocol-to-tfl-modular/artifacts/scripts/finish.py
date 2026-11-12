@@ -1,22 +1,26 @@
 """Assemble the deliverables of a protocol-to-TFL run into one manifest.
 
-Reads the study package the last sub-workflow returned and lists, by
-deliverable, every file with the sub-workflow run that produced it, plus the
-package history (which run of which sub-workflow ended how). Nothing is copied:
-every entry is a download URL into the run that made it.
+Follows collect-deliverables, which hands on the final study package and, as
+downloaded `files`, the deliverables worth opening (TLF viewer, reconciliation,
+review pages, CORE reports, ADaM define.xml). Each is sha256-verified and copied
+into this step's /output under its `showAs` name, so the master run shows them.
+manifest.json lists, by deliverable, every file in the package with the
+sub-workflow run that produced it (a download URL into that run), plus the
+package history (which run of which sub-workflow ended how).
 
-Result: { outcome: complete, summary, deliverables, history, package }
+Result: { outcome: complete, summary, shown, deliverables, history, package }
 """
 
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from mfpkg import OUTPUT_DIR, StepFailure, read_input, run_main, step_output, with_history, write_result  # noqa: E402
+from mfpkg import OUTPUT_DIR, StepFailure, read_input, run_main, verify_files, with_history, write_result  # noqa: E402
 
 WORKFLOW = "protocol-to-tfl-modular"
 DELIVERABLES = (
@@ -49,19 +53,29 @@ def deliverables(package: dict) -> list[dict]:
     return groups
 
 
+def show(files: list[dict]) -> list[str]:
+    shown = []
+    for entry in verify_files(files):
+        show_as = Path(entry.get("showAs") or entry["name"]).name
+        shutil.copyfile(entry["localPath"], OUTPUT_DIR / show_as)
+        shown.append(show_as)
+    return shown
+
+
 def main() -> None:
-    generated = step_output(read_input(), "generate").get("output") or {}
-    package = generated.get("package")
+    step_input = read_input()
+    package = step_input.get("package")
     if isinstance(package, dict) is False or not package.get("files"):
-        raise StepFailure("ard-tfl-generation returned no study package.")
+        raise StepFailure("collect-deliverables handed on no study package.")
+    shown = show(step_input.get("files") or [])
     groups = deliverables(package)
     history = package.get("history") or []
     manifest = {"study": package.get("study"), "deliverables": groups, "history": history}
     (OUTPUT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     counts = ", ".join(f"{len(group['files'])} {group['title'].split(' (')[0].lower()}" for group in groups[:3])
     write_result({
-        "outcome": "complete", "deliverables": groups, "history": history,
-        "summary": f"COMPLETE: {counts}; {len(history)} sub-workflow run(s) in the history. Open manifest.json; start with the TLF viewer.",
+        "outcome": "complete", "shown": shown, "deliverables": groups, "history": history,
+        "summary": f"COMPLETE: {counts}; {len(history)} sub-workflow run(s) in the history. Start with tlf-viewer.html; manifest.json lists every file.",
         "package": with_history(package, WORKFLOW, "complete"),
     })
 

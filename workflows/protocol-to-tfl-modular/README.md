@@ -11,7 +11,7 @@ staging `vedha` by the old monolithic v6.)
 route-input ─protocol, no usdm─► digitize (protocol-digitization) ─► route-input ─► plan
             ─usdm, or empty─► plan
 plan (tlf-planning) ─► validate-sdtm (cdisc-core-validation, sdtmig, onReject=reupload) ─► route-spec ─► specify (analysis-specification)
-   ─► derive-adam (adam-core-loop: adam-derivation ⇄ CORE adamig) ─► generate (ard-tfl-generation) ─► finish ─► done
+   ─► derive-adam (adam-core-loop: adam-derivation ⇄ CORE adamig) ─► generate (ard-tfl-generation) ─► collect-deliverables ─► finish ─► done
 generate: outcome upstream_change ─► route-spec ─► specify (with the reviewer's request) ─► derive-adam ─► generate   (≤ 2 rounds)
 route-spec: a third spec-change request ─► specs-change-requested
 each child: run failed ─► child-failed · ended without its result (failed / not accepted) ─► stopped
@@ -26,14 +26,15 @@ the ADaM, then regenerates the TLFs.
 | Step | Child (pinned version, staging `vedha`) | Hand-off |
 |---|---|---|
 | `route-input` | script | Package with a `usdm` → `plan`; with a `protocol` but no `usdm` → `digitize`, then back here with digitize's package → `plan`; empty → `plan` (uploads happen there). |
-| `digitize` | `protocol-digitization` v2 | `${steps.route-input.package}`; protocol PDF → USDM 4.0 with page citations, gated, CORE-validated (usdm 4-0), approved by the clinical scientist |
+| `digitize` | `protocol-digitization` v3 | `${steps.route-input.package}`; protocol PDF → USDM 4.0 with page citations, gated, CORE-validated (usdm 4-0), approved by the clinical scientist |
 | `plan` | `tlf-planning` v4 | `${steps.route-input.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
 | `validate-sdtm` | `cdisc-core-validation` v3 | `${steps.plan.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
 | `route-spec` | script | First pass: validate-sdtm's package, no request. After `upstream_change`: generate's package and its `request`; a third request → `specs-change-requested`. |
 | `specify` | `analysis-specification` v4 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
 | `derive-adam` | `adam-core-loop` v3 | `${steps.specify.output.package}`, `start=derive` |
 | `generate` | `ard-tfl-generation` v4 | `${steps.derive-adam.output.package}` |
-| `finish` | script | `manifest.json`: every deliverable with the run that produced it, and the package history |
+| `collect-deliverables` | script | Lifts the files worth opening out of generate's package into top-level `files` (the runtime downloads only those), each tagged `showAs`: `tlf-viewer.html`, `reconciliation.json`, `usdm-review.html`, `tlf-plan.html`, `specs.html`, `core-report-<usdm\|sdtmig\|adamig>.html`, `adam-define.xml` |
+| `finish` | script | Copies those files, sha256-verified, into its `/output` — the master run shows the TLF viewer and review pages directly; `manifest.json`: every file of the package with the run that produced it, and the package history |
 
 A run-workflow step's output is `{instanceId, definitionName, status, error,
 output}`, where `output` is the chosen child step's result; every child returns
