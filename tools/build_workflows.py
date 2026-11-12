@@ -6,8 +6,12 @@ artifacts read-only at /artifacts and builds the carried Dockerfile, so scripts
 version with the definition and no image or commit has to be pinned. Shared
 helpers in workflows/shared/ are copied into every workflow's scripts/.
 
-Usage: python3 tools/build_workflows.py [name ...]
-Then:  pnpm exec mediforce workflow register --file=dist/<name>.wd.json --namespace=<ns>
+Child versions are per namespace. `workflow.json` pins the staging `vedha` versions;
+`--pins pins/<instance>-<namespace>.json` (child name -> version) rewrites every
+run-workflow step's `definitionVersion` and writes to dist/<instance>-<namespace>/.
+
+Usage: python3 tools/build_workflows.py [--pins pins/prod-appsilon.json] [name ...]
+Then:  pnpm exec mediforce workflow register --file=dist/[<pins>/]<name>.wd.json --namespace=<ns>
 """
 
 from __future__ import annotations
@@ -53,8 +57,20 @@ def reference_problems(definition: dict) -> list[str]:
     return sorted(set(problems))
 
 
-def build(folder: Path) -> Path:
+def apply_pins(definition: dict, pins: dict[str, int]) -> None:
+    for step in definition["steps"]:
+        config = (step.get("action") or {}).get("config") or {}
+        if "definitionName" not in config:
+            continue
+        if config["definitionName"] not in pins:
+            raise SystemExit(f"{definition['name']}: step {step['id']} runs {config['definitionName']}, which the pins file does not pin")
+        config["definitionVersion"] = pins[config["definitionName"]]
+
+
+def build(folder: Path, pins: dict[str, int] | None, target_folder: Path) -> Path:
     definition = json.loads((folder / "workflow.json").read_text(encoding="utf-8"))
+    if pins is not None:
+        apply_pins(definition, pins)
     problems = reference_problems(definition)
     if problems:
         raise SystemExit(f"{folder.name}: bad step references: {problems}")
@@ -68,17 +84,24 @@ def build(folder: Path) -> Path:
     if oversized or total > SET_CAP:
         raise SystemExit(f"{folder.name}: artifacts over the cap (64 KiB/file, 256 KiB/set): {oversized}, total {total}")
     definition["artifacts"] = files
-    DIST.mkdir(exist_ok=True)
-    target = DIST / f"{definition['name']}.wd.json"
+    target_folder.mkdir(parents=True, exist_ok=True)
+    target = target_folder / f"{definition['name']}.wd.json"
     target.write_text(json.dumps(definition, indent=2), encoding="utf-8")
     print(f"{target.relative_to(ROOT)}: {len(definition['steps'])} steps, {len(files)} artifacts, {total / 1024:.1f} KiB")
     return target
 
 
 def main() -> None:
-    names = sys.argv[1:] or [path.name for path in sorted(WORKFLOWS.iterdir()) if (path / "workflow.json").is_file()]
+    arguments = sys.argv[1:]
+    pins, target_folder = None, DIST
+    if len(arguments) >= 2 and arguments[0] == "--pins":
+        pins_file = Path(arguments[1])
+        pins = json.loads(pins_file.read_text(encoding="utf-8"))
+        target_folder = DIST / pins_file.stem
+        arguments = arguments[2:]
+    names = arguments or [path.name for path in sorted(WORKFLOWS.iterdir()) if (path / "workflow.json").is_file()]
     for name in names:
-        build(WORKFLOWS / name)
+        build(WORKFLOWS / name, pins, target_folder)
 
 
 if __name__ == "__main__":
