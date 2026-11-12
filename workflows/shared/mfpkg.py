@@ -35,8 +35,11 @@ STEP_OUTPUTS_DIR = Path(os.environ.get("MEDIFORCE_STEP_OUTPUTS_DIR", "/workspace
 # dropped in one place instead of being trusted by the next phase. ADaMIG
 # dispositions survive a re-derivation (the CORE loop carries them across fix
 # rounds) but not a new ADaM spec: they judged findings on a different design.
+# USDM dispositions and issue index likewise survive a re-extraction but not a new protocol.
 DOWNSTREAM: dict[str, tuple[str, ...]] = {
-    "usdm": ("study-model", "tlf-plan", "tlf-plan-view", "coverage-report", "analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
+    "protocol": ("usdm", "core-dispositions-usdm", "core-issue-index-usdm"),
+    "usdm": ("usdm-citations", "usdm-view", "core-report-usdm",
+             "study-model", "tlf-plan", "tlf-plan-view", "coverage-report", "analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
     "tlf-plan": ("analysis-spec", "analysis-spec-view", "ars", "adam-spec"),
     "analysis-spec": ("ard", "tfl", "tfl-program", "tfl-log"),
     "ars": ("ard", "tfl", "tfl-program", "tfl-log"),

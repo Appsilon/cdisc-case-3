@@ -37,7 +37,8 @@ def run_finish(work: Path, step_input: dict) -> tuple[int, dict]:
 
 def main() -> None:
     files = [entry("tlf-viewer.html", "tfl", "gen"), entry("T-14-2.01.html", "tfl", "gen"), entry("T-14-2.01.json", "ard", "gen"),
-             entry("adsl.xpt", "adam", "derive"), entry("core-report.html", "core-report-adamig", "core"), entry("usdm.json", "usdm", "plan")]
+             entry("adsl.xpt", "adam", "derive"), entry("core-report.html", "core-report-adamig", "core"), entry("usdm.json", "usdm", "plan"),
+             entry("usdm-citations.json", "usdm-citations", "digitize")]
     package = {"study": {"id": "CDISCPILOT01"}, "files": files, "history": [{"workflow": "tlf-planning", "runId": "plan", "outcome": "planned"}]}
     with tempfile.TemporaryDirectory() as temporary:
         code, result = run_finish(Path(temporary) / "ok", {"steps": {"generate": {"status": "completed", "output": {"outcome": "generated", "package": package}}}})

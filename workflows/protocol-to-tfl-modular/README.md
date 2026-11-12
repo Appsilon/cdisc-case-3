@@ -1,12 +1,15 @@
 # protocol-to-tfl-modular
 
-The master: take a study from its USDM study definition and SDTM to validated
-ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order.
+The master: take a study from its protocol (or its USDM study definition) and
+SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned
+sub-workflows in order.
 Each child is its own run with its own reviewers and runs standalone too, so a
 sponsor can adopt any single piece. (The name `protocol-to-tfl` is taken on
 staging `vedha` by the old monolithic v6.)
 
 ```
+route-input ─protocol, no usdm─► digitize (protocol-digitization) ─► route-input ─► plan
+            ─usdm, or empty─► plan
 plan (tlf-planning) ─► validate-sdtm (cdisc-core-validation, sdtmig, onReject=reupload) ─► route-spec ─► specify (analysis-specification)
    ─► derive-adam (adam-core-loop: adam-derivation ⇄ CORE adamig) ─► generate (ard-tfl-generation) ─► finish ─► done
 generate: outcome upstream_change ─► route-spec ─► specify (with the reviewer's request) ─► derive-adam ─► generate   (≤ 2 rounds)
@@ -22,7 +25,9 @@ the ADaM, then regenerates the TLFs.
 
 | Step | Child (pinned version, staging `vedha`) | Hand-off |
 |---|---|---|
-| `plan` | `tlf-planning` v4 | `${triggerPayload.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
+| `route-input` | script | Package with a `usdm` → `plan`; with a `protocol` but no `usdm` → `digitize`, then back here with digitize's package → `plan`; empty → `plan` (uploads happen there). |
+| `digitize` | `protocol-digitization` v2 | `${steps.route-input.package}`; protocol PDF → USDM 4.0 with page citations, gated, CORE-validated (usdm 4-0), approved by the clinical scientist |
+| `plan` | `tlf-planning` v4 | `${steps.route-input.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
 | `validate-sdtm` | `cdisc-core-validation` v3 | `${steps.plan.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
 | `route-spec` | script | First pass: validate-sdtm's package, no request. After `upstream_change`: generate's package and its `request`; a third request → `specs-change-requested`. |
 | `specify` | `analysis-specification` v4 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
@@ -37,11 +42,12 @@ in `workflow.json` when a child is re-registered.
 
 ## Not yet
 
-- Protocol PDF → USDM (`protocol-digitization`); today the USDM is required.
+- Parallel branches; QC double programming.
 
 ## Test
 
 ```bash
 python3 tests/test_finish.py
+python3 tests/test_route_input.py
 python3 tests/test_route_spec.py
 ```

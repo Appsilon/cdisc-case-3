@@ -167,7 +167,7 @@ and fall back to `.decode`.
 |---|---|---|
 | C94496 | Primary Endpoint | `Primary` |
 | C139173 | Secondary Endpoint | `Secondary` |
-| C188874 | Exploratory Endpoint | `Exploratory` |
+| C170559 | Exploratory Endpoint | `Exploratory` |
 
 (If a code is unrecognized, decode from the `.decode` string — strip the trailing
 " Objective"/" Endpoint" — and note the unmapped code.)

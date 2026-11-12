@@ -1,7 +1,7 @@
 {
   "name": "protocol-to-tfl-modular",
   "title": "Protocol to TLFs - modular, team-owned sub-workflows",
-  "description": "Take a study from its USDM study definition and SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order, each as its own run with its own reviewers: tlf-planning (statistician) -> cdisc-core-validation of the SDTM (standards reviewer) -> analysis-specification (statistician) -> adam-core-loop: adam-derivation gated by CORE ADaMIG validation (ADaM programmer + standards reviewer) -> ard-tfl-generation (statistical programmer + statistician); when the TLF review finds the analysis itself wrong, its request goes back to analysis-specification and the ADaM and TLFs are regenerated (at most two rounds). The sub-workflows hand each other a study package of files by download URL; nothing is copied by hand. The AI writes plans, specs and code; scripts execute the code, validate, and produce every number; humans approve at every hand-off. Each sub-workflow also runs on its own, so a sponsor can adopt any one of them.",
+  "description": "Take a study from its protocol (or its USDM study definition) and SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order, each as its own run with its own reviewers: protocol-digitization when the package has a protocol but no USDM (clinical scientist + standards reviewer) -> tlf-planning (statistician) -> cdisc-core-validation of the SDTM (standards reviewer) -> analysis-specification (statistician) -> adam-core-loop: adam-derivation gated by CORE ADaMIG validation (ADaM programmer + standards reviewer) -> ard-tfl-generation (statistical programmer + statistician); when the TLF review finds the analysis itself wrong, its request goes back to analysis-specification and the ADaM and TLFs are regenerated (at most two rounds). The sub-workflows hand each other a study package of files by download URL; nothing is copied by hand. The AI writes plans, specs and code; scripts execute the code, validate, and produce every number; humans approve at every hand-off. Each sub-workflow also runs on its own, so a sponsor can adopt any one of them.",
   "preamble": "CDISC terms (USDM, SDTM, ADaM, ARS, ARD, TLF, CORE rule IDs, Define-XML, adverse events, deaths) are technical workflow content.",
   "roles": [
     "statistician"
@@ -12,10 +12,45 @@
       "type": "object",
       "required": false,
       "default": {},
-      "description": "Optional study package { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kinds usdm and sdtm (+ sdtm-define, sap). Leave empty: the statistician uploads the USDM, SDTM and define.xml in the planning run."
+      "description": "Optional study package { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kinds usdm or protocol (a protocol without a USDM is digitized first), sdtm (+ sdtm-define, sap). Leave empty: the statistician uploads the USDM, SDTM and define.xml in the planning run."
     }
   ],
   "steps": [
+    {
+      "id": "route-input",
+      "name": "Route the input",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. A package with a USDM goes straight to planning; a package with a protocol but no USDM is digitized first (and comes back here with the USDM); an empty package goes to planning, where the statistician uploads the inputs.",
+      "script": {
+        "command": "python3 /artifacts/scripts/route_input.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      },
+      "stepParams": {
+        "package": "${triggerPayload.package}"
+      }
+    },
+    {
+      "id": "digitize",
+      "name": "Digitize the protocol",
+      "type": "creation",
+      "executor": "action",
+      "description": "Child run of protocol-digitization: the AI turns the protocol PDF into a USDM 4.0 study definition with a page citation for every entity; a gate checks the schema, references and quotes; CDISC CORE validates it; the clinical scientist approves.",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "protocol-digitization",
+          "definitionVersion": 2,
+          "payload": {
+            "package": "${steps.route-input.package}"
+          },
+          "timeout": "P30D",
+          "step": "return-result"
+        }
+      }
+    },
     {
       "id": "plan",
       "name": "Plan the TLFs",
@@ -28,7 +63,7 @@
           "definitionName": "tlf-planning",
           "definitionVersion": 4,
           "payload": {
-            "package": "${triggerPayload.package}"
+            "package": "${steps.route-input.package}"
           },
           "timeout": "P30D",
           "step": "return-result"
@@ -169,6 +204,31 @@
     }
   ],
   "transitions": [
+    {
+      "from": "route-input",
+      "to": "digitize",
+      "when": "output.target == \"digitize\""
+    },
+    {
+      "from": "route-input",
+      "to": "plan",
+      "when": "else"
+    },
+    {
+      "from": "digitize",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "digitize",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "digitize",
+      "to": "route-input",
+      "when": "else"
+    },
     {
       "from": "plan",
       "to": "child-failed",

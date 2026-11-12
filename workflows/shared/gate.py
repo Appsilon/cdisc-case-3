@@ -61,10 +61,17 @@ class GateLoop:
         comment = str(review.get("reviewerComment") or review.get("comment") or "").strip()
         if not comment:
             raise StepFailure("The work was sent back without a comment; the agent needs to know what to change.")
+        return self.append_request(comment, skill)
+
+    def append_request(self, comment: str, skill: str, source: str = "review") -> dict:
+        """Append a change request (a reviewer's, or one a script composed) and give the agent fresh attempts."""
         previous = self.review_feedback_path.read_text(encoding="utf-8").splitlines() if self.review_feedback_path.is_file() else []
         iteration = len(previous) + 1
+        line = {"skill": skill, "iteration": iteration, "comment": comment, "at": now_iso()}
+        if source != "review":
+            line["source"] = source
         with open(self.review_feedback_path, "a", encoding="utf-8") as handle:
-            handle.write(json.dumps({"skill": skill, "iteration": iteration, "comment": comment, "at": now_iso()}) + "\n")
+            handle.write(json.dumps(line) + "\n")
         self.reset()
         return {"iteration": iteration, "comment": comment, "summary": f"Revision {iteration} requested: {comment[:200]}"}
 

@@ -1,0 +1,430 @@
+{
+ "EligibilityCriterion_1": {
+  "page": 11,
+  "quote": "Males and postmenopausal females at least 50 years of age."
+ },
+ "EligibilityCriterion_2": {
+  "page": 11,
+  "quote": "Diagnosis of probable AD as defined by National Institute of"
+ },
+ "EligibilityCriterion_3": {
+  "page": 11,
+  "quote": "MMSE score of 10 to 23. [4] Hachinski Ischemic Scale score of d4 (Attachment LZZT.8)."
+ },
+ "EligibilityCriterion_4": {
+  "page": 11,
+  "quote": "Hachinski Ischemic Scale score of d4 (Attachment LZZT.8)."
+ },
+ "EligibilityCriterion_5": {
+  "page": 11,
+  "quote": "CNS imaging (CT scan or MRI of brain) compatible with AD within"
+ },
+ "EligibilityCriterion_6": {
+  "page": 12,
+  "quote": "Investigator has obtained informed consent signed by the patient"
+ },
+ "EligibilityCriterion_7": {
+  "page": 12,
+  "quote": "Geographic proximity to investigator’s site that allows adequate"
+ },
+ "EligibilityCriterion_8": {
+  "page": 12,
+  "quote": "A reliable caregiver who is in frequent or daily contact with the patient"
+ },
+ "EligibilityCriterion_9": {
+  "page": 13,
+  "quote": "Persons who have previously completed or withdrawn from this study"
+ },
+ "EligibilityCriterion_10": {
+  "page": 13,
+  "quote": "Use of any investigational agent or approved Alzheimer’s therapeutic"
+ },
+ "EligibilityCriterion_11": {
+  "page": 13,
+  "quote": "Serious illness which required hospitalization within 3 months of"
+ },
+ "EligibilityCriterion_12": {
+  "page": 13,
+  "quote": "Diagnosis of serious neurological conditions, including"
+ },
+ "EligibilityCriterion_13": {
+  "page": 13,
+  "quote": "Episode of depression meeting DSM-IV criteria within 3 months of"
+ },
+ "EligibilityCriterion_14": {
+  "page": 13,
+  "quote": "A history within the last 5 years of the following:"
+ },
+ "EligibilityCriterion_15": {
+  "page": 13,
+  "quote": "A history of syncope within the last 5 years."
+ },
+ "EligibilityCriterion_16": {
+  "page": 13,
+  "quote": "Evidence from ECG recording at screening of any of the following"
+ },
+ "EligibilityCriterion_17": {
+  "page": 14,
+  "quote": "A history within the last 5 years of a serious cardiovascular disorder,"
+ },
+ "EligibilityCriterion_18": {
+  "page": 14,
+  "quote": "A history within the last 5 years of a serious gastrointestinal disorder,"
+ },
+ "EligibilityCriterion_19": {
+  "page": 14,
+  "quote": "A history within the last 5 years of a serious endocrine disorder,"
+ },
+ "EligibilityCriterion_20": {
+  "page": 14,
+  "quote": "A history within the last 5 years of a serious respiratory disorder,"
+ },
+ "EligibilityCriterion_21": {
+  "page": 15,
+  "quote": "A history within the last 5 years of a serious genitourinary disorder,"
+ },
+ "EligibilityCriterion_22": {
+  "page": 15,
+  "quote": "A history within the last 5 years of a serious rheumatologic disorder,"
+ },
+ "EligibilityCriterion_23": {
+  "page": 15,
+  "quote": "A known history of human immunodeficiency virus (HIV) within the"
+ },
+ "EligibilityCriterion_24": {
+  "page": 15,
+  "quote": "A history within the last 5 years of a serious infectious disease"
+ },
+ "EligibilityCriterion_25": {
+  "page": 15,
+  "quote": "A history within the last 5 years of a primary or recurrent malignant"
+ },
+ "EligibilityCriterion_26": {
+  "page": 15,
+  "quote": "Visual, hearing, or communication disabilities impairing the ability to"
+ },
+ "EligibilityCriterion_27": {
+  "page": 15,
+  "quote": "Laboratory test values exceeding the Lilly Reference Range III for the"
+ },
+ "EligibilityCriterion_28": {
+  "page": 15,
+  "quote": "Central laboratory test values below reference range for folate, and"
+ },
+ "EligibilityCriterion_29": {
+  "page": 16,
+  "quote": "Positive syphilis screening."
+ },
+ "EligibilityCriterion_30": {
+  "page": 16,
+  "quote": "Glycosylated hemoglobin (A1C).  Required only on patients with"
+ },
+ "EligibilityCriterion_31": {
+  "page": 16,
+  "quote": "Treatment with the following medications within  the specified"
+ },
+ "Objective_1": {
+  "page": 7,
+  "quote": "To determine if there is a statistically significant relationship"
+ },
+ "Endpoint_1": {
+  "page": 42,
+  "quote": "The primary analysis of ADAS-Cog (11) and CIBIC+ will be the 24-week endpoint"
+ },
+ "Endpoint_2": {
+  "page": 42,
+  "quote": "The primary analysis of ADAS-Cog (11) and CIBIC+ will be the 24-week endpoint"
+ },
+ "Objective_2": {
+  "page": 7,
+  "quote": "To document the safety profile of the xanomeline TTS."
+ },
+ "Endpoint_3": {
+  "page": 30,
+  "quote": "recording adverse events,"
+ },
+ "Endpoint_4": {
+  "page": 30,
+  "quote": "laboratory test results, vital signs (including supine/standing pulse and blood pressure"
+ },
+ "Endpoint_5": {
+  "page": 30,
+  "quote": "laboratory test results, vital signs (including supine/standing pulse and blood pressure"
+ },
+ "Endpoint_6": {
+  "page": 30,
+  "quote": "laboratory test results, vital signs (including supine/standing pulse and blood pressure"
+ },
+ "Endpoint_7": {
+  "page": 46,
+  "quote": "The primary consideration will be the frequency of pauses."
+ },
+ "Objective_3": {
+  "page": 7,
+  "quote": "To assess the dose-dependent improvement in behavior."
+ },
+ "Endpoint_8": {
+  "page": 43,
+  "quote": "the primary analysis of the NPI-X will be"
+ },
+ "Objective_4": {
+  "page": 7,
+  "quote": "To assess the dose-dependent improvements in activities of daily living."
+ },
+ "Endpoint_9": {
+  "page": 42,
+  "quote": "The DAD will be analyzed with respect to the total score"
+ },
+ "Objective_5": {
+  "page": 7,
+  "quote": "To assess the dose-dependent improvements in an extended assessment of"
+ },
+ "Endpoint_10": {
+  "page": 42,
+  "quote": "ADAS-Cog (14) and each of the 14 individual components will also be analyzed."
+ },
+ "Objective_6": {
+  "page": 7,
+  "quote": "To assess the treatment response as a function of Apo E genotype."
+ },
+ "Endpoint_11": {
+  "page": 47,
+  "quote": "baseline disease severity as measured by MMSE, Apo"
+ },
+ "AnalysisPopulation_1": {
+  "page": 41,
+  "quote": "all patients will be included in all analyses of efficacy if they have a baseline"
+ },
+ "AnalysisPopulation_2": {
+  "page": 39,
+  "quote": "All patients who are enrolled in the study will be included in the efficacy analysis"
+ },
+ "Estimand_1": {
+  "page": 29,
+  "quote": "The primary analysis of efficacy will include only the data obtained up to and including"
+ },
+ "Estimand_2": {
+  "page": 29,
+  "quote": "The primary analysis of efficacy will include only the data obtained up to and including"
+ },
+ "StudyArm_1": {
+  "page": 8,
+  "quote": "will include a placebo arm, a low-dose xanomeline arm"
+ },
+ "StudyArm_2": {
+  "page": 8,
+  "quote": "will include a placebo arm, a low-dose xanomeline arm"
+ },
+ "StudyArm_3": {
+  "page": 8,
+  "quote": "mg xanomeline), and a high-dose xanomeline arm"
+ },
+ "StudyEpoch_1": {
+  "page": 8,
+  "quote": "The screening process should occur within 2 weeks of"
+ },
+ "StudyEpoch_2": {
+  "page": 8,
+  "quote": "patients will be randomized to 1 of 3 treatment arms."
+ },
+ "StudyElement_1": {
+  "page": 8,
+  "quote": "patients will wear a placebo TTS to determine willingness and ability"
+ },
+ "StudyElement_2": {
+  "page": 8,
+  "quote": "will include a placebo arm, a low-dose xanomeline arm"
+ },
+ "StudyElement_3": {
+  "page": 8,
+  "quote": "will include a placebo arm, a low-dose xanomeline arm"
+ },
+ "StudyElement_4": {
+  "page": 8,
+  "quote": "mg xanomeline), and a high-dose xanomeline arm"
+ },
+ "StudyDesignPopulation_1": {
+  "page": 11,
+  "quote": "Approximately 300 patients with a diagnosis of probable mild to moderate AD will be"
+ },
+ "Activity_1": {
+  "page": 8,
+  "quote": "Following informed consent, patients will be screened at Visit 1."
+ },
+ "Activity_2": {
+  "page": 8,
+  "quote": "medical assessment (including medical history, pre-existing conditions, physical"
+ },
+ "Activity_3": {
+  "page": 8,
+  "quote": "complete neuropsychiatric assessment, psychometric testing, and general"
+ },
+ "Activity_4": {
+  "page": 8,
+  "quote": "In addition, vital signs, temperature, medication history,"
+ },
+ "Activity_5": {
+  "page": 8,
+  "quote": "Vital signs, temperature, and an assessment of adverse events will"
+ },
+ "Activity_6": {
+  "page": 8,
+  "quote": "Vital signs, temperature, and an assessment of adverse events will"
+ },
+ "Activity_7": {
+  "page": 8,
+  "quote": "electrocardiogram (ECG), chest x-ray, and safety laboratories will be obtained."
+ },
+ "Activity_8": {
+  "page": 8,
+  "quote": "electrocardiogram (ECG), chest x-ray, and safety laboratories will be obtained."
+ },
+ "Activity_9": {
+  "page": 8,
+  "quote": "nervous system (CNS) imaging in the previous 12 months, a computed tomography (CT)"
+ },
+ "Activity_10": {
+  "page": 8,
+  "quote": "patients will wear a placebo TTS to determine willingness and ability"
+ },
+ "Activity_11": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Activity_12": {
+  "page": 33,
+  "quote": "Urinalysis will also be performed at Visits 4, 9, and 12."
+ },
+ "Activity_13": {
+  "page": 8,
+  "quote": "they will undergo a 24-hour Ambulatory ECG."
+ },
+ "Activity_14": {
+  "page": 8,
+  "quote": "patients will be randomized to 1 of 3 treatment arms."
+ },
+ "Activity_15": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Activity_16": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Activity_17": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Activity_18": {
+  "page": 8,
+  "quote": "NPI-X will be administered at 2-week intervals either at clinic visits or via"
+ },
+ "Activity_19": {
+  "page": 9,
+  "quote": "Use of concomitant medications will be collected at Visits 3, 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Activity_20": {
+  "page": 29,
+  "quote": "collected from each patient at Visits 3, 4, 5, 7, 9, and 11."
+ },
+ "Activity_21": {
+  "page": 9,
+  "quote": "medications will be dispensed to the patients."
+ },
+ "Encounter_1": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_1": {
+  "page": 8,
+  "quote": "Following informed consent, patients will be screened at Visit 1."
+ },
+ "Encounter_2": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_2": {
+  "page": 8,
+  "quote": "they will undergo a 24-hour Ambulatory ECG."
+ },
+ "Encounter_3": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_3": {
+  "page": 8,
+  "quote": "patients will be randomized to 1 of 3 treatment arms."
+ },
+ "Encounter_4": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_4": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Encounter_5": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_5": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Encounter_6": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_6": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Encounter_7": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_7": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Encounter_8": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_8": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Encounter_9": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_9": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Encounter_10": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_10": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ },
+ "Encounter_11": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_11": {
+  "page": 8,
+  "quote": "At Visits 3, 8, 10, and 12, efficacy instruments (ADAS-Cog, CIBIC+, and DAD) will be"
+ },
+ "Encounter_12": {
+  "page": 9,
+  "quote": "Week -2 -.3 0 2 4 6 8 12 16 20 24"
+ },
+ "ScheduledActivityInstance_12": {
+  "page": 9,
+  "quote": "safety labs will be obtained at Visits 4, 5, 7, 8, 9, 10, 11, 12, and 13."
+ }
+}

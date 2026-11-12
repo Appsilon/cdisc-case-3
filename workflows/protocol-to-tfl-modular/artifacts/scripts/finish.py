@@ -30,6 +30,8 @@ DELIVERABLES = (
                                        "core-dispositions-sdtmig", "core-dispositions-adamig"), None),
     ("Analysis specs, ADaM spec and ARS ReportingEvent", ("analysis-spec", "analysis-spec-view", "adam-spec", "ars"), None),
     ("TLF plan, study model and coverage audit", ("tlf-plan", "tlf-plan-view", "study-model", "coverage-report"), None),
+    ("Protocol digitization: USDM citations, review page and CORE USDM", ("usdm-citations", "usdm-view", "core-report-usdm",
+                                                                          "core-issue-index-usdm", "core-dispositions-usdm"), None),
     ("Study inputs", ("usdm", "sdtm", "sdtm-define", "sap", "protocol", "shells"), None),
 )
 
