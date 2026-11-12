@@ -1,10 +1,11 @@
 """Block until a run ends or it (a sub-workflow run) or one of its children waits at a human step.
 
-  python3 tools/wait_human.py <master-run-id> [run-id-to-ignore ...]
+  python3 tools/wait_human.py [--prod] <master-run-id> [run-id-to-ignore ...]
 
-Polls staging every 30 s through the mediforce CLI (run from ~/Repo/mediforce with
-the staging key in ~/.config/mediforce/staging-key) and prints the paused child
-runs, or the master's final state. Ignore runs you already handled or parked.
+Polls every 30 s through the mediforce CLI (run from ~/Repo/mediforce): staging with
+~/.config/mediforce/staging-key, or with --prod prod.mediforce.ai with
+~/.config/mediforce/phuse-key. Prints the paused child runs, or the master's final
+state. Ignore runs you already handled or parked.
 """
 
 from __future__ import annotations
@@ -16,14 +17,16 @@ import sys
 import time
 from pathlib import Path
 
-BASE_URL = "--base-url=https://staging.mediforce.ai"
+INSTANCES = {"staging": ("https://staging.mediforce.ai", "staging-key"), "prod": ("https://prod.mediforce.ai", "phuse-key")}
+INSTANCE = "staging"
 CHILD_WORKFLOWS = ("protocol-digitization", "tlf-planning", "analysis-specification", "cdisc-core-validation", "adam-derivation", "ard-tfl-generation")
 MEDIFORCE_CHECKOUT = Path.home() / "Repo" / "mediforce"
 
 
 def cli(*arguments: str) -> str:
-    environment = {**os.environ, "MEDIFORCE_API_KEY": (Path.home() / ".config/mediforce/staging-key").read_text().strip()}
-    return subprocess.run(["pnpm", "exec", "mediforce", *arguments, BASE_URL], cwd=MEDIFORCE_CHECKOUT, env=environment,
+    base_url, key_file = INSTANCES[INSTANCE]
+    environment = {**os.environ, "MEDIFORCE_API_KEY": (Path.home() / ".config/mediforce" / key_file).read_text().strip()}
+    return subprocess.run(["pnpm", "exec", "mediforce", *arguments, f"--base-url={base_url}"], cwd=MEDIFORCE_CHECKOUT, env=environment,
                           capture_output=True, text=True).stdout
 
 
@@ -36,7 +39,11 @@ def has_open_task(run_id: str) -> bool:
 
 
 def main() -> None:
-    master, ignored = sys.argv[1], set(sys.argv[2:])
+    global INSTANCE
+    arguments = sys.argv[1:]
+    if arguments[0] == "--prod":
+        INSTANCE, arguments = "prod", arguments[1:]
+    master, ignored = arguments[0], set(arguments[1:])
     while True:
         state = cli("run", "get", master)
         if "status:       running" not in state and "status:       paused" not in state:
