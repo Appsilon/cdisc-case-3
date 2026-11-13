@@ -110,9 +110,9 @@
     },
     {
       "id": "check-lineage",
-      "name": "Check lineage",
+      "name": "Check lineage and populations",
       "type": "creation",
-      "description": "Deterministic. Builds lineage.json from the @derive tags and gates on it: every exported column has exactly one tag, the tagged lines mention the variable, every source exists in SDTM or ADaM, and every dataset, variable and PARAMCD the spec demands was produced.",
+      "description": "Deterministic. Builds lineage.json from the @derive tags and gates on it: every exported column has exactly one tag, the tagged lines mention the variable, every source exists in SDTM or ADaM, and every dataset, variable and PARAMCD the spec demands was produced. Then checks the exported ADaM against DM and EX, recomputed from the data: ADSL subjects = DM (or DM minus screen failures / not assigned), SAFFL = exposed in EX, RANDFL/ITTFL = randomised, TRT01P/TRT01A one-to-one with DM.ARM/ACTARM, every USUBJID in ADSL; writes population-counts.json (each population flag by arm).",
       "executor": "script",
       "plugin": "script-container",
       "script": {

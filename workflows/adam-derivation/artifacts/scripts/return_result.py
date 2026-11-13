@@ -2,7 +2,8 @@
 
 outcome:
   derived  programs ran with clean logs, lineage gate passed, define generated;
-           publishes adam (.xpt), adam-program (.R), adam-log, lineage, adam-define.
+           publishes adam (.xpt), adam-program (.R), adam-log, adam-define, and under
+           kind lineage: lineage.json and population-counts.json.
   failed   the gates still failed after the last attempt; publishes the programs
            and logs for a human to pick up, and leaves the package's data as it was.
 
@@ -65,7 +66,8 @@ def main() -> None:
         return
 
     datasets = folder_files("execute-programs", "adam", ".xpt", "adam")
-    singles = [step_file("check-lineage", "lineage.json", "lineage", WORKFLOW), step_file("generate-define", "define.xml", "adam-define", WORKFLOW)]
+    singles = [step_file("check-lineage", "lineage.json", "lineage", WORKFLOW), step_file("check-lineage", "population-counts.json", "lineage", WORKFLOW),
+               step_file("generate-define", "define.xml", "adam-define", WORKFLOW)]
     files = datasets + programs + logs + [entry for entry in singles if entry]
     package = with_history(replace_files(package, files), WORKFLOW, "derived")
     summary = (f"DERIVED in {attempts()} attempt(s): " + ", ".join(f"{item['dataset']} ({item['rows']} rows)" for item in executed.get("datasets") or [])

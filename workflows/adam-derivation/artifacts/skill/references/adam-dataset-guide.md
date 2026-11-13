@@ -85,8 +85,8 @@ One row per subject containing demographics, treatment information, population f
 | DCSREAS | Reason for Discontinuation | DS.DSTERM where DSCAT=DISPOSITION |
 | DTHDT | Date of Death | DM.DTHDTC or AE/DS death records |
 | DTHFL | Death Flag | "Y" if subject died, null otherwise |
-| SAFFL | Safety Population Flag | Y if took >= 1 dose of study drug |
-| ITTFL | Intent-to-Treat Flag | Y if randomized |
+| SAFFL | Safety Population Flag | Y if any EX record with EXSTDTC (placebo EXDOSE = 0 counts); see mandatory rule 4 |
+| ITTFL | Intent-to-Treat Flag | Y if randomized (DM ARMCD not screen failure / not assigned / blank) |
 | EFFFL | Efficacy Population Flag | Study-specific criteria (often SAFFL=Y + baseline + post-baseline assessment) |
 | COMP24FL | Completers at Week 24 Flag | Y if completed Week 24 visit |
 | WEIGHTBL | Baseline Weight | VS weight at baseline visit |
@@ -132,7 +132,12 @@ adsl <- dm %>%
   # Derive population flags
   mutate(
     SAFFL = if_else(!is.na(TRTSDT), "Y", "N"),
-    ITTFL = if_else(!is.na(ARM), "Y", "N")
+    ITTFL = if_else(
+      !is.na(ARMCD) & ARMCD != "" &
+        !gsub("[^a-z]", "", tolower(ARMCD)) %in% c("scrnfail", "notassgn", "screenfailure", "notassigned") &
+        !gsub("[^a-z]", "", tolower(ARM)) %in% c("scrnfail", "notassgn", "screenfailure", "notassigned"),
+      "Y", "N"
+    )
   )
 ```
 

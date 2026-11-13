@@ -48,7 +48,8 @@ ct  <- contrast(emm, method = list(                          # EXPLICIT coef lis
 ## Assemble a tidy ARD
 Long format, one row per statistic: `group1, variable_level, context, stat_name, stat`. Bind the
 descriptive rows (flattened from `ard_continuous`) with the emmeans/contrast rows, then
-`write.csv` + `jsonlite::write_json(..., auto_unbox = TRUE)`.
+`write.csv` + `jsonlite::write_json(..., auto_unbox = TRUE, digits = NA)` (full precision; the
+default rounds to 4 decimals).
 
 ## Render
 - Render to the target row/column shape (gtsummary, or direct markdown for exact-layout control),

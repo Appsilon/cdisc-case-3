@@ -1,7 +1,7 @@
 {
   "name": "ard-tfl-generation",
-  "title": "ARD and TLF generation with display-to-ARD reconciliation",
-  "description": "Generate the Analysis Results Data (ARD) and the rendered Tables, Listings and Figures from ADaM and the approved analysis specs. The AI writes one R program per planned output, tagged with the ARS analysis and the ADaM variables it reads; deterministic steps run every program in a fresh R session against the delivered ADaM, check the ARD and display contract, and reconcile every number shown in a table with an ARD statistic (rounded half away from zero) - a number with no ARD source goes back to the AI. The reviewer sees one viewer page per run: each display with its ARD, its program and the trace to the ADaM derivation lines. Approve, request changes, or send it back to the specs (outcome upstream_change). Runs standalone (upload) or inside a parent workflow (study package in the trigger).",
+  "title": "ARD and TLF generation with display-to-ARD reconciliation and ADaM accuracy gates",
+  "description": "Generate the Analysis Results Data (ARD) and the rendered Tables, Listings and Figures from ADaM and the approved analysis specs. The AI writes one R program per planned output, tagged with the ARS analysis and the ADaM variables it reads; deterministic steps run every program in a fresh R session against the delivered ADaM, check the ARD and display contract, and reconcile every number shown in a table with an ARD statistic (rounded half away from zero) - a number with no ARD source goes back to the AI. Accuracy gates independent of the AI's code then check the ARD itself against the ADaM and the ARS spec: each output's big N per arm is recounted from ADSL with its analysis set (and must agree with adam-derivation's population counts), and every statistic of a simple-summary analysis (n, %, mean, SD, median, min, max) is recomputed; a mismatch goes back to the AI. The reviewer sees one viewer page per run: each display with its ARD, its program and the trace to the ADaM derivation lines. Approve, request changes, or send it back to the specs (outcome upstream_change). Runs standalone (upload) or inside a parent workflow (study package in the trigger).",
   "preamble": "CDISC terms (ARD, ARS, ADaM, ADSL, ADAE, TLF, analysis sets, LS means, ANCOVA, MMRM, Kaplan-Meier, adverse events, deaths) are technical workflow content.",
   "roles": [
     "stat-programmer",
@@ -37,7 +37,7 @@
       "id": "upload-inputs",
       "name": "Upload ADaM and specs",
       "type": "creation",
-      "description": "Upload the ADaM datasets (.xpt), analysis-spec.json, reporting-event.json and tlf-plan.json. Optionally lineage.json from adam-derivation (shown as the trace in the viewer) and existing TLF programs (.R) to continue from.",
+      "description": "Upload the ADaM datasets (.xpt), analysis-spec.json, reporting-event.json and tlf-plan.json. Optionally lineage.json and population-counts.json from adam-derivation (the trace in the viewer; the population counts the denominators must match) and existing TLF programs (.R) to continue from.",
       "executor": "human",
       "allowedRoles": [
         "stat-programmer"
@@ -76,7 +76,7 @@
       "id": "author-programs",
       "name": "Write TLF programs",
       "type": "creation",
-      "description": "AI. Writes one R program per planned output to /workspace/tlf-programs/<final_id>.R, tagged '# @tlf <final_id> analysis=<AN id> uses=<DS.VAR,...>': compute every statistic into the ARD first, then render the display from the ARD only. Runs self_check.py (the same gates) until PASS. Writes code only - the numbers come from the next step.",
+      "description": "AI. Writes one R program per planned output to /workspace/tlf-programs/<final_id>.R, tagged '# @tlf <final_id> analysis=<AN id> uses=<DS.VAR,...>': compute every statistic into the ARD first, then render the display from the ARD only; one big-N ARD row (variable BIGN) per column, named in the header. Runs self_check.py (the same gates) until PASS. Writes code only - the numbers come from the next step.",
       "executor": "agent",
       "autonomyLevel": "L4",
       "plugin": "claude-code-agent",
@@ -107,9 +107,9 @@
     },
     {
       "id": "reconcile",
-      "name": "Reconcile displays with the ARD",
+      "name": "Reconcile displays and check the ARD against ADaM",
       "type": "creation",
-      "description": "Deterministic. Every table body cell that shows numbers names their ARD rows (data-ard, 0-based) and each number must equal exactly that row's stat rounded half away from zero at the shown precision; anything else goes back to the agent. On pass builds tlf-viewer.html: each display with its ARD, program and trace to the ADaM derivation lines.",
+      "description": "Deterministic. Every table body cell that shows numbers (and every header 'N=') names their ARD rows (data-ard, 0-based) and each number must equal exactly that row's stat rounded half away from zero at the shown precision. Then accuracy gates independent of the programs, from ADaM + the ARS spec: big N per arm recounted from ADSL with the output's analysis set (shown in the header from that ARD row, consistent with population-counts.json when supplied), and every statistic of a simple-summary analysis recomputed by a fixed R program (coverage reported; model-based statistics are 'not independently checked'). Anything else goes back to the agent. On pass builds tlf-viewer.html (each display with its ARD, program, trace and data checks) and accuracy.json.",
       "executor": "script",
       "plugin": "script-container",
       "script": {
@@ -177,7 +177,7 @@
       "id": "return-result",
       "name": "Return result",
       "type": "creation",
-      "description": "Deterministic. outcome = generated (publishes ARD, displays, tlf-viewer.html, reconciliation.json, programs and logs into the study package), upstream_change (the reviewer's request for the specs in `request`), or failed (gates still failing after the last attempt; programs and logs attached).",
+      "description": "Deterministic. outcome = generated (publishes ARD, displays, tlf-viewer.html, reconciliation.json, accuracy.json, programs and logs into the study package), upstream_change (the reviewer's request for the specs in `request`), or failed (gates still failing after the last attempt; programs and logs attached).",
       "executor": "script",
       "plugin": "script-container",
       "script": {

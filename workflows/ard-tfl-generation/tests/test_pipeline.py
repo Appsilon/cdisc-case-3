@@ -2,16 +2,26 @@
 
 Simulates what the platform does between steps (per-step /output folder,
 input.json = previous output + `steps` + stepParams, downloaded `files` with
-localPath, one shared /workspace). Fixtures: a 12-subject ADSL/ADAE, a plan
-with one table, one figure and one blocked output, and programs that follow
-the contract (tests/fixtures/programs).
+localPath, one shared /workspace). Fixtures: a 12-subject ADSL/ADAE, an ARS
+ReportingEvent (analysis set, TRTP grouping, label-only data subset), a plan
+with one table, one figure and one blocked output, population-counts.json, and
+programs that follow the contract (tests/fixtures/programs).
 
-  1. package mode, clean programs -> executed, every displayed number reconciled, viewer, outcome generated
+  1. package mode, clean programs -> executed, every displayed number reconciled, big N recounted from ADSL,
+     every ARD statistic recomputed, viewer + accuracy.json, outcome generated
   2. a number typed into the display, a bad tag, a missing program -> sent back; three attempts -> failed
   3. a cell showing another arm's mean (a value the ARD holds, in the wrong row) -> rejected
-  4. upload mode, a review round, then 'spec-change' -> outcome upstream_change with the request
-  5. the cell checks on their own: missing / miscounted / out-of-range data-ard, an off-by-one digit
-     that equals another ARD stat, bounds (<0.001) and percentages
+  4. denominators: 5 SAFFL flipped in ADSL after the ARD was made, and a big N off by one in both ARD and
+     header -> rejected (reconcile alone passes the second); population-counts.json disagreeing -> a warning only
+  5. recompute: an ARD mean shifted by one, displayed consistently -> rejected (reconcile alone passes); an ARD
+     written at jsonlite's default 4 decimals -> passes
+  5b. a SEX grouping ordered before the treatment grouping -> big N still checked by arm; an analysis grouped by
+     SEX alone -> big N not checked; population-counts.json off -> passes with an upstream warning
+  6. upload mode, a review round, then 'spec-change' -> outcome upstream_change with the request
+  7. the cell checks on their own: missing / miscounted / out-of-range data-ard, an off-by-one digit
+     that equals another ARD stat, bounds (<0.001), percentages, header N
+  8. the where-clause parser, what the recompute leaves unchecked, rounding tolerance, "Missing" category rows
+  9. the real CDISC pilot ADSL (254 subjects) with the demographics program -> passes, when PILOT_ADSL exists
 
 Needs R with haven, jsonlite and ggplot2:
   python3 tests/test_pipeline.py
@@ -32,7 +42,9 @@ HERE = Path(__file__).resolve().parent
 ARTIFACTS = HERE.parent / "artifacts"
 SHARED = HERE.parent.parent / "shared"
 FIXTURES = HERE / "fixtures"
-INPUT_KINDS = {"tlf-plan.json": "tlf-plan", "analysis-spec.json": "analysis-spec", "reporting-event.json": "ars", "lineage.json": "lineage"}
+INPUT_KINDS = {"tlf-plan.json": "tlf-plan", "analysis-spec.json": "analysis-spec", "reporting-event.json": "ars", "lineage.json": "lineage",
+               "population-counts.json": "lineage"}
+PILOT_ADSL = Path(os.environ.get("PILOT_ADSL", str(Path.home() / "Repo/experimental-fda-submission-4-podman/submissions-pilot2/datasets/adam/adsl.xpt")))
 
 
 class Run:
@@ -110,7 +122,7 @@ def staged_run(root: Path) -> Run:
     run = Run(root)
     files = input_files(with_kinds=True)
     resolved = run.step("resolve-inputs", "resolve_inputs.py", {"package": {"files": without_local(files)}})
-    assert resolved["needsUpload"] is False and len(resolved["files"]) == 6, resolved
+    assert resolved["needsUpload"] is False and len(resolved["files"]) == 7, resolved
     staged = run.step("stage-inputs", "stage_inputs.py", files=with_local(resolved["files"], files))
     assert staged["datasets"] == ["ADAE", "ADSL"] and staged["outputs"] == ["F-14-1", "T-14-2.01"], staged
     return run
@@ -126,9 +138,14 @@ def test_generated(work: Path) -> None:
     executed = run.step("execute-programs", "execute_programs.py")
     assert executed["needsFix"] is False and [item["id"] for item in executed["outputs"]] == ["F-14-1", "T-14-2.01"], executed
     reconciled = run.step("reconcile", "reconcile.py")
-    assert reconciled["needsFix"] is False and reconciled["checked"] == 9 and reconciled["unmatched"] == 0, reconciled
+    assert reconciled["needsFix"] is False and reconciled["checked"] == 12 and reconciled["unmatched"] == 0, reconciled
+    assert reconciled["accuracy"]["coverage"] == {"statistics": 12, "recomputed": 12, "mismatches": 0}, reconciled["accuracy"]
+    accuracy = json.loads((run.steps_dir / "reconcile" / "accuracy.json").read_text())
+    assert accuracy["denominators"]["T-14-2.01"]["expected"] == {"Placebo": 4, "Drug Low": 4, "Drug High": 4, "Total": 12}, accuracy
+    assert accuracy["denominators"]["F-14-1"]["status"] == "pass" and accuracy["populationCounts"]["status"] == "compared", accuracy
     page = (run.steps_dir / "reconcile" / "tlf-viewer.html").read_text()
     for expected in ("AN.T-14-2.01", "adsl.R lines [12, 14]", "data:image/png;base64,", "srcdoc=", "@tlf F-14-1", "stat_name",
+                     "12 of 12 ARD statistics recomputed from ADaM", "big N recounted from ADSL (SAFFL EQ Y): Placebo 4",
                      "title=&quot;ARD #4: group1_level=Drug Low, variable=AGE, context=continuous, stat_name=mean"):
         assert expected in page, expected
 
@@ -138,7 +155,7 @@ def test_generated(work: Path) -> None:
     kinds = {item["name"]: item["kind"] for item in result["package"]["files"]}
     assert kinds["T-14-2.01.json"] == "ard" and kinds["F-14-1.png"] == "tfl" and kinds["tlf-viewer.html"] == "tfl", kinds
     assert kinds["T-14-2.01.R"] == "tfl-program" and kinds["setup.R"] == "tfl-program" and kinds["F-14-1.log"] == "tfl-log", kinds
-    assert kinds["adsl.xpt"] == "adam" and kinds["analysis-spec.json"] == "analysis-spec"
+    assert kinds["adsl.xpt"] == "adam" and kinds["analysis-spec.json"] == "analysis-spec" and kinds["accuracy.json"] == "tfl"
 
 
 def broken_programs(work: Path) -> Path:
@@ -221,6 +238,10 @@ def test_cell_checks(work: Path) -> None:
     assert problems("<td data-ard='7'>100.0%</td>") == []
     assert problems("<td data-ard='7'>100.0</td>") == [], "a proportion of 1 in a % column shows as 100.0"
     assert problems("<td data-ard='²'>1</td>") == ["data-ard='²' is not a comma-separated list of 0-based ARD row indices"]
+    (work / "header.html").write_text("<table><tr><th></th><th data-ard='7'>Arm 54 mg (N=1)</th><th>Arm (N=2)</th><th>Week 24</th></tr></table>")
+    header = reconcile_output("T-1", work / "header.html", work / "cells.json")
+    assert header["checked"] == 2 and [item["problem"] for item in header["unmatched"]] == [
+        "shows 'Arm (N=2)' without data-ard (the 0-based ARD row of each number)"], header
     (work / "listing.html").write_text("<table><tr><td>01-701-1015</td><td>2014-01-02</td><td data-ard='0'>73.7</td></tr></table>")
     listed = reconcile_output("L-1", work / "listing.html", work / "cells.json", listing=True)["unmatched"]
     assert [item["problem"] for item in listed] == ["shows 73.7, but ARD row 0 (variable=AGE, stat_name=mean) is 73.64"], listed
@@ -230,6 +251,177 @@ def test_cell_checks(work: Path) -> None:
                             [*ard[:4], {"variable": "AE", "stat_name": "label", "stat": "<\"n\">"}])
     assert "<td data-ard=4 title=\"ARD #4: variable=AE, stat_name=label, stat=&lt;&quot;n&quot;&gt;\">" in linked, linked
     assert "<style>[data-ard]:hover" in linked.split("</HEAD>")[0], linked
+
+
+def edited_programs(work: Path, name: str, program: str, old: str, new: str) -> Path:
+    target = work / name
+    shutil.copytree(FIXTURES / "programs", target)
+    path = target / program
+    text = path.read_text()
+    assert old in text, old
+    path.write_text(text.replace(old, new))
+    return target
+
+
+def write_xpt(path: Path, r_expression: str) -> None:
+    program = f'data <- haven::read_xpt("{path}"); {r_expression}; haven::write_xpt(data, "{path}", version = 5)'
+    completed = subprocess.run(["Rscript", "--vanilla", "-e", program], capture_output=True, text=True)
+    assert completed.returncode == 0, completed.stderr
+
+
+def test_denominators(work: Path) -> None:
+    run = staged_run(work / "flipped")
+    run.agent(FIXTURES / "programs")
+    assert run.step("execute-programs", "execute_programs.py")["needsFix"] is False
+    write_xpt(run.workspace / "ard-tfl-generation" / "inputs" / "adam" / "adsl.xpt", 'data$SAFFL[1:5] <- "N"')
+    reconciled = run.step("reconcile", "reconcile.py")
+    problems = "\n".join(reconciled["problems"])
+    assert reconciled["needsFix"] is True and reconciled["unmatched"] == 0, reconciled
+    assert "T-14-2.01: big N for Placebo is 4 in ARD row 9, but ADSL subjects with SAFFL EQ Y and TRT01P = Placebo number 0" in problems, problems
+    assert "F-14-1: big N for Drug Low is 4 in ARD row 4, but" in problems and "population-counts.json" not in problems, problems
+    assert reconciled["accuracy"]["warnings"][0] == "population-counts.json: SAFFL total is 12, but ADSL has 7 (F-14-1)", reconciled["accuracy"]
+    assert (run.workspace / "ard-tfl-generation" / "tlf-viewer.html").is_file() is False
+
+    run = staged_run(work / "off-by-one")
+    run.agent(edited_programs(work, "off-by-one-programs", "T-14-2.01.R", "ard <- rbind(ard, big_n(adsl))",
+                              'ard <- rbind(ard, big_n(adsl))\nard$stat[ard$variable == "BIGN" & ard$group1_level == "Placebo"] <- 5'))
+    run.step("execute-programs", "execute_programs.py")
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["unmatched"] == 0, "the header shows the ARD's (wrong) N, so the display reconciles"
+    assert reconciled["needsFix"] is True and reconciled["problems"] == [
+        "T-14-2.01: big N for Placebo is 5 in ARD row 9, but ADSL subjects with SAFFL EQ Y and TRT01P = Placebo number 4 (ARS AS.SAF)"], reconciled
+    assert reconciled["accuracy"]["summary"]["denominatorsFailed"] == 1, reconciled
+
+
+def test_recompute(work: Path) -> None:
+    run = staged_run(work / "shifted-mean")
+    run.agent(edited_programs(work, "shifted-mean-programs", "T-14-2.01.R", "ard <- rbind(ard, big_n(adsl))",
+                              'ard <- rbind(ard, big_n(adsl))\nard$stat[ard$variable == "AGE" & ard$group1_level == "Placebo" & ard$stat_name == "mean"] <- 75.5'))
+    run.step("execute-programs", "execute_programs.py")
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["unmatched"] == 0, "the display shows the ARD's (wrong) mean, so the display reconciles"
+    assert reconciled["needsFix"] is True and reconciled["problems"] == [
+        "T-14-2.01: ARD row 1 (group1_level=Placebo, variable=AGE, context=continuous, stat_name=mean) is 75.5, but recomputing mean "
+        "independently from ADSL records of ADSL subjects with SAFFL EQ Y, where TRT01P EQ Placebo gives 74.5 = mean of AGE over its "
+        "non-missing values - fix the computation, or declare a narrower slice in the row's filter"], reconciled
+    assert reconciled["accuracy"]["coverage"] == {"statistics": 12, "recomputed": 12, "mismatches": 1}, reconciled
+    checked = run.self_check()
+    assert checked.returncode == 1 and "recomputing mean independently from ADSL" in checked.stdout, "the agent's self-check runs the same gates"
+
+    run = staged_run(work / "rounded-ard")
+    run.agent(edited_programs(work, "rounded-ard-programs", "setup.R", "auto_unbox = TRUE, digits = NA)", "auto_unbox = TRUE)"))
+    run.step("execute-programs", "execute_programs.py")
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["needsFix"] is False and reconciled["accuracy"]["coverage"] == {"statistics": 12, "recomputed": 12, "mismatches": 0}, reconciled
+    rounded = [row["stat"] for row in json.loads((run.steps_dir / "execute-programs" / "ard" / "T-14-2.01.json").read_text())
+               if row["stat_name"] == "sd"]
+    assert all(len(str(stat).split(".")[-1]) <= 4 for stat in rounded) and any(len(str(stat).split(".")[-1]) == 4 for stat in rounded), rounded
+
+
+def test_groupings_and_upstream_counts(work: Path) -> None:
+    run = staged_run(work / "groupings")
+    inputs = run.workspace / "ard-tfl-generation" / "inputs"
+    event = json.loads((inputs / "reporting-event.json").read_text())
+    event["analysisGroupings"].insert(0, {"id": "GRP.SEX", "name": "Sex", "dataDriven": True, "groupingDataset": "ADSL", "groupingVariable": "SEX"})
+    analyses = {analysis["id"]: analysis for analysis in event["analyses"]}
+    analyses["AN.T-14-2.01"]["orderedGroupings"] = [{"order": 1, "groupingId": "GRP.SEX", "resultsByGroup": True},
+                                                    {"order": 2, "groupingId": "GRP.TRT", "resultsByGroup": True}]
+    analyses["AN.F-14-1"]["orderedGroupings"] = [{"order": 1, "groupingId": "GRP.SEX", "resultsByGroup": True}]
+    (inputs / "reporting-event.json").write_text(json.dumps(event))
+    counts = json.loads((inputs / "population-counts.json").read_text())
+    counts["populations"]["SAFFL"]["total"] = 13
+    (inputs / "population-counts.json").write_text(json.dumps(counts))
+    run.agent(FIXTURES / "programs")
+    run.step("execute-programs", "execute_programs.py")
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["needsFix"] is False and reconciled["accuracy"]["coverage"] == {"statistics": 12, "recomputed": 12, "mismatches": 0}, reconciled
+    assert reconciled["accuracy"]["warnings"] == ["population-counts.json: SAFFL total is 13, but ADSL has 12 (T-14-2.01)"], reconciled
+    assert "1 upstream warning(s)" in reconciled["summary"], reconciled["summary"]
+    accuracy = json.loads((run.steps_dir / "reconcile" / "accuracy.json").read_text())
+    table, figure = accuracy["denominators"]["T-14-2.01"], accuracy["denominators"]["F-14-1"]
+    assert table["status"] == "pass" and table["grouping"] == "TRT01P" and table["expected"]["Placebo"] == 4, table
+    assert figure["status"] == "not checked" and figure["reason"].startswith("none of the ARS analysis groupings is a treatment variable"), figure
+    page = (run.steps_dir / "reconcile" / "tlf-viewer.html").read_text()
+    assert "Warning (upstream ADaM, not this step's programs): population-counts.json: SAFFL total is 13" in page
+
+
+def test_accuracy_units(work: Path) -> None:
+    sys.path[:0] = [str(ARTIFACTS / "scripts"), str(SHARED)]
+    from accuracy import Context, Requests, evaluate_recompute, matches, parse_where, recompute_check
+
+    assert parse_where("PARAMCD IN ('ALT','AST') AND AVISITN IN (0, 24) AND AVAL IS NOT NULL AND DTYPE = ''") == [
+        {"variable": "PARAMCD", "comparator": "IN", "values": ["ALT", "AST"]}, {"variable": "AVISITN", "comparator": "IN", "values": [0, 24]},
+        {"variable": "AVAL", "comparator": "NOTNULL", "values": []}, {"variable": "DTYPE", "comparator": "EQ", "values": [""]}]
+    assert parse_where("AEBODSYS = 'BLOOD AND LYMPHATIC SYSTEM DISORDERS'") == [
+        {"variable": "AEBODSYS", "comparator": "EQ", "values": ["BLOOD AND LYMPHATIC SYSTEM DISORDERS"]}]
+    assert parse_where("(all concomitant-medication records)") == [] and parse_where("SEX = 'F' OR AGE > 65") is None
+    assert parse_where("substr(PARAMCD, 1, 2) = 'AL'") is None
+
+    event = json.loads((FIXTURES / "reporting-event.json").read_text())
+    event["methods"].append({"id": "MTH.ANCOVA", "name": "ANCOVA of change from baseline", "operations": []})
+    event["analyses"].append({**event["analyses"][0], "id": "AN.MODEL", "methodId": "MTH.ANCOVA"})
+    columns = {"ADSL": ["USUBJID", "TRT01P", "SAFFL", "AGE"]}
+    rows = [{"variable": "AGE", "stat_name": "mean", "stat": 1}, {"variable": "AGE", "stat_name": "lsmean", "stat": 1},
+            {"variable": "BIGN", "stat_name": "N", "stat": 4}, {"variable": "AGE", "stat_name": "label", "stat": "Mean"}]
+    model = recompute_check("T-1", Context(event, "AN.MODEL", columns), rows, Requests(), [])
+    assert model["statistics"] == 2 and model["notChecked"] == {"method ANCOVA of change from baseline is not a simple summary": 2}, model
+    plans = []
+    simple = recompute_check("T-1", Context(event, "AN.T-14-2.01", columns), [*rows, {"variable": "TEAE", "stat_name": "n", "stat": 3},
+                                                                             {"variable": "AGE", "stat_name": "mean", "stat": 1, "filter": "AGE >"}],
+                             Requests(), plans)
+    assert len(plans) == 1 and simple["notChecked"] == {"statistic lsmean": 1, "variable TEAE is not an ADaM column": 1}, simple
+    assert simple["problems"] == ["T-1: ARD row 5: filter 'AGE >' is not a where-clause of AND-ed comparisons (e.g. PARAMCD = 'ALT' AND AVISITN = 24)"]
+
+    assert matches(0.3386, 86 / 254) is True and matches(33.86, 8600 / 254) is True and matches(0.34, 86 / 254) is True
+    assert matches(74, 74.4) is False and matches(0.3387, 86 / 254) is False and matches(75.5, 74.5) is False
+
+    adam = work / "missing-adam"
+    shutil.copytree(FIXTURES / "adam", adam)
+    write_xpt(adam / "adsl.xpt", 'data$RACE <- ifelse(data$USUBJID %in% c("01-001", "01-002", "01-005"), "", "WHITE")')
+    columns = {"ADSL": ["USUBJID", "TRT01P", "SAFFL", "AGE", "RACE"]}
+    context = Context(event, "AN.T-14-2.01", columns)
+
+    def race(level: str, arm: str, stat_name: str, stat: float) -> dict:
+        return {"group1": "TRT01P", "group1_level": arm, "variable": "RACE", "variable_level": level, "stat_name": stat_name, "stat": stat}
+
+    rows = [race("Missing", "Placebo", "n", 2), race("MISSING", "Placebo", "p", 0.5), race("", "Drug Low", "n", 1),
+            race("missing", "Drug Low", "pct", 25), race("WHITE", "Placebo", "n", 2), race("Missing", "Drug High", "n", 1)]
+    requests, plans = Requests(), []
+    report = recompute_check("T-1", context, rows, requests, plans)
+    requests.run(adam)
+    evaluate_recompute("T-1", report, plans, requests, context)
+    assert report["recomputed"] == 6 and [item["row"] for item in report["mismatches"]] == [5], report
+    assert "is 1, but recomputing n independently from ADSL records of ADSL subjects with SAFFL EQ Y, where TRT01P EQ Drug High AND RACE ISNULL " \
+           "gives 0 = subjects with RACE missing" in report["problems"][0], report["problems"]
+
+
+def test_pilot(work: Path) -> None:
+    if PILOT_ADSL.is_file() is False:
+        print(f"skip test_pilot: no {PILOT_ADSL}")
+        return
+    inputs = work / "pilot-inputs"
+    inputs.mkdir()
+    shutil.copyfile(PILOT_ADSL, inputs / "adsl.xpt")
+    for name in ("tlf-plan.json", "reporting-event.json"):
+        shutil.copyfile(FIXTURES / name, inputs / name)
+    spec = [item for item in json.loads((FIXTURES / "analysis-spec.json").read_text()) if item["table_id"] == "T-14-2.01"]
+    (inputs / "analysis-spec.json").write_text(json.dumps(spec))
+    (inputs / "population-counts.json").write_text(json.dumps({"armVariable": "TRT01A", "populations": {
+        "SAFFL": {"total": 254, "byArm": {"Placebo": 86, "Xanomeline Low Dose": 84, "Xanomeline High Dose": 84}}}}))
+    files = [entry(inputs / "adsl.xpt", "adam")] + [entry(inputs / name, kind) for name, kind in INPUT_KINDS.items() if name != "lineage.json"]
+    run = Run(work / "pilot")
+    run.step("resolve-inputs", "resolve_inputs.py", {"package": {}})
+    run.step("stage-inputs", "stage_inputs.py", files=files)
+    programs = work / "pilot-programs"
+    shutil.copytree(FIXTURES / "programs", programs)
+    (programs / "F-14-1.R").unlink()
+    run.agent(programs)
+    assert run.step("execute-programs", "execute_programs.py")["needsFix"] is False
+    reconciled = run.step("reconcile", "reconcile.py")
+    assert reconciled["needsFix"] is False and reconciled["accuracy"]["coverage"] == {"statistics": 9, "recomputed": 9, "mismatches": 0}, reconciled
+    accuracy = json.loads((run.steps_dir / "reconcile" / "accuracy.json").read_text())
+    assert accuracy["denominators"]["T-14-2.01"]["expected"]["Total"] == 254 and accuracy["populationCounts"]["status"] == "compared", accuracy
+    print(f"    pilot: {reconciled['summary']}")
 
 
 def test_upload_review_and_upstream(work: Path) -> None:
@@ -256,7 +448,8 @@ def test_upload_review_and_upstream(work: Path) -> None:
 def main() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        for test in (test_generated, test_failures, test_wrong_row, test_upload_review_and_upstream, test_cell_checks):
+        for test in (test_generated, test_failures, test_wrong_row, test_denominators, test_recompute, test_groupings_and_upstream_counts,
+                     test_upload_review_and_upstream, test_cell_checks, test_accuracy_units, test_pilot):
             test(work)
             print(f"ok  {test.__name__}")
 

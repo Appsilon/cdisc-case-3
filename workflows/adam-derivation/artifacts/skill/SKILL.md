@@ -51,7 +51,7 @@ Each program:
 Put a tag line directly above the code that makes the variable:
 
 ```r
-# @derive ADSL.TRTSDT origin=Derived src=EX.EXSTDTC,EX.EXDOSE method="Date of first dose with EXDOSE > 0"
+# @derive ADSL.TRTSDT origin=Derived src=EX.EXSTDTC,EX.EXDOSE method="Date of first exposure with EXDOSE >= 0 (placebo 0 counts)"
 adsl <- derive_vars_merged(adsl, dataset_add = ex_dosed, by_vars = exprs(USUBJID),
                            new_vars = exprs(TRTSDT = EXSTDT), order = exprs(EXSTDT), mode = "first")
 
@@ -80,7 +80,7 @@ exact lines behind each ADaM finding. A wrong tag sends a reviewer to the wrong 
    variables, populations and expected N, which mandatory rules apply with which parameters.
 2. Read `references/mandatory-derivation-rules.md` **before writing code** — day-based visit
    windowing that keeps unscheduled visits, LOCF at the endpoint, `SITEGR1` on randomized counts,
-   the N gate. Use `references/adam-dataset-guide.md` for structures and
+   populations that agree with DM/EX (`SAFFL` = any EX record, placebo included), the N gate. Use `references/adam-dataset-guide.md` for structures and
    `references/admiral-coding-conventions.md` for admiral idioms. Prefer admiral functions.
    Honour the spec's codes literally (`PARAMCD`, flags, variable names).
 3. Write `adsl.R` first, then the others.
@@ -89,7 +89,7 @@ exact lines behind each ADaM finding. A wrong tag sends a reviewer to the wrong 
    python3 /artifacts/scripts/self_check.py
    ```
    It executes every program exactly as the next step will (fresh session, dependency order),
-   then runs the lineage gate, and prints every problem. Your step is done when it prints `PASS`.
+   then runs the lineage and population gate (rule 4), and prints every problem. Your step is done when it prints `PASS`.
 5. Write `/output/result.json`:
    ```json
    {"programs": ["adsl.R", "adae.R"], "datasets": ["ADSL", "ADAE"],

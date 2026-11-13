@@ -1,12 +1,115 @@
 {
  "id": "RE.FIXTURE",
  "name": "fixture",
- "analyses": [
+ "analysisSets": [
   {
-   "id": "AN.T-14-2.01"
+   "id": "AS.SAF",
+   "name": "Safety Population",
+   "level": 1,
+   "order": 1,
+   "condition": {
+    "dataset": "ADSL",
+    "variable": "SAFFL",
+    "comparator": "EQ",
+    "value": [
+     "Y"
+    ]
+   }
+  }
+ ],
+ "analysisGroupings": [
+  {
+   "id": "GRP.TRT",
+   "name": "Planned Treatment",
+   "dataDriven": true,
+   "groupingDataset": "ADSL",
+   "groupingVariable": "TRTP"
+  }
+ ],
+ "dataSubsets": [
+  {
+   "id": "DSS.F-14-1",
+   "name": "DataSubset.14-1F",
+   "label": "TRTEMFL = 'Y'",
+   "level": 1,
+   "order": 1
+  }
+ ],
+ "methods": [
+  {
+   "id": "MTH.DESC",
+   "name": "Descriptive summary statistics",
+   "operations": [
+    {
+     "id": "OP.DESC.N",
+     "order": 1,
+     "name": "N"
+    },
+    {
+     "id": "OP.DESC.MEAN",
+     "order": 2,
+     "name": "Mean"
+    },
+    {
+     "id": "OP.DESC.SD",
+     "order": 3,
+     "name": "Standard deviation"
+    }
+   ]
   },
   {
-   "id": "AN.F-14-1"
+   "id": "MTH.INCID",
+   "name": "Incidence n (%) by preferred term",
+   "operations": [
+    {
+     "id": "OP.INC.N",
+     "order": 1,
+     "name": "Subjects with event"
+    }
+   ]
+  }
+ ],
+ "analyses": [
+  {
+   "id": "AN.T-14-2.01",
+   "name": "Age by Treatment",
+   "reason": {
+    "controlledTerm": "SPECIFIED IN SAP"
+   },
+   "purpose": {
+    "sponsorTermId": "SPT.DEMOGRAPHY"
+   },
+   "methodId": "MTH.DESC",
+   "analysisSetId": "AS.SAF",
+   "dataset": "ADSL",
+   "orderedGroupings": [
+    {
+     "order": 1,
+     "groupingId": "GRP.TRT",
+     "resultsByGroup": true
+    }
+   ]
+  },
+  {
+   "id": "AN.F-14-1",
+   "name": "Subjects with TEAEs",
+   "reason": {
+    "controlledTerm": "SPECIFIED IN SAP"
+   },
+   "purpose": {
+    "sponsorTermId": "SPT.SAFETY"
+   },
+   "methodId": "MTH.INCID",
+   "analysisSetId": "AS.SAF",
+   "dataset": "ADAE",
+   "dataSubsetId": "DSS.F-14-1",
+   "orderedGroupings": [
+    {
+     "order": 1,
+     "groupingId": "GRP.TRT",
+     "resultsByGroup": true
+    }
+   ]
   }
  ],
  "outputs": [

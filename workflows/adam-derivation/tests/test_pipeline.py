@@ -9,9 +9,15 @@ programs in tests/fixtures/programs:
   2. an untagged column and an untagged extra column -> check-lineage sends it back (retry),
      then, attempts used up -> outcome failed
   3. fix loop: package carrying programs + CORE dispositions -> fixMode, findings staged
+  4. population gate (seeded defects): the real pilot ADaM passes; 5 flipped SAFFL, a dropped
+     ADSL subject, 3 swapped TRT01P and an ADSL from the 18-subject synthetic SDTM fail;
+     Unplanned Treatment / ACTARM != ARM pass (noted); an unreadable ADaM .xpt is the agent's
+     problem, an unreadable DM a StepFailure; and a flipped SAFFL in the programs goes back to the agent
 
-Needs R with haven, jsonlite, dplyr and the SDTM folder:
-  SDTM_DIR=$HOME/Repo/FULL_WORKFLOW/inputs/sdtm python3 tests/test_pipeline.py
+Needs R with haven, jsonlite, dplyr, admiral. SDTM_DIR defaults to the real CDISC pilot SDTM;
+PILOT_ADAM_DIR (the pilot's ADaM) and SYNTHETIC_SDTM_DIR (the 18-subject set) default to the
+local checkouts below, and their seeded-defect checks are skipped when the folder is missing:
+  python3 tests/test_pipeline.py
 """
 
 from __future__ import annotations
@@ -30,6 +36,10 @@ HERE = Path(__file__).resolve().parent
 ARTIFACTS = HERE.parent / "artifacts"
 SHARED = HERE.parent.parent / "shared"
 FIXTURES = HERE / "fixtures"
+REPO = Path.home() / "Repo"
+DEFAULT_SDTM_DIR = REPO / "protocol-to-tfl" / "test-docs" / "cdiscpilot01" / "sdtm"
+DEFAULT_PILOT_ADAM_DIR = REPO / "experimental-fda-submission-4-podman" / "submissions-pilot2" / "datasets" / "adam"
+DEFAULT_SYNTHETIC_SDTM_DIR = REPO / "FULL_WORKFLOW" / "inputs" / "sdtm"
 
 
 class Run:
@@ -139,8 +149,17 @@ def test_derived(work: Path, sdtm_dir: Path) -> None:
     assert item_defs["IT.ADSL.TRTSDT"].get("Length") == "8" and item_defs["IT.ADSL.TRTSDT"].get("DataType") == "integer"
     assert all(item.get("Length") for item in item_defs.values()), "every ItemDef needs a Length"
 
+    assert lineage_gate["notes"] == [], lineage_gate["notes"]
+    populations = json.loads((run.steps_dir / "check-lineage" / "population-counts.json").read_text(encoding="utf-8"))
+    assert populations == lineage_gate["populations"], "population-counts.json and the step output must agree"
+    assert populations["armVariable"] == "TRT01P" and populations["datasets"]["ADSL"]["records"] == 306, populations
+    pilot_arms = {"Placebo": 86, "Xanomeline High Dose": 84, "Xanomeline Low Dose": 84}
+    assert populations["populations"]["SAFFL"] == {"total": 254, "byArm": pilot_arms}, populations["populations"]
+    assert populations["populations"]["ITTFL"] == {"total": 254, "byArm": pilot_arms}, populations["populations"]
+
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "derived", result["summary"]
+    assert {item["name"] for item in result["package"]["files"] if item["kind"] == "lineage"} == {"lineage.json", "population-counts.json"}
     kinds = sorted({item["kind"] for item in result["package"]["files"]})
     assert {"adam", "adam-program", "adam-log", "lineage", "adam-define", "sdtm", "adam-spec"} <= set(kinds), kinds
     assert all(item["downloadUrl"].startswith(("/api/runs/", "/api/attachments/")) for item in result["package"]["files"])
@@ -192,12 +211,14 @@ def test_fix_loop_staging(work: Path, sdtm_dir: Path) -> None:
     lineage = work / "lineage.json"
     lineage.write_text(json.dumps({"variables": [{"dataset": "ADSL", "variable": "TRTSDT", "program": "adsl.R", "lines": [1, 2]}]}), encoding="utf-8")
     extra = [entry(FIXTURES / "programs" / "adsl.R", "adam-program"), entry(FIXTURES / "programs" / "adae.R", "adam-program"),
-             entry(lineage, "lineage"), entry(dispositions, "core-dispositions-adamig"), entry(report, "core-report-adamig"),
+             entry(lineage, "lineage"), {**entry(lineage, "lineage"), "name": "population-counts.json"},
+             entry(dispositions, "core-dispositions-adamig"), entry(report, "core-report-adamig"),
              {**entry(report, "core-report-adamig"), "name": "core-report.html"}]
     package = package_for(sdtm_dir, FIXTURES / "adam-spec.json", extra)
     resolved = run.step("resolve-inputs", "resolve_inputs.py", {"package": without_local(package)})
     names = [item["name"] for item in resolved["files"]]
     assert "core-report.json" in names and "core-report.html" not in names, names
+    assert "population-counts.json" not in names, names
     local = {item["name"]: item["localPath"] for item in package["files"]}
     staged = run.step("stage-inputs", "stage_inputs.py", files=[{**item, "localPath": local[item["name"]]} for item in resolved["files"]])
     assert staged["fixMode"] is True and staged["findings"] == 1, staged
@@ -227,6 +248,151 @@ def test_upload_mode(work: Path, sdtm_dir: Path) -> None:
     print("  upload:", staged["summary"])
 
 
+SEED_R = r"""
+arguments <- commandArgs(TRUE)
+mode <- arguments[1]; source_dir <- arguments[2]; target_dir <- arguments[3]
+library(dplyr, warn.conflicts = FALSE)
+if (mode == "synthetic") {
+  dm <- haven::read_xpt(file.path(source_dir, "dm.xpt"))
+  ex <- haven::read_xpt(file.path(source_dir, "ex.xpt"))
+  adsl <- dm %>% transmute(STUDYID, USUBJID, TRT01P = ARM, TRT01A = ACTARM,
+                           ITTFL = if_else(ARM == "", "N", "Y"), SAFFL = if_else(USUBJID %in% ex$USUBJID, "Y", "N"))
+} else {
+  adsl <- haven::read_xpt(file.path(source_dir, "adsl.xpt"))
+  if (mode == "flip-saffl") adsl$SAFFL[1:5] <- "N"
+  if (mode == "drop-subject") adsl <- adsl[-1, ]
+  if (mode == "swap-trt01p") adsl$TRT01P[which(adsl$TRT01P == "Placebo")[1:3]] <- "Xanomeline High Dose"
+}
+haven::write_xpt(adsl, file.path(target_dir, "adsl.xpt"), version = 5, name = "ADSL")
+"""
+
+
+def seeded_adam(work: Path, mode: str, source_dir: Path, pilot_adam: Path) -> Path:
+    """The pilot ADaM folder with ADSL replaced by a seeded defect."""
+    target = work / f"adam-{mode}"
+    target.mkdir(parents=True)
+    for dataset in pilot_adam.glob("*.xpt"):
+        if dataset.name.lower() != "adsl.xpt":
+            (target / dataset.name.lower()).symlink_to(dataset)
+    program = work / "seed.R"
+    program.write_text(SEED_R, encoding="utf-8")
+    subprocess.run(["Rscript", "--vanilla", str(program), mode, str(source_dir), str(target)], check=True, capture_output=True, text=True)
+    return target
+
+
+def populations_module():
+    sys.path[:0] = [str(ARTIFACTS / "scripts"), str(SHARED)]
+    import populations
+    return populations
+
+
+def population_check(sdtm_dir: Path, adam_dir: Path) -> tuple[list[str], list[str], dict]:
+    return populations_module().gate_populations(sdtm_dir, adam_dir)
+
+
+def population_check_data(data: dict) -> tuple[list[str], list[str], dict]:
+    return populations_module().check(data)
+
+
+def test_population_gate(work: Path, sdtm_dir: Path) -> None:
+    pilot_adam = Path(os.environ.get("PILOT_ADAM_DIR", str(DEFAULT_PILOT_ADAM_DIR)))
+    synthetic_sdtm = Path(os.environ.get("SYNTHETIC_SDTM_DIR", str(DEFAULT_SYNTHETIC_SDTM_DIR)))
+    if (pilot_adam / "adsl.xpt").is_file() is False:
+        print(f"  SKIPPED: no pilot ADaM at {pilot_adam}")
+    else:
+        problems, notes, counts = population_check(sdtm_dir, pilot_adam)
+        assert problems == [], problems
+        assert len(notes) == 1 and "TRT01A follows DM.ARM" in notes[0] and "12 subject(s)" in notes[0], notes
+        arms = {"Placebo": 86, "Xanomeline High Dose": 84, "Xanomeline Low Dose": 84}
+        assert counts["armVariable"] == "TRT01A" and counts["datasets"]["ADSL"] == {"records": 254}, counts
+        assert counts["populations"]["SAFFL"] == {"total": 254, "byArm": arms} and counts["populations"]["ITTFL"]["total"] == 254, counts
+        assert counts["populations"]["EFFFL"]["byArm"] == {"Placebo": 79, "Xanomeline High Dose": 74, "Xanomeline Low Dose": 81}, counts
+        print("  pilot ADaM vs pilot SDTM: PASS;", notes[0][:90])
+
+        problems, _, counts = population_check(sdtm_dir, seeded_adam(work, "flip-saffl", pilot_adam, pilot_adam))
+        assert len(problems) == 1 and problems[0].startswith("ADSL.SAFFL='Y' for 249 subject(s), but 254 are exposed"), problems
+        assert counts["populations"]["SAFFL"]["total"] == 249, counts
+        print("  5 SAFFL flipped: FAIL as expected:", problems[0][:150])
+
+        problems, _, _ = population_check(sdtm_dir, seeded_adam(work, "drop-subject", pilot_adam, pilot_adam))
+        joined = "\n".join(problems)
+        assert "Randomised in DM but missing from ADSL: 01-701-1015" in joined, joined
+        assert "ADADAS has 1 USUBJID(s) that are not in ADSL: 01-701-1015" in joined, joined
+        print(f"  ADSL subject dropped: FAIL as expected ({len(problems)} problems)")
+
+        problems, _, _ = population_check(sdtm_dir, seeded_adam(work, "swap-trt01p", pilot_adam, pilot_adam))
+        assert len(problems) == 2 and problems[0].startswith("DM.ARM 'Placebo' maps to more than one ADSL.TRT01P"), problems
+        assert problems[1].startswith("ADSL.TRT01P 'Xanomeline High Dose' maps to more than one DM.ARM"), problems
+        print("  3 TRT01P swapped: FAIL as expected:", problems[0][:120])
+
+        if (synthetic_sdtm / "dm.xpt").is_file() is False:
+            print(f"  SKIPPED: no synthetic SDTM at {synthetic_sdtm}")
+        else:
+            problems, _, _ = population_check(sdtm_dir, seeded_adam(work, "synthetic", synthetic_sdtm, pilot_adam))
+            joined = "\n".join(problems)
+            assert "ADSL holds 18 subject(s); DM has 306, 254 randomised" in joined and "Not in DM: CDISC001" in joined, joined
+            assert "ADADAS has 254 USUBJID(s) that are not in ADSL" in joined, joined
+            print(f"  synthetic 18-subject ADSL vs real DM: FAIL as expected ({len(problems)} problems):", problems[0][:120])
+
+    problems, _, _ = population_check_data({
+        "sdtm": {"DM": {"USUBJID": ["S1", "S2", "S3", "S4"], "ARMCD": ["PBO", "Scrnfail", "NOTASSGN", "PBO"],
+                        "ARM": ["Placebo", "Screen Failure", "Not Assigned", "Placebo"],
+                        "ACTARMCD": ["PBO", "Scrnfail", "NOTASSGN", "NOTTRT"], "ACTARM": ["Placebo", "Screen Failure", "Not Assigned", "Not Treated"]},
+                 "EX": {"USUBJID": ["S1"], "EXSTDTC": ["2020-01-01"]}},
+        "adam": {"ADSL": {"records": 4, "columns": {"USUBJID": ["S1", "S2", "S3", "S4"], "TRT01P": ["Placebo", "", "", "Placebo"],
+                                                    "TRT01A": ["Placebo", "", "", ""], "SAFFL": ["Y", "N", "N", "N"], "ITTFL": ["Y", "N", "N", "Y"]}}},
+    })
+    assert problems == [], problems
+    print("  blank TRT01P/TRT01A for screen failure, not assigned and not treated: PASS")
+
+    problems, notes, _ = population_check_data({
+        "sdtm": {"DM": {"USUBJID": ["S1", "S2", "S3", "S4"], "ARMCD": ["PBO", "SCRNFAIL", "PBO", "PBO"],
+                        "ARM": ["Placebo", "Screen Failure", "Placebo", "Placebo"],
+                        "ACTARMCD": ["PBO", "SCRNFAIL", "UNPLAN", "DRG"], "ACTARM": ["Placebo", "Screen Failure", "Unplanned Treatment", "Drug"]},
+                 "EX": {"USUBJID": ["S1", "S4"], "EXSTDTC": ["2020-01-01", "2020-01-02"]}},
+        "adam": {"ADSL": {"records": 3, "columns": {"USUBJID": ["S1", "S3", "S4"], "TRT01P": ["Placebo", "Placebo", "Placebo"],
+                                                    "TRT01A": ["Placebo", "", "Drug"], "SAFFL": ["Y", "N", "Y"], "ITTFL": ["Y", "Y", "Y"]}}},
+    })
+    assert problems == [], problems
+    assert notes == ["ADSL.TRT01A follows DM.ACTARM: 1 treated subject(s) have ACTARM != ARM (S4), so their TRT01A differs from TRT01P."], notes
+    print("  upper-case SCRNFAIL, Unplanned Treatment, ACTARM != ARM noted: PASS")
+
+    broken_adam = work / "broken-adam"
+    broken_adam.mkdir()
+    (broken_adam / "adsl.xpt").write_bytes(b"not an xpt file")
+    problems, _, counts = population_check(sdtm_dir, broken_adam)
+    assert len(problems) == 1 and problems[0].startswith("adsl.xpt cannot be read with haven::read_xpt:") and counts["populations"] == {}, problems
+    broken_sdtm = work / "broken-sdtm"
+    broken_sdtm.mkdir()
+    (broken_sdtm / "dm.xpt").write_bytes(b"not an xpt file")
+    try:
+        population_check(broken_sdtm, broken_adam)
+        raise AssertionError("an unreadable DM must fail the step")
+    except populations_module().StepFailure as failure:
+        assert "Could not read the staged DM / EX" in str(failure), failure
+    print("  unreadable ADaM .xpt -> agent problem; unreadable DM -> StepFailure: PASS")
+
+    run = Run(work / "population")
+    package = package_for(sdtm_dir, FIXTURES / "adam-spec.json")
+    resolved = run.step("resolve-inputs", "resolve_inputs.py", {"package": without_local(package)})
+    local = {item["name"]: item["localPath"] for item in package["files"]}
+    run.step("stage-inputs", "stage_inputs.py", files=[{**item, "localPath": local[item["name"]]} for item in resolved["files"]])
+    flipped = work / "flipped-programs"
+    shutil.copytree(FIXTURES / "programs", flipped)
+    adsl = flipped / "adsl.R"
+    adsl.write_text(adsl.read_text(encoding="utf-8").replace(
+        'if (sum(adsl$SAFFL == "Y") == 0)',
+        'adsl$SAFFL[which(adsl$SAFFL == "Y")[1:5]] <- "N"\n\nif (sum(adsl$SAFFL == "Y") == 0)'), encoding="utf-8")
+    run.agent(flipped)
+    executed, lineage_gate = run_gates(run)
+    assert executed["needsFix"] is False, executed["problems"]
+    assert lineage_gate["needsFix"] is True and lineage_gate["retry"] is True, lineage_gate
+    assert len(lineage_gate["problems"]) == 1 and "ADSL.SAFFL='Y' for 249 subject(s), but 254 are exposed" in lineage_gate["problems"][0], lineage_gate
+    feedback = json.loads((run.workspace / "adam-derivation" / "feedback.json").read_text(encoding="utf-8"))
+    assert feedback["step"] == "check-lineage" and feedback["problems"] == lineage_gate["problems"], feedback
+    print("  flipped SAFFL in the programs: back to the agent:", lineage_gate["problems"][0][:120])
+
+
 def r_libraries() -> str:
     """Programs run with Rscript --vanilla, which skips ~/.Renviron; hand the local library paths over explicitly."""
     completed = subprocess.run(["Rscript", "-e", "cat(.libPaths(), sep = ':')"], capture_output=True, text=True, check=True)
@@ -235,12 +401,12 @@ def r_libraries() -> str:
 
 def main() -> None:
     os.environ["R_LIBS"] = r_libraries()
-    sdtm = os.environ.get("SDTM_DIR")
-    if not sdtm:
-        raise SystemExit("Set SDTM_DIR (see the module docstring).")
+    sdtm = os.environ.get("SDTM_DIR", str(DEFAULT_SDTM_DIR))
+    if (Path(sdtm) / "dm.xpt").is_file() is False:
+        raise SystemExit(f"No dm.xpt in {sdtm}: set SDTM_DIR to the CDISC pilot SDTM (see the module docstring).")
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
-        for test in (test_upload_mode, test_fix_loop_staging, test_derived, test_gate_retry_then_failed):
+        for test in (test_upload_mode, test_fix_loop_staging, test_derived, test_gate_retry_then_failed, test_population_gate):
             print(test.__name__)
             test(work, Path(sdtm))
     print("all passed")

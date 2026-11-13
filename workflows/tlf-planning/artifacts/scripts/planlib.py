@@ -6,6 +6,8 @@ Every step of a run mounts the same worktree at /workspace:
         inputs/usdm.json                 the study definition (required)
         inputs/{sap,protocol,shells}/    optional context documents
         inputs/sdtm-inventory.json       what the delivered SDTM holds, for feasibility
+        inputs/sdtm-study-facts.json     DM / EX / TS / TA columns for the data check
+        study-check.json                 SDTM vs USDM data check (check-study)
         plan/study-model.json            written by the planner agent
         plan/tlf-plan.json               written by the planner agent
         plan/tlf-index.md                written by the planner agent
@@ -38,6 +40,7 @@ INPUTS_DIR = WORK_DIR / "inputs"
 PLAN_DIR = WORK_DIR / "plan"
 AUDIT_DIR = WORK_DIR / "audit"
 PLAN_CHECK_PATH = WORK_DIR / "plan-check.json"
+STUDY_CHECK_PATH = WORK_DIR / "study-check.json"
 LOOP = GateLoop(WORK_DIR)
 
 STUDY_MODEL = "study-model.json"
@@ -50,6 +53,7 @@ STATUSES = ("planned", "blocked", "needs-clarification")
 PRIORITIES = ("primary", "secondary", "supportive")
 CATEGORIES = ("disposition", "demographics", "efficacy", "pk", "exposure", "safety-ae", "safety-lab",
               "safety-vs", "conmeds", "pro", "other")
+PLACEHOLDER = re.compile(r"to be determined|^\s*$|\*\*\*", re.IGNORECASE)
 FINAL_ID = re.compile(r"^(?P<prefix>[TLF])-14-[0-9A-Za-z.\-]+$")
 
 
@@ -105,8 +109,18 @@ def candidate_problems(candidate: dict, label: str, objective_ids: set[str], end
     return problems
 
 
-def check_plan(plan_dir: Path = PLAN_DIR) -> dict:
-    """Run the gate over the plan files. Result: {problems, counts}."""
+def staged_primary_endpoints() -> dict[str, str]:
+    from studycheck import primary_endpoint_ids
+    usdm_path = INPUTS_DIR / "usdm.json"
+    return primary_endpoint_ids(json.loads(usdm_path.read_text(encoding="utf-8"))) if usdm_path.is_file() else {}
+
+
+def check_plan(plan_dir: Path = PLAN_DIR, primary: dict[str, str] | None = None) -> dict:
+    """Run the gate over the plan files; primary = the USDM's primary endpoints {id: text}.
+
+    Result: {problems, counts}; counts.blockedPrimary lists primary endpoints whose every output is blocked (needs-clarification goes to the
+    statistician, not here) - the data
+    cannot answer the study's primary question, which the planner cannot fix, so the run stops."""
     problems: list[str] = []
     model = load_json(plan_dir / STUDY_MODEL, problems)
     plan = load_json(plan_dir / TLF_PLAN, problems)
@@ -148,6 +162,13 @@ def check_plan(plan_dir: Path = PLAN_DIR) -> dict:
         if candidate.get("status") == "planned":
             planned_endpoints.update(endpoint_trace or [])
 
+    for endpoint_id, text in (primary or {}).items():
+        modelled = next((item for item in endpoints if str(item.get("id")) == endpoint_id), None)
+        if modelled is None:
+            problems.append(f"Primary endpoint {endpoint_id} of the USDM is missing from {STUDY_MODEL} (keep the USDM ids verbatim)")
+        elif modelled.get("resolved") is not True and PLACEHOLDER.search(text) is None:
+            problems.append(f"Primary endpoint {endpoint_id} is marked unresolved, but the USDM states it: {text[:120]!r}")
+
     resolved = [item for item in endpoints if item.get("resolved") is True]
     for endpoint in resolved:
         if endpoint.get("id") not in traced:
@@ -171,4 +192,8 @@ def check_plan(plan_dir: Path = PLAN_DIR) -> dict:
         "blockedEndpoints": sorted(str(item.get("id")) for item in resolved
                                    if item.get("id") in traced and item.get("id") not in planned_endpoints),
     }
+    only_blocked = {endpoint for endpoint in counts["blockedEndpoints"]
+                    if all(item.get("status") == "blocked" for item in plan if isinstance(item, dict)
+                           and endpoint in ((item.get("traces_to") or {}).get("endpoint_ids") or []))}
+    counts["blockedPrimary"] = [key for key in counts["blockedEndpoints"] if key in (primary or {}) and key in only_blocked]
     return {"problems": problems, "counts": counts}

@@ -5,6 +5,9 @@ outcome:
            publishes the files exactly as the gate checked them (check-plan's
            output): study-model, tlf-plan (json), tlf-plan-view (index md + html),
            plus the critic's coverage-report and the review feedback.
+  data-mismatch  the SDTM is not the study the USDM describes (check-study), or it
+           cannot answer a primary endpoint (check-plan dataBlocked); publishes the
+           data-check page (and the plan drafts) and leaves the package's plan as it was.
   failed   the gate still failed after the last attempt; publishes what the
            planner wrote, for a human to pick up, and leaves the package's plan as it was.
 
@@ -42,6 +45,19 @@ def main() -> None:
         ]
         package = replace_files(package, uploaded)
 
+    study_check = step_output(step_input, "check-study")
+    if study_check.get("failed") is True or gate.get("dataBlocked") is True:
+        attached = [step_file("check-study", name, "tlf-plan-view", WORKFLOW) for name in ("study-check.html", "study-check.json")]
+        if gate.get("dataBlocked") is True:
+            attached += [publish_copy(PLAN_DIR / name, kind, WORKFLOW) for name, kind in PLAN_KINDS[:3]]
+        reason = study_check.get("summary") if study_check.get("failed") is True else gate.get("summary")
+        write_result({
+            "outcome": "data-mismatch", "counts": gate.get("counts") or {}, "verdict": None, "problems": [reason],
+            "summary": f"DATA MISMATCH: {reason}", "files": [entry for entry in attached if entry],
+            "package": with_history(package, WORKFLOW, "data-mismatch"),
+        })
+        return
+
     if gate.get("needsFix") is True:
         problems = gate.get("problems") or []
         drafts = [entry for entry in (publish_copy(PLAN_DIR / name, kind, WORKFLOW) for name, kind in PLAN_KINDS[:3]) if entry]
@@ -54,6 +70,7 @@ def main() -> None:
         return
 
     checked = [step_file("check-plan", name, kind, WORKFLOW) for name, kind in PLAN_KINDS]
+    checked += [step_file("check-study", name, "tlf-plan-view", WORKFLOW) for name in ("study-check.html", "study-check.json")]
     audit_report = step_file("audit-plan", "coverage-report.md", "coverage-report", WORKFLOW) \
         or publish_copy(AUDIT_DIR / "coverage-report.md", "coverage-report", WORKFLOW)
     feedback = publish_copy(LOOP.review_feedback_path, f"review-feedback-{WORKFLOW}", WORKFLOW)

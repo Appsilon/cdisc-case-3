@@ -23,6 +23,8 @@ from mfpkg import StepFailure, read_input, run_main, step_output, write_result  
 SHOWN = (
     ("tfl", "tlf-viewer.html", "tlf-viewer.html"),
     ("tfl", "reconciliation.json", "reconciliation.json"),
+    ("tfl", "accuracy.json", "accuracy.json"),
+    ("tlf-plan-view", "study-check.html", "data-check-sdtm-vs-protocol.html"),
     ("usdm-view", "usdm-review.html", "usdm-review.html"),
     ("tlf-plan-view", "tlf-plan.html", "tlf-plan.html"),
     ("analysis-spec-view", "specs.html", "specs.html"),

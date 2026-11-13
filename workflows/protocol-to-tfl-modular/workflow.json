@@ -55,7 +55,7 @@
       "id": "plan",
       "name": "Plan the TLFs",
       "type": "creation",
-      "description": "Child run of tlf-planning: the AI plans every output from the USDM and checks feasibility against the SDTM; a gate checks every trace; an independent AI critic audits it; the statistician approves. Uploads happen here when no package was given.",
+      "description": "Child run of tlf-planning: a deterministic data check first compares the SDTM with the USDM (arms, enrollment, exposure; a mismatch stops the run at data-mismatch); the AI plans every output from the USDM and checks feasibility against the SDTM; a gate checks every trace; an independent AI critic audits it; the statistician approves. Uploads happen here when no package was given.",
       "executor": "action",
       "action": {
         "kind": "run-workflow",
@@ -204,6 +204,12 @@
       "executor": "human"
     },
     {
+      "id": "data-mismatch",
+      "name": "The SDTM is not the protocol's study, or cannot answer a primary endpoint",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
       "id": "stopped",
       "name": "A sub-workflow ended without a result",
       "type": "terminal",
@@ -246,6 +252,11 @@
       "from": "plan",
       "to": "child-failed",
       "when": "output.status != \"completed\""
+    },
+    {
+      "from": "plan",
+      "to": "data-mismatch",
+      "when": "output.status == \"completed\" && output.output.outcome == \"data-mismatch\""
     },
     {
       "from": "plan",

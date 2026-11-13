@@ -3,7 +3,7 @@
 outcome:
   generated        programs ran, every displayed number reconciles with the ARD, and the
                    reviewer approved; publishes ard, tfl (displays + tlf-viewer.html +
-                   reconciliation.json), tfl-program, tfl-log.
+                   reconciliation.json + accuracy.json), tfl-program, tfl-log.
   upstream_change  the reviewer says the specs must change (comment in `request`); publishes
                    the current programs and outputs for reference, package unchanged otherwise.
   failed           the gates still failed after the last attempt; publishes the programs and
@@ -59,7 +59,7 @@ def main() -> None:
 
     ard = folder_files("execute-programs", "ard", (".json",), "ard")
     displays = folder_files("execute-programs", "tfl", (".html", ".png"), "tfl")
-    reports = [entry for entry in (step_file("reconcile", name, "tfl", WORKFLOW) for name in ("tlf-viewer.html", "reconciliation.json")) if entry]
+    reports = [entry for entry in (step_file("reconcile", name, "tfl", WORKFLOW) for name in ("tlf-viewer.html", "reconciliation.json", "accuracy.json")) if entry]
     outputs = [item.get("id") for item in executed.get("outputs") or []]
     if review.get("verdict") == "spec-change":
         request = str(review.get("reviewerComment") or review.get("comment") or "").strip()
@@ -69,9 +69,12 @@ def main() -> None:
         return
 
     files = ard + displays + reports + programs + logs
+    coverage = (reconciled.get("accuracy") or {}).get("coverage") or {}
     write_result({"outcome": "generated", "outputs": outputs, "request": None, "problems": [],
                   "summary": f"GENERATED {len(outputs)} output(s) in {LOOP.attempts()} attempt(s): ARD + display each, "
-                             f"{reconciled.get('checked', 0)} displayed numbers reconciled with the ARD; approved. Open tlf-viewer.html.",
+                             f"{reconciled.get('checked', 0)} displayed numbers reconciled with the ARD, "
+                             f"{coverage.get('recomputed', 0)} of {coverage.get('statistics', 0)} ARD statistics recomputed from ADaM; "
+                             "approved. Open tlf-viewer.html.",
                   "files": files, "package": with_history(replace_files(package, files), WORKFLOW, "generated")})
 
 

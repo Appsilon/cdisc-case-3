@@ -1,7 +1,7 @@
 # Mandatory Derivation Rules & Data-Quality Gate
 
 These rules are **non-negotiable**. Each was a real bug in this repo's ADaM that produced a
-silently-wrong analysis number until fixed. `sdtm-to-adam` MUST implement all three and MUST assert
+silently-wrong analysis number until fixed. `sdtm-to-adam` MUST implement all four and MUST assert
 them with the data-quality gate at the end. They are the authoritative reasons the derived ADaM
 either yields correct analysis numbers or drifts.
 
@@ -116,6 +116,33 @@ adsl <- adsl %>%
 
 The planned-arm levels (`0, 54, 81`) and threshold come from the study design in the spec; keep the
 "randomized only" semantics regardless of study.
+
+---
+
+## Rule 4 — Populations must agree with DM and EX (checked by the gate)
+
+`check-lineage` recomputes these from the staged SDTM and fails the attempt on any difference, naming
+the subjects:
+
+- **ADSL subjects** = every DM subject, or exactly the randomised ones: DM minus screen failures / not
+  assigned (`ARMCD`/`ARM` such as `Scrnfail`, `Screen Failure`, `NOTASSGN`, `Not Assigned`, any case, or
+  both blank).
+  One record per subject.
+- **`SAFFL='Y'`** = subjects with at least one EX record with `EXSTDTC`. Do **not** require
+  `EXDOSE > 0`: placebo subjects have `EXDOSE = 0` and are exposed.
+- **`RANDFL` / `ITTFL` = 'Y'** (whichever you create) = the randomised subjects as above.
+- **`TRT01P`** follows `DM.ARM`, **`TRT01A`** follows `DM.ACTARM`, each through one one-to-one mapping
+  (each DM arm → exactly one value, and back) over the randomised / treated subjects (treated: `ACTARM`
+  not `Not Treated` / `Unplanned Treatment`); leave both blank for screen failures and not-assigned
+  subjects. Per ADaMIG, `TRT01A` is the actual treatment: derive it from `ACTARM`. When `ACTARM`
+  differs from `ARM` for any subject, the program must tag it: the `@derive ADSL.TRT01A` tag names
+  `src=DM.ACTARM` and its `method` says that TRT01A differs from TRT01P where ACTARM != ARM, and the
+  program prints those subjects. The gate notes them too. A `TRT01A` that copies the planned arm is
+  accepted with a note, but derive it from `ACTARM`.
+- Every `USUBJID` of every other ADaM dataset is in ADSL.
+
+The step also counts every `*FL` flag by `TRT01A` (else `TRT01P`) into `population-counts.json`, which
+ard-tfl-generation compares with the ADSL its big Ns are recounted from. Derive the flags from the data, never from expected Ns.
 
 ---
 

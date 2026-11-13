@@ -2,7 +2,8 @@
 
 Started by a parent workflow, the trigger carries a study `package`: its ADaM
 datasets, the approved specs (analysis-spec.json, reporting-event.json), the
-plan, the ADaM lineage and - on a review round driven by a parent - the
+plan, the ADaM lineage (kind lineage: lineage.json and adam-derivation's
+population-counts.json) and - on a review round driven by a parent - the
 previous TLF programs go to `stage-inputs` as top-level `files`. Started by
 hand, there is no package and the run goes to the upload step instead.
 

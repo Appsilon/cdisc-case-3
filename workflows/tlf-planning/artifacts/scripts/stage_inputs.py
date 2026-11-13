@@ -7,7 +7,8 @@ sap/, protocol/, shells/. The delivered SDTM is summarised in
 sdtm-inventory.json - per domain the record count, the variables and the
 distinct category / test / parameter codes - so feasibility is decided on what
 the data holds (QS split into QSPH + QSSL says nothing about which instrument
-is in it), not on file names. Uploads carry no kind, so they are classified by
+is in it), not on file names. The DM / EX / TS / TA columns check-study compares
+with the USDM go to sdtm-study-facts.json. Uploads carry no kind, so they are classified by
 content (USDM JSON) and name (.xml = SDTM define, carried on for CORE; sap /
 shell in the file name; otherwise protocol).
 
@@ -26,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import StepFailure, read_input, run_main, sha256_of, verify_files, write_result  # noqa: E402
 from sdtminventory import sdtm_inventory  # noqa: E402
+from studycheck import study_facts  # noqa: E402
 from planlib import INPUTS_DIR, WORK_DIR  # noqa: E402
 
 DATASET_SUFFIXES = (".xpt", ".sas7bdat")
@@ -78,7 +80,10 @@ def main() -> None:
             (INPUTS_DIR / kind).mkdir(exist_ok=True)
             shutil.copyfile(entry["localPath"], INPUTS_DIR / kind / entry["name"])
 
-    inventory = sdtm_inventory([Path(entry["localPath"]) for entry, kind in kinds if kind == "sdtm"])
+    sdtm_paths = [Path(entry["localPath"]) for entry, kind in kinds if kind == "sdtm"]
+    inventory = sdtm_inventory(sdtm_paths)
+    (INPUTS_DIR / "sdtm-study-facts.json").write_text(json.dumps({"sdtmFiles": len(sdtm_paths), "facts": study_facts(sdtm_paths)}),
+                                                      encoding="utf-8")
     (INPUTS_DIR / "sdtm-inventory.json").write_text(json.dumps({"domains": inventory}, indent=2), encoding="utf-8")
     domains = sorted(inventory)
     unreadable = sorted(domain for domain, summary in inventory.items() if "error" in summary)

@@ -92,6 +92,21 @@ writeLines(html, file.path(Sys.getenv("TFL_DIR"), "T-14-3.01.html"))   # hand-bu
   ```
 
   Write the ARD from that same data frame without reordering rows after the indices are taken.
+- **Big N.** Every table and figure ARD carries one row per displayed column with `variable = "BIGN"`,
+  `stat_name = "N"`, `group1` = the treatment variable, `group1_level` = the arm (`"Total"` for an
+  overall column): the ADSL subjects in the ARS analysis set for that arm. Show it in the column
+  header from that row: `<th data-ard="0">Placebo (N=86)</th>` (in header rows only the number after
+  `N=` is checked, so arm names may contain digits). A gate recounts it from ADSL with the ARS
+  analysis set and grouping and rejects any difference or missing arm.
+- **Rows say what they summarise.** A second gate recomputes every statistic of a simple-summary
+  analysis (descriptive, frequency, incidence) from ADaM, independently of your program: `variable` =
+  the ADaM column, `variable_level` = the category counted, `group1..k`/`group1_level..k` = ADaM
+  columns and values, `stat_name` one of `N` (non-missing), `n` (subjects in the category), `p`
+  (proportion of the arm's big N or of N), `mean`, `sd`, `median`, `min`, `max`. When a statistic is
+  over a narrower slice than the ARS data subset (one parameter, one visit), add `filter` to the row as
+  a where-clause: `filter = "PARAMCD = 'ALT' AND AVISITN = 24"`. Other statistic names (LS means,
+  CIs, p-values) are reported as not independently checked — never rename a statistic to dodge the
+  check. A mismatch names the row, the ARD value, the recomputed value and the scope.
 - Figures: `<final_id>.png` (`ggplot2::ggsave`, 150-300 dpi); the curve's numbers still go to the ARD.
 - `uses=` lists every ADaM `DATASET.VARIABLE` the program reads; it is the trace from each output to
   the ADaM derivation lines in the viewer.
@@ -144,7 +159,8 @@ For each TLF, one script that:
 4. **Assemble a tidy ARD** — long format, one row per statistic:
    `group1, variable_level, context, stat_name, stat`. Flatten `ard_continuous` (its `group1_level`
    and `stat` are **list-columns holding factors** — coerce with `as.character()`/`as.numeric()`),
-   bind the model rows, then `write.csv` + `jsonlite::write_json(..., auto_unbox = TRUE)`.
+   bind the model rows, then `write.csv` + `jsonlite::write_json(..., auto_unbox = TRUE, digits = NA)` (full precision; the
+   default rounds to 4 decimals).
 
 **Engine map** (from `adam-to-tlf-design.md` §5 and the schema catalog; ⚠️ = assemble, ❌ = custom):
 
@@ -195,7 +211,7 @@ shell was provided for the TLF, match its exact layout (row labels and footnote 
   rows — see the program contract above). Pull values from the ARD and apply `fmt()`
   (SAS rounding) at each statistic's **display precision** from the method's `display` block
   (e.g. mean to 1 dp, SD to 2 dp, median to 1 dp, range as integers, p-values to 3 dp).
-- **Column order and reference** come from `groupingFactor.levels`; **N in headers** from ADSL.
+- **Column order and reference** come from `groupingFactor.levels`; **N in headers** from the ARD's `BIGN` rows (computed from ADSL).
 - **Figures (KM):** `ggsurvfit` — see below.
 - Numbers and their `data-ard` matter more than pixel fidelity on the first build.
 

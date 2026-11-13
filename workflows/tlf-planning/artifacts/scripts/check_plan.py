@@ -7,7 +7,12 @@ it publishes the plan files and tlf-plan.html - the plan as a table a
 statistician can review, with the trace of every output and the flagged items
 - for the critic and the human review.
 
-Result: { needsFix, retry, attempt, problems, counts, summary }
+A plan that leaves a primary endpoint of the USDM without a planned output is
+not sent back (the planner cannot add data): dataBlocked stops the run in
+return-result (outcome data-mismatch). The page also shows the data checks
+(check-study) so the statistician sees any warning.
+
+Result: { needsFix, retry, attempt, problems, dataBlocked, counts, summary }
 """
 
 from __future__ import annotations
@@ -22,7 +27,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import OUTPUT_DIR, run_main, write_result  # noqa: E402
 from gate import MAX_ATTEMPTS  # noqa: E402
-from planlib import LOOP, PLAN_CHECK_PATH, PLAN_DIR, PLAN_FILES, STUDY_MODEL, TLF_PLAN, check_plan  # noqa: E402
+from planlib import (LOOP, PLAN_CHECK_PATH, PLAN_DIR, PLAN_FILES, STUDY_CHECK_PATH, STUDY_MODEL, TLF_PLAN,  # noqa: E402
+                     check_plan, staged_primary_endpoints)
 
 STYLE = """
 :root { color-scheme: light dark; --fg:#1d2433; --muted:#5b6475; --line:#d9dee7; --bg:#fff; --chip:#eef2f8; --warn:#9a5b00; }
@@ -50,6 +56,15 @@ def analysis_text(candidate: dict) -> str:
     return html.escape(" · ".join(str(value) for value in fields if value not in (None, "", "none")))
 
 
+def data_checks_panel() -> str:
+    if STUDY_CHECK_PATH.is_file() is False:
+        return ""
+    checks = json.loads(STUDY_CHECK_PATH.read_text(encoding="utf-8")).get("checks") or []
+    rows = "".join(f"<tr><td>{html.escape(item['check'])}</td><td class='{'reason' if item['status'] != 'pass' else ''}'>"
+                   f"{html.escape(item['status'].upper())}</td><td>{html.escape(item['detail'])}</td></tr>" for item in checks)
+    return f"<h2>Data checks: SDTM vs protocol</h2><table><tr><th>Check</th><th>Result</th><th>Detail</th></tr>{rows}</table>"
+
+
 def render(model: dict, plan: list[dict], counts: dict) -> str:
     planned = sorted((item for item in plan if item.get("status") == "planned"), key=lambda item: str(item.get("final_id")))
     flagged = [item for item in plan if item.get("status") != "planned"]
@@ -75,6 +90,7 @@ def render(model: dict, plan: list[dict], counts: dict) -> str:
 <p class="meta">{counts.get('tables', 0)} tables · {counts.get('listings', 0)} listings · {counts.get('figures', 0)} figures planned ·
 {counts.get('flagged', 0)} flagged · {counts.get('objectives', 0)} objectives / {counts.get('endpoints', 0)} endpoints
 ({counts.get('unresolvedEndpoints', 0)} unresolved)</p>
+{data_checks_panel()}
 {f'<h2>Resolved endpoints with no producible output</h2><ul>{blocked}</ul>' if blocked else ''}
 <h2>Planned outputs</h2>
 <table><tr><th>ID</th><th>Title</th><th>Priority</th><th>Analysis</th><th>Traces to</th></tr>{rows}</table>
@@ -85,13 +101,19 @@ def render(model: dict, plan: list[dict], counts: dict) -> str:
 
 def main() -> None:
     attempt = LOOP.count()
-    result = check_plan()
+    result = check_plan(primary=staged_primary_endpoints())
     problems = result["problems"]
     PLAN_CHECK_PATH.write_text(json.dumps(result, indent=2), encoding="utf-8")
     routing = LOOP.route("check-plan", problems)
     if problems:
-        write_result({**routing, "counts": result["counts"],
+        write_result({**routing, "dataBlocked": False, "counts": result["counts"],
                       "summary": f"Plan gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}"})
+        return
+    blocked_primary = result["counts"]["blockedPrimary"]
+    if blocked_primary:
+        write_result({**routing, "dataBlocked": True, "counts": result["counts"],
+                      "summary": f"STOP: primary endpoint(s) {', '.join(blocked_primary)} have no producible output - the delivered "
+                                 "SDTM cannot answer the study's primary question (see the planner's status_reason)."})
         return
 
     for name in PLAN_FILES:
@@ -101,7 +123,7 @@ def main() -> None:
     counts = result["counts"]
     (OUTPUT_DIR / "tlf-plan.html").write_text(render(model, plan, counts), encoding="utf-8")
     write_result({
-        **routing, "counts": counts,
+        **routing, "dataBlocked": False, "counts": counts,
         "summary": f"Plan gate passed: {counts['tables']} tables, {counts['listings']} listings, {counts['figures']} figures planned, "
                    f"{counts['flagged']} flagged; every resolved endpoint traced"
                    + (f" ({len(counts['blockedEndpoints'])} with no producible output: {', '.join(counts['blockedEndpoints'])})."

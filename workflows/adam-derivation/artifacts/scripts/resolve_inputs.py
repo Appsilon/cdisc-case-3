@@ -46,7 +46,8 @@ def main() -> None:
             + ", ".join(sorted({str(entry.get("kind")) for entry in package.get("files") or []}) or ["none"])
         )
     reports = [entry for entry in files_of_kind(package, "core-report-adamig") if entry.get("name") == "core-report.json"]
-    fix_files = [entry for entry in files_of_kind(package, *FIX_KINDS) if entry.get("kind") != "core-report-adamig"] + reports
+    lineage = [entry for entry in files_of_kind(package, "lineage") if entry.get("name") == "lineage.json"]
+    fix_files = [entry for entry in files_of_kind(package, *FIX_KINDS) if entry.get("kind") not in ("core-report-adamig", "lineage")] + reports + lineage
     files = files_of_kind(package, *REQUIRED_KINDS, *CONTEXT_KINDS) + fix_files
     write_result({
         "needsUpload": False,

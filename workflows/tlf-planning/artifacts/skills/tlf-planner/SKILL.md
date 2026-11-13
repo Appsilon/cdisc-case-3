@@ -47,6 +47,13 @@ All under `/workspace/tlf-planning/inputs/` (read-only for you):
   alone proves nothing (QS may be split into QSPH/QSSL by instrument). Name the domain and code
   in `status_reason` when you block. Empty `domains` means no data has been delivered yet: keep
   data-dependent candidates `planned` and add the note `"feasibility not checked — no SDTM delivered"`.
+- `../study-check.json` — the deterministic data check that ran before you (the SDTM's arms,
+  enrollment and exposure against the USDM). It passed, or you would not be running; mention its
+  `warn` lines in the index if they matter for planning.
+- **A primary endpoint must not be left without a planned output.** If you block every output of a
+  USDM primary endpoint, the run stops (`data-mismatch`) — the data cannot answer the study's
+  primary question. So before blocking one, search `sdtm-inventory.json` for the instrument's
+  codes in every domain (QS, QSxx, FT, RS, …) and block only when they truly are not there.
 
 ## Output
 

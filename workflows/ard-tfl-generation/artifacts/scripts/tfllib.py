@@ -8,6 +8,7 @@ Every step of a run mounts the same worktree at /workspace:
         inputs/reporting-event.json        the CDISC ARS ReportingEvent
         inputs/tlf-plan.json               titles and output types
         inputs/lineage.json                ADaM variable -> program lines, when supplied
+        inputs/population-counts.json      population flag counts by arm from adam-derivation, when supplied
         inputs/adam-columns.json           what each ADaM dataset holds (written by stage-inputs)
         feedback.json                      what the last gate rejected, for the agent
         review-feedback.jsonl              every reviewer request, one JSON line each
@@ -35,6 +36,15 @@ Program contract (enforced by execute-programs and reconcile):
     x100 - always when followed by %); "<0.001" / ">0.999" must bound it. The first cell of a row
     (its label) and <th>-only header rows carry none. Listings show ADaM records, not statistics:
     their cells need no data-ard (any that carry one are checked).
+  * big N: one ARD row per displayed column of a table or figure with variable "BIGN", stat_name "N",
+    group1 = the treatment variable and group1_level = the arm ("Total", or no group1, for an overall
+    column), counted from ADSL with the ARS analysis set. A header cell that shows "N=" names that row:
+    <th data-ard="0">Placebo (N=86)</th> (in header rows only the numbers after "N=" are checked);
+  * every other ARD row says what it summarises so it can be recomputed from ADaM (accuracy.py): variable
+    = the ADaM column, variable_level = the category counted, group1..k / group1_level..k = the ADaM
+    grouping columns and values, stat_name N / n / p / mean / sd / median / min / max for those
+    statistics; when the statistic covers a narrower slice than the ARS data subset (one parameter, one
+    visit), the row's "filter" says which, as a where-clause: "PARAMCD = 'ALT' AND AVISITN = 24".
 """
 
 from __future__ import annotations
@@ -64,6 +74,7 @@ FIELD = re.compile(r"(?P<key>analysis|uses)=(?P<value>\S+)")
 NUMBER = re.compile(r"(?:(?P<bound>[<>≤≥])\s?|(?<![\w.]))(?P<value>[-−]?\d+(?:\.\d+)?)(?![\w.])(?P<percent>\s?%)?")
 ARD_INDEX = re.compile(r"[0-9]+")
 ADAM_VARIABLE = re.compile(r"^(AD[A-Z0-9]{1,6})\.([A-Z][A-Z0-9_]{0,7})$")
+HEADER_N = re.compile(r"\bN\s*=\s*(?P<value>\d+)(?![\w.])")
 
 
 def read_json(path: Path):
@@ -178,13 +189,20 @@ class TableCells(HTMLParser):
 
 
 def displayed_cells(html_text: str) -> list[dict]:
-    """Every table body cell that shows numbers: {where, text, numbers: [(bound, token, percent)], refs}.
-    Row labels (first cell) and pure header rows are excluded."""
+    """Every table body cell that shows numbers, and every header cell that shows a big N ("N=86"):
+    {where, text, numbers: [(bound, token, percent)], refs}. Row labels (first cell) are excluded; in pure
+    header rows only the numbers after "N=" count."""
     parser = TableCells()
     parser.feed(html_text)
     found = []
     for row in parser.rows:
-        if not row or all(tag == "th" for tag, _, _ in row):
+        if not row:
+            continue
+        if all(tag == "th" for tag, _, _ in row):
+            for position, (_, text, refs) in enumerate(row, start=1):
+                numbers = [("", match.group("value"), False) for match in HEADER_N.finditer(text)]
+                if numbers:
+                    found.append({"where": f"header '{text[:40]}', column {position}", "text": text, "numbers": numbers, "refs": refs})
             continue
         label = row[0][1]
         for position, (_, text, refs) in enumerate(row[1:], start=2):

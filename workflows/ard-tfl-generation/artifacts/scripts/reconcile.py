@@ -1,4 +1,4 @@
-"""Reconcile every displayed number with the ARD, and build the TLF viewer.
+"""Reconcile every displayed number with the ARD, check the ARD against the ADaM, and build the TLF viewer.
 
 Deterministic. For each table and listing, every body cell that shows numbers
 names their ARD rows (data-ard="i,j", 0-based) and each number must equal its
@@ -9,12 +9,22 @@ some other statistic. A number without its row was computed or typed in the
 renderer - the failure the numbers-then-display discipline exists to prevent -
 and goes back to the agent while attempts remain.
 
+Then the accuracy gates (accuracy.py), which check the ARD itself against the
+ADaM and the ARS spec, independent of the agent's programs: each output's big N
+per arm recounted from ADSL with its ARS analysis set (and shown in the header
+from that ARD row), and every statistic of a simple-summary analysis
+recomputed from ADaM. Their problems go back to the agent the same way;
+accuracy.json holds the report and the coverage (statistics recomputed / all
+numeric ARD statistics). population-counts.json, when staged, is compared with
+ADSL; a difference is upstream's (the ADaM was approved there), so it is a
+warning in accuracy.json, the viewer and the summary, never sent to the agent.
+
 On pass writes tlf-viewer.html: one self-contained page with, per output, the
 rendered display (hovering a cell shows the ARD rows it was rendered from), its
 ARD, the program that made both, and the trace - ARS analysis, analysis set, record subset, methods, and each ADaM variable the
 program reads with the derivation program lines from the ADaM lineage.
 
-Result: { needsFix, retry, attempt, problems, checked, unmatched, summary }
+Result: { needsFix, retry, attempt, problems, checked, unmatched, accuracy: {coverage, summary, warnings}, summary }
 """
 
 from __future__ import annotations
@@ -29,6 +39,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import OUTPUT_DIR, STEP_OUTPUTS_DIR, run_main, write_result  # noqa: E402
+from accuracy import accuracy_gate  # noqa: E402
 from tfllib import (  # noqa: E402
     ARD_INDEX, INPUTS_DIR, LOOP, MAX_PROBLEMS_PER_OUTPUT, PROGRAMS_DIR, RUN_DIR, SELF_CHECK, describe_ard_row, planned_outputs, read_json,
     reconcile_output,
@@ -41,7 +52,7 @@ body { font: 14px/1.45 system-ui, sans-serif; color: var(--fg); background: var(
 nav { width: 230px; flex: none; border-right: 1px solid var(--line); height: 100vh; overflow-y: auto; position: sticky; top: 0; padding: 12px 0; }
 nav a { display: block; padding: 3px 14px; color: var(--fg); text-decoration: none; font-size: 13px; } nav a:hover { color: var(--accent); }
 main { flex: 1; min-width: 0; padding: 16px 20px; } section { border-bottom: 1px solid var(--line); padding: 8px 0 20px; }
-h1 { font-size: 18px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 12px 0 4px; } p.meta { color: var(--muted); margin: 0 0 8px; }
+h1 { font-size: 18px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 12px 0 4px; } p.meta { color: var(--muted); margin: 0 0 8px; } p.warning { color: #b45309; margin: 0 0 8px; }
 .chip { background: var(--chip); border-radius: 4px; padding: 0 5px; font-size: 12px; margin-right: 4px; display: inline-block; }
 iframe { width: 100%; height: 420px; border: 1px solid var(--line); background: #fff; } img { max-width: 100%; border: 1px solid var(--line); }
 details { margin-top: 8px; } summary { cursor: pointer; color: var(--accent); }
@@ -85,7 +96,18 @@ def linked_display(display_html: str, rows: list[dict]) -> str:
     return HEAD_END.sub(lambda end: CELL_HOVER_STYLE + end.group(0), linked, count=1) if HEAD_END.search(linked) else linked + CELL_HOVER_STYLE
 
 
-def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, folder: Path, check: dict) -> str:
+def accuracy_line(denominators: dict, recompute: dict) -> str:
+    if denominators.get("status") == "pass":
+        arms = ", ".join(f"{level} {count:g}" for level, count in denominators.get("ard", {}).items())
+        big_n = f"big N recounted from ADSL ({denominators.get('population')}): {arms}"
+    else:
+        big_n = f"big N {denominators.get('status')}" + (f" ({denominators['reason']})" if denominators.get("reason") else "")
+    skipped = "; ".join(f"{count} {reason}" for reason, count in recompute.get("notChecked", {}).items())
+    return (f"{big_n} · {recompute.get('recomputed', 0)} of {recompute.get('statistics', 0)} ARD statistics recomputed from ADaM"
+            + (f" (not independently checked: {skipped})" if skipped else ""))
+
+
+def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, folder: Path, check: dict, accuracy: dict) -> str:
     html_path, png_path = folder / "tfl" / f"{final_id}.html", folder / "tfl" / f"{final_id}.png"
     display = ""
     if png_path.is_file():
@@ -106,6 +128,7 @@ def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, fol
     checked = f"{check['checked']} displayed numbers reconciled with the ARD" if check.get("skipped") is None else check["skipped"]
     return f"""<section id="{html.escape(final_id)}"><h2>{html.escape(final_id)} {html.escape(str(meta.get('title') or ''))}</h2>
 <p class="meta">{html.escape(checked)} · {len(ard_rows)} ARD rows</p>
+<p class="meta">{html.escape(accuracy_line(accuracy["denominators"].get(final_id, {}), accuracy["recompute"].get(final_id, {})))}</p>
 <dl><dt>ARS analysis</dt><dd>{chips([tag.get('analysis')])}</dd>
 <dt>Analysis set</dt><dd>{html.escape(str((spec.get('analysisSet') or {}).get('condition', '')))}</dd>
 <dt>Records</dt><dd>{chips([(spec.get('dataSubset') or {}).get('dataset')])}{html.escape(str((spec.get('dataSubset') or {}).get('condition', '')))}</dd>
@@ -115,18 +138,22 @@ def section(final_id: str, meta: dict, spec: dict, tag: dict, lineage: dict, fol
 <details><summary>Program {html.escape(program.name)}</summary><pre>{html.escape(code)}</pre></details></section>"""
 
 
-def viewer(outputs: dict, tags: dict, folder: Path, checks: dict) -> str:
+def viewer(outputs: dict, tags: dict, folder: Path, checks: dict, accuracy: dict) -> str:
     specs = {str(entry.get("table_id")): entry for entry in read_json(INPUTS_DIR / "analysis-spec.json") if isinstance(entry, dict)}
     lineage = lineage_index()
     ordered = sorted(tags)
     nav = "".join(f"<a href='#{html.escape(final_id)}'>{html.escape(final_id)}</a>" for final_id in ordered)
     body = "".join(section(final_id, outputs[final_id], specs.get(final_id, {}), tags[final_id], lineage, folder,
-                           checks[final_id]) for final_id in ordered)
+                           checks[final_id], accuracy) for final_id in ordered)
     numbers = sum(item["checked"] for item in checks.values())
+    coverage, counted = accuracy["coverage"], accuracy["summary"]
+    population_counts = accuracy["populationCounts"]["status"]
+    warnings = "".join(f"<p class='warning'>Warning (upstream ADaM, not this step's programs): {html.escape(item)}</p>" for item in accuracy["warnings"])
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>TLF viewer</title><style>{STYLE}</style></head><body>
 <nav>{nav}</nav><main><h1>Tables, listings and figures</h1>
 <p class="meta">{len(ordered)} outputs · {numbers} displayed numbers, each matched to the ARD row its cell names (hover a cell) · every ARD computed by the program shown, from ADaM traced to its derivation lines</p>
-{body}</main></body></html>"""
+<p class="meta">Data checks, independent of the programs: big N recounted from ADSL for {counted['denominatorsPassed']} output(s), {counted['denominatorsNotChecked']} not checked · {coverage['recomputed']} of {coverage['statistics']} ARD statistics recomputed from ADaM · population-counts.json: {html.escape(population_counts)}</p>
+{warnings}{body}</main></body></html>"""
 
 
 def main() -> None:
@@ -144,17 +171,27 @@ def main() -> None:
                             "and name its row in data-ard")
         if len(check["unmatched"]) > MAX_PROBLEMS_PER_OUTPUT:
             problems.append(f"{final_id}: {len(check['unmatched']) - MAX_PROBLEMS_PER_OUTPUT} more unmatched value(s)")
+    accuracy_problems, accuracy = accuracy_gate(outputs, tags, folder)
+    problems += accuracy_problems
 
     routing = LOOP.route("reconcile", problems)
     checked = sum(item["checked"] for item in checks.values())
     unmatched = sum(len(item["unmatched"]) for item in checks.values())
     if SELF_CHECK is False:
         (OUTPUT_DIR / "reconciliation.json").write_text(json.dumps(checks, indent=2), encoding="utf-8")
+        (OUTPUT_DIR / "accuracy.json").write_text(json.dumps(accuracy, indent=2), encoding="utf-8")
         if not problems:
-            (OUTPUT_DIR / "tlf-viewer.html").write_text(viewer(outputs, tags, folder, checks), encoding="utf-8")
-    summary = (f"ARD reconciliation FAILED (attempt {routing['attempt']}): {unmatched} problem(s) in {checked} displayed number(s) - each must match the ARD row its cell names."
-               if problems else f"ARD reconciliation passed: {checked} displayed number(s) in {len(checks)} output(s) each match the ARD row their cell names.")
-    write_result({**routing, "checked": checked, "unmatched": unmatched, "summary": summary})
+            (OUTPUT_DIR / "tlf-viewer.html").write_text(viewer(outputs, tags, folder, checks, accuracy), encoding="utf-8")
+    coverage = accuracy["coverage"]
+    data_checks = (f"big N recounted from ADSL for {accuracy['summary']['denominatorsPassed']} output(s); "
+                   f"{coverage['recomputed']} of {coverage['statistics']} ARD statistics recomputed from ADaM")
+    if accuracy["warnings"]:
+        data_checks += f"; {len(accuracy['warnings'])} upstream warning(s): {accuracy['warnings'][0][:200]}"
+    summary = (f"ARD checks FAILED (attempt {routing['attempt']}): {unmatched} display problem(s) in {checked} displayed number(s), "
+               f"{len(accuracy_problems)} data problem(s) ({data_checks}). First: {problems[0][:300]}"
+               if problems else f"ARD checks passed: {checked} displayed number(s) in {len(checks)} output(s) each match the ARD row their cell names; {data_checks}.")
+    write_result({**routing, "checked": checked, "unmatched": unmatched,
+                  "accuracy": {"coverage": coverage, "summary": accuracy["summary"], "warnings": accuracy["warnings"]}, "summary": summary})
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 Files arrive as top-level `files` (package or upload), already downloaded with
 `localPath`. Each is sha256-verified and staged under
 /workspace/ard-tfl-generation/inputs: ADaM as adam/<dataset>.xpt, the specs,
-the plan and lineage.json by name; previous TLF programs go back to
+the plan, lineage.json and population-counts.json by name; previous TLF programs go back to
 /workspace/tlf-programs. adam-columns.json records what each ADaM dataset
 holds, for the program tags to resolve against. Uploads carry no kind, so they
 are classified by name.
@@ -24,7 +24,8 @@ from mfpkg import StepFailure, read_input, run_main, sha256_of, verify_files, wr
 from sdtminventory import sdtm_inventory  # noqa: E402
 from tfllib import ADAM_COLUMNS_PATH, ADAM_DIR, INPUTS_DIR, PROGRAMS_DIR, WORK_DIR, planned_outputs  # noqa: E402
 
-NAMED = {"analysis-spec.json": "analysis-spec", "reporting-event.json": "ars", "tlf-plan.json": "tlf-plan", "lineage.json": "lineage"}
+NAMED = {"analysis-spec.json": "analysis-spec", "reporting-event.json": "ars", "tlf-plan.json": "tlf-plan", "lineage.json": "lineage",
+         "population-counts.json": "lineage"}
 
 
 def classify(entry: dict) -> str:

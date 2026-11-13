@@ -81,6 +81,19 @@
       }
     },
     {
+      "id": "check-study",
+      "name": "Check the SDTM against the protocol",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic data check before any planning: DM must have as many arms (randomised subjects) as the USDM, the randomised count must be within 50-150 % of the USDM plannedEnrollmentNumber, and randomised subjects must have EX records (fail = the SDTM is not this protocol's study: the run stops with outcome data-mismatch; CORE does not check this). DM arm names, TA arms, TS PLANSUB / TITLE / TPHASE are compared too (warnings). Writes study-check.html, shown on the plan review page.",
+      "script": {
+        "command": "python3 /artifacts/scripts/check_study.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 10
+      }
+    },
+    {
       "id": "plan-tlfs",
       "name": "Plan TLFs",
       "type": "creation",
@@ -104,7 +117,7 @@
       "id": "check-plan",
       "name": "Check the plan",
       "type": "creation",
-      "description": "Deterministic gate: both files parse, every candidate follows the schema, every trace resolves into the study model, final_ids are unique and match the type, flagged outputs carry a reason and stay unnumbered, every resolved endpoint is traced by a candidate, and the index lists every planned output. Failures go back to the planner (three attempts per review round). On pass publishes the plan and tlf-plan.html.",
+      "description": "Deterministic gate: both files parse, every candidate follows the schema, every trace resolves into the study model, final_ids are unique and match the type, flagged outputs carry a reason and stay unnumbered, every resolved endpoint is traced by a candidate, and the index lists every planned output. Failures go back to the planner (three attempts per review round). On pass publishes the plan and tlf-plan.html. A primary endpoint of the USDM whose every output is blocked stops the run (dataBlocked -> outcome data-mismatch): the planner cannot add data.",
       "executor": "script",
       "plugin": "script-container",
       "script": {
@@ -141,7 +154,7 @@
       "allowedRoles": [
         "statistician"
       ],
-      "description": "Review the planned outputs (tlf-plan.html from Check the plan: every output with its analysis and what it traces to, plus the flagged items) and the critic's coverage report. Approve to publish the plan, or request changes with a comment; the planner changes only what you ask.",
+      "description": "Review the planned outputs (tlf-plan.html from Check the plan: every output with its analysis and what it traces to, plus the flagged items and the SDTM-vs-protocol data checks) and the critic's coverage report. Approve to publish the plan, or request changes with a comment; the planner changes only what you ask.",
       "params": [
         {
           "name": "comment",
@@ -184,7 +197,7 @@
       "id": "return-result",
       "name": "Return result",
       "type": "creation",
-      "description": "Deterministic. outcome = planned (publishes the gate-checked study-model, tlf-plan, tlf-plan-view (index md + html), the coverage report and review feedback into the study package) or failed (the gate still fails after the last attempt; the planner's files are attached, the package's plan is unchanged).",
+      "description": "Deterministic. outcome = planned (publishes the gate-checked study-model, tlf-plan, tlf-plan-view (index md + html), the coverage report and review feedback into the study package) data-mismatch (check-study failed, or a primary endpoint has no producible output; the data-check page is attached, the package's plan is unchanged) or failed (the gate still fails after the last attempt; the planner's files are attached, the package's plan is unchanged).",
       "executor": "script",
       "plugin": "script-container",
       "script": {
@@ -202,6 +215,10 @@
   ],
   "transitions": [
     {
+      "from": "stage-inputs",
+      "to": "check-study"
+    },
+    {
       "from": "resolve-inputs",
       "to": "upload-inputs",
       "when": "output.needsUpload == true"
@@ -216,8 +233,14 @@
       "to": "stage-inputs"
     },
     {
-      "from": "stage-inputs",
-      "to": "plan-tlfs"
+      "from": "check-study",
+      "to": "return-result",
+      "when": "output.failed == true"
+    },
+    {
+      "from": "check-study",
+      "to": "plan-tlfs",
+      "when": "else"
     },
     {
       "from": "plan-tlfs",
@@ -232,6 +255,11 @@
       "from": "check-plan",
       "to": "return-result",
       "when": "output.needsFix == true && output.retry == false"
+    },
+    {
+      "from": "check-plan",
+      "to": "return-result",
+      "when": "output.dataBlocked == true"
     },
     {
       "from": "check-plan",

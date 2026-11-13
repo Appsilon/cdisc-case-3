@@ -1,4 +1,4 @@
-"""Build lineage.json from the programs' @derive tags and gate the derivation on it.
+"""Build lineage.json from the programs' @derive tags and gate the derivation on it and on its populations.
 
 lineage.json is the traceability backbone: every ADaM variable -> the program
 lines that make it -> its spec entry -> the SDTM variables it reads -> the
@@ -11,9 +11,14 @@ is generated from it. So it has to be true, and this step checks that it is:
   * every `src=` exists - an SDTM column or a column of another ADaM dataset;
   * every dataset, variable and PARAMCD the ADaM spec demands was produced.
 
+Then the ADaM conservation checks of populations.py: ADSL subjects, SAFFL,
+RANDFL/ITTFL, TRT01P/TRT01A and every dataset's USUBJIDs against DM and EX,
+recomputed from the data, not from the agent's code. The population counts go
+to population-counts.json, for a downstream TLF denominator check.
+
 A failure goes back to the agent (feedback.json) while attempts remain.
 
-Result: { needsFix, retry, attempt, problems, counts, summary }
+Result: { needsFix, retry, attempt, problems, counts, populations, notes, summary }
 """
 
 from __future__ import annotations
@@ -27,9 +32,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from adamlib import (  # noqa: E402
-    INPUTS_DIR, MAX_ATTEMPTS, ORIGINS, SDTM_COLUMNS_PATH, dataset_programs, gate, read_tags, resolve_sources,
+    INPUTS_DIR, MAX_ATTEMPTS, ORIGINS, SDTM_COLUMNS_PATH, SDTM_DIR, dataset_programs, gate, read_tags, resolve_sources,
 )
 from mfpkg import OUTPUT_DIR, STEP_OUTPUTS_DIR, StepFailure, run_main, write_result  # noqa: E402
+from populations import gate_populations, summary_line  # noqa: E402
 
 SOURCE_REQUIRED = ("Derived", "Predecessor")
 PROBLEM_CAP = 60
@@ -148,18 +154,22 @@ def main() -> None:
 
     if len(problems) > PROBLEM_CAP:
         problems = problems[:PROBLEM_CAP] + [f"... and {len(problems) - PROBLEM_CAP} more of the same kinds"]
+    population_problems, notes, populations = gate_populations(SDTM_DIR, STEP_OUTPUTS_DIR / "execute-programs" / "adam")
+    (OUTPUT_DIR / "population-counts.json").write_text(json.dumps(populations, indent=2), encoding="utf-8")
+    problems = problems + population_problems
     routing = gate("check-lineage", problems)
     origins = defaultdict(int)
     for entry in entries:
         origins[entry["origin"]] += 1
     counts = {"variables": len(entries), "datasets": len(manifests), "origins": dict(origins)}
     if problems:
-        summary = (f"Attempt {routing['attempt']}/{MAX_ATTEMPTS}: lineage gate failed with {len(problems)} problem(s). "
-                   + ("Back to the agent." if routing["retry"] else "No attempts left."))
+        summary = (f"Attempt {routing['attempt']}/{MAX_ATTEMPTS}: lineage and population gate failed with {len(problems)} problem(s)"
+                   f" ({len(population_problems)} population). " + ("Back to the agent." if routing["retry"] else "No attempts left."))
     else:
         summary = (f"Lineage complete: {len(entries)} variable(s) across {len(manifests)} dataset(s) traced to program lines and sources ("
-                   + ", ".join(f"{count} {origin}" for origin, count in sorted(origins.items())) + "); every spec demand met.")
-    write_result({**routing, "counts": counts, "summary": summary})
+                   + ", ".join(f"{count} {origin}" for origin, count in sorted(origins.items())) + "); every spec demand met. "
+                   + f"Populations agree with DM/EX: {summary_line(populations)}.")
+    write_result({**routing, "counts": counts, "populations": populations, "notes": notes, "summary": summary})
 
 
 if __name__ == "__main__":

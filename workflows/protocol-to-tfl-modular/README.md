@@ -16,6 +16,7 @@ plan (tlf-planning) ─► validate-sdtm (cdisc-core-validation, sdtmig, onRejec
 generate: outcome upstream_change ─► route-spec ─► specify (with the reviewer's request) ─► derive-adam ─► generate   (≤ 2 rounds)
 route-spec: a third spec-change request ─► specs-change-requested
 each child: run failed ─► child-failed · ended without its result (failed / not accepted) ─► stopped
+plan: outcome data-mismatch (the SDTM is not the USDM's study, or cannot answer a primary endpoint) ─► data-mismatch
 ```
 
 The SDTM is validated before specification, so a spec-change round does not
@@ -34,7 +35,7 @@ the ADaM, then regenerates the TLFs.
 | `specify` | `analysis-specification` v4 / v1 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
 | `derive-adam` | `adam-core-loop` v3 / v1 | `${steps.specify.output.package}`, `start=derive` |
 | `generate` | `ard-tfl-generation` v4 / v1 | `${steps.derive-adam.output.package}` |
-| `collect-deliverables` | script | Lifts the files worth opening out of generate's package into top-level `files` (the runtime downloads only those), each tagged `showAs`: `tlf-viewer.html`, `reconciliation.json`, `usdm-review.html`, `tlf-plan.html`, `specs.html`, `core-report-<usdm\|sdtmig\|adamig>.html`, `adam-define.xml` |
+| `collect-deliverables` | script | Lifts the files worth opening out of generate's package into top-level `files` (the runtime downloads only those), each tagged `showAs`: `tlf-viewer.html`, `reconciliation.json`, `accuracy.json` (big-N and recompute gates), `data-check-sdtm-vs-protocol.html` (tlf-planning's `study-check.html`), `usdm-review.html`, `tlf-plan.html`, `specs.html`, `core-report-<usdm\|sdtmig\|adamig>.html`, `adam-define.xml` |
 | `finish` | script | Copies those files, sha256-verified, into its `/output` — the master run shows the TLF viewer and review pages directly; `manifest.json`: every file of the package with the run that produced it, and the package history |
 
 A run-workflow step's output is `{instanceId, definitionName, status, error,

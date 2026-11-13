@@ -75,6 +75,7 @@ def main() -> None:
         results.append(result)
         problems += run_problems
 
+    (RUN_DIR / "tags.json").write_text(json.dumps(tags, indent=2), encoding="utf-8")
     if SELF_CHECK is False:
         for folder in ("ard", "tfl", "logs"):
             shutil.copytree(RUN_DIR / folder, OUTPUT_DIR / folder, dirs_exist_ok=True)
