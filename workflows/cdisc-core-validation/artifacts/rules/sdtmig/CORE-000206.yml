@@ -1,0 +1,103 @@
+Authorities:
+- Organization: CDISC
+  Standards:
+  - Name: SDTMIG
+    Version: '3.4'
+    References:
+    - Origin: SDTM and SDTMIG Conformance Rules
+      Rule Identifier:
+        Id: CG0371
+        Version: '1'
+      Version: '2.0'
+      Citations:
+      - Cited Guidance: Value of identifying variable of the parent record(s).
+        Document: Model v2.0
+        Item: IDVARVAL
+        Section: Supplemental Qualifiers
+  - Name: SDTMIG
+    Version: '3.3'
+    References:
+    - Origin: SDTM and SDTMIG Conformance Rules
+      Rule Identifier:
+        Id: CG0371
+        Version: '1'
+      Version: '2.0'
+      Citations:
+      - Cited Guidance: Value of identifying variable of the parent record(s).
+        Document: Model v1.7
+        Section: 2.2.7
+  - Name: SDTMIG
+    Version: '3.2'
+    References:
+    - Origin: SDTM and SDTMIG Conformance Rules
+      Rule Identifier:
+        Id: CG0371
+        Version: '1'
+      Version: '2.0'
+      Citations:
+      - Cited Guidance: Value of identifying variable of the parent record(s).
+        Document: Model v1.4
+        Section: 2.2.7
+Check:
+  all:
+  - name: IDVAR
+    operator: non_empty
+  - name: IDVARVAL
+    operator: non_empty
+  - name: IDVARVAL
+    operator: not_equal_to
+    value: IDVAR
+    type_insensitive: true
+    value_is_reference: true
+Core:
+  Id: CORE-000206
+  Status: Published
+  Version: '1'
+Description: >-
+  Raise an error when IDVARVAL is not equal to a value of the variable referenced by IDVAR
+  within the domain referenced by RDOMAIN when IDVAR is populated. Carried by Mediforce:
+  CORE v1.0.0 publishes this rule matching on USUBJID only, which pairs every SUPP record
+  with every parent record of the subject (false issues; >14 GB on the CDISC pilot's
+  SUPPLB). This is CDISC's corrected definition (match on USUBJID, IDVAR, IDVARVAL, as in
+  later CORE releases); it replaces the published rule.
+Executability: Fully Executable
+Match Datasets:
+- Name: SUPP--
+  Keys:
+  - USUBJID
+  - IDVAR
+  - IDVARVAL
+  Wildcard: '**'
+  Child: true
+- Name: CO
+  Keys:
+  - USUBJID
+  - IDVAR
+  - IDVARVAL
+  Wildcard: '**'
+  Child: true
+- Name: RELREC
+  Keys:
+  - USUBJID
+  - IDVAR
+  - IDVARVAL
+  Wildcard: '**'
+  Child: true
+Outcome:
+  Message: IDVARVAL does not equal a value of the variable referenced by IDVAR where domain is equal to RDOMAIN.
+  Output Variables:
+  - RDOMAIN
+  - IDVAR
+  - IDVARVAL
+Rule Type: Record Data
+Scope:
+  Classes:
+    Include:
+    - SPECIAL PURPOSE
+    - RELATIONSHIP
+  Domains:
+    Include:
+    - CO
+    - SUPP--
+    - RELREC
+Sensitivity: Record

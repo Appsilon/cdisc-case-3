@@ -11,17 +11,25 @@ adding to them:
   2. the local rules — carried in /artifacts/rules/<standard>/ plus any the
      sponsor supplied — when there are any.
 The two JSON reports are merged into core-report.json; each pass keeps its XLSX.
+A local rule whose Core Id is a published CORE-* id replaces that published rule
+(excluded from pass 1 with -er): the carried sdtmig/CORE-000206.yml is CDISC's
+corrected definition of a rule CORE v1.0.0 publishes with a per-subject cross
+join (false issues; >14 GB on the CDISC pilot's SUPPLB).
 Issue rows are capped at MAX_ISSUE_ROWS per rule and dataset (CORE `-me <n> true`):
 real studies raise hundreds of thousands of rows for one rule (EPOCH missing on
 every QS/LB record of the CDISC pilot - 293k rows, a 113 MB report, an XLSX that
 did not finish in an hour). CORE's Issue_Summary keeps the true counts.
-CORE always runs on its pandas implementation: by default it switches to Dask
-when the largest dataset is >= 25 % of the container's free memory, which on the
-CDISC pilot is 3x slower and reports different findings (163k vs 293k issues) -
-the report must not depend on the machine. CORE runs one worker per available
-CPU (cgroup quota), bounded by memory at WORKER_MEMORY_BYTES each; CORE_POOL_SIZE
-overrides it. The staging folders are emptied first, so a retried step never
-sees the previous attempt's datasets.
+The platform runs this step in an 8 GB, 2-CPU container. CORE sizes its caches
+and picks pandas or Dask from psutil's available memory, which inside a container
+is the host's; core_memory/sitecustomize.py makes every CORE process see half the
+container's usable memory instead (CORE_MEMORY_BUDGET_BYTES). CORE always runs on
+pandas: its Dask path was 3x slower on the pilot and reported different findings
+(163k vs 293k issues) - the report must not depend on the machine. Workers: one
+per available CPU (cgroup quota), bounded by the memory the caches leave at
+WORKER_MEMORY_BYTES each (one worker plus caches peaked at 6.7 GB on the pilot,
+CORE-002123 on QS; when the kernel kills a worker CORE's pool hangs for good);
+CORE_POOL_SIZE overrides it. The staging folders are emptied first, so a retried
+step never sees the previous attempt's datasets.
 
 Result: { config, coreVersion, environment, datasets, ruleStatusCounts,
           issueCount, notes, notChecked, inputFiles, reports }
@@ -51,8 +59,10 @@ WORK_DIR = Path(os.environ.get("CORE_WORK_DIR", "/tmp/core-work"))
 DATASET_NAME = re.compile(r"^[a-z][a-z0-9]{1,7}$")
 NO_RULES_MESSAGE = "No rules were selected"
 MAX_ISSUE_ROWS = 1000
-WORKER_MEMORY_BYTES = 3 * 1024 ** 3 // 2
+WORKER_MEMORY_BYTES = 4 * 1024 ** 3
 PANDAS_THRESHOLD_BYTES = str(10 ** 15)
+CORE_MEMORY_DIR = Path(__file__).resolve().parent / "core_memory"
+CACHE_SHARE_OF_BUDGET = 0.75
 DATA_KINDS = {"sdtm", "send", "adam", "usdm"}
 DEFINE_SUFFIX = "-define"
 
@@ -178,8 +188,8 @@ def read_cgroup(name: str) -> str:
 
 def available_cpus() -> float:
     cpus = float(len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1))
-    quota = read_cgroup("cpu.max").split()
-    if len(quota) == 2 and quota[0] != "max":
+    quota = read_cgroup("cpu.max").split() or [read_cgroup("cpu/cpu.cfs_quota_us"), read_cgroup("cpu/cpu.cfs_period_us")]
+    if len(quota) == 2 and quota[0].isdigit() and quota[1].isdigit():
         cpus = min(cpus, int(quota[0]) / int(quota[1]))
     return cpus
 
@@ -189,20 +199,34 @@ def runtime_environment(largest_dataset_bytes: int) -> dict:
     import psutil
 
     memory = psutil.virtual_memory()
-    limit_text, usage_text = read_cgroup("memory.max"), read_cgroup("memory.current")
-    memory_limit = int(limit_text) if limit_text.isdigit() else memory.total
-    usable_memory = memory_limit - int(usage_text) if limit_text.isdigit() and usage_text.isdigit() else memory.available
+    limit_text = read_cgroup("memory.max") or read_cgroup("memory/memory.limit_in_bytes")
+    usage_text = read_cgroup("memory.current") or read_cgroup("memory/memory.usage_in_bytes")
+    memory_limit = min(int(limit_text), memory.total) if limit_text.isdigit() else memory.total
+    usable_memory = min(memory.available, memory_limit - int(usage_text) if usage_text.isdigit() else memory_limit)
     cpus = available_cpus()
-    pool_size = int(os.environ.get("CORE_POOL_SIZE") or max(1, min(int(cpus), usable_memory // WORKER_MEMORY_BYTES)))
+    core_budget = usable_memory // 2
+    worker_memory = usable_memory - int(core_budget * CACHE_SHARE_OF_BUDGET)
+    pool_size = int(os.environ.get("CORE_POOL_SIZE") or max(1, min(int(cpus), worker_memory // WORKER_MEMORY_BYTES)))
     return {
         "cpus": round(cpus, 2),
         "memoryTotal": memory.total,
         "memoryLimit": memory_limit,
         "memoryUsable": usable_memory,
+        "coreMemoryBudget": core_budget,
         "largestDatasetBytes": largest_dataset_bytes,
         "datasetImplementation": "pandas",
         "poolSize": pool_size,
         "passSeconds": {},
+    }
+
+
+def core_environment(environment: dict) -> dict:
+    python_path = os.pathsep.join(part for part in (str(CORE_MEMORY_DIR), os.environ.get("PYTHONPATH", "")) if part)
+    return {
+        **os.environ,
+        "PYTHONPATH": python_path,
+        "CORE_MEMORY_BUDGET_BYTES": str(environment["coreMemoryBudget"]),
+        "DATASET_SIZE_THRESHOLD": PANDAS_THRESHOLD_BYTES,
     }
 
 
@@ -219,7 +243,7 @@ def run_engine(arguments: list[str], label: str, notes: list[str], environment: 
     print(f"[{label}] {' '.join(command)}", flush=True)
     started = time.monotonic()
     completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True,
-                               env={**os.environ, "DATASET_SIZE_THRESHOLD": PANDAS_THRESHOLD_BYTES})
+                               env=core_environment(environment))
     environment["passSeconds"][label] = round(time.monotonic() - started)
     print(f"[{label}] finished in {environment['passSeconds'][label]} s, exit code {completed.returncode}", flush=True)
     output = (completed.stdout or "") + (completed.stderr or "")
@@ -260,6 +284,20 @@ def collect_rules(standard: str, uploaded: list[Path]) -> Path | None:
     for source in [*sources, *uploaded]:
         shutil.copyfile(source, rules_dir / source.name)
     return rules_dir if any(rules_dir.iterdir()) else None
+
+
+def replaced_published_rules(rules_dir: Path | None) -> list[str]:
+    """Published CORE ids that a local rule redefines."""
+    import yaml
+
+    if rules_dir is None:
+        return []
+    core_ids = set()
+    for rule_file in rules_dir.iterdir():
+        core_id = str(((yaml.safe_load(rule_file.read_text(encoding="utf-8")) or {}).get("Core") or {}).get("Id") or "")
+        if core_id.startswith("CORE-"):
+            core_ids.add(core_id)
+    return sorted(core_ids)
 
 
 def main() -> None:
@@ -328,11 +366,15 @@ def main() -> None:
     environment = runtime_environment(max(staged.stat().st_size for staged in inputs_validated))
     print(f"environment: {json.dumps(environment)}", flush=True)
 
+    rules_dir = collect_rules(standard, uploaded_rules)
+    replaced = replaced_published_rules(rules_dir)
+    for core_id in replaced:
+        notes.append(f"{core_id}: the published CORE v1.0.0 rule was replaced by the local rule of the same id.")
+
     passes: dict[str, dict] = {}
-    published = run_engine(base_arguments, "published", notes, environment)
+    published = run_engine(base_arguments + [argument for core_id in replaced for argument in ("-er", core_id)], "published", notes, environment)
     if published is not None:
         passes["published"] = published
-    rules_dir = collect_rules(standard, uploaded_rules)
     if rules_dir is not None:
         local = run_engine(base_arguments + ["-lr", str(rules_dir)], "local", notes, environment)
         if local is not None:

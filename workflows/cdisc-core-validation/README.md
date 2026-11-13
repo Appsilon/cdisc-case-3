@@ -16,7 +16,7 @@ resolve-inputs ─needsUpload─► upload-datasets ─► run-core ─► build
 |---|---|---|
 | `resolve-inputs` | script | Package mode: picks files by `kind`. Standalone: routes to the upload. Fixes standard, version, CT, `onReject`. |
 | `upload-datasets` | human (`data-manager`) | `.xpt`, `.sas7bdat`, Dataset-JSON, CSV, one `define.xml`, optional `lineage.json` + programs, sponsor rules `.yml`, `core-policy.json`. |
-| `run-core` | script | sha256-verifies inputs, stages SAS V5 `.xpt`, runs CORE: published rules, then local rules (`-lr` replaces published rules, so it is a second pass). Issue rows are capped at 1,000 per rule × dataset (`-me 1000 true`): the real CDISC pilot raises 293k rows (CORE-000701 EPOCH missing on every QS/LB record), whose XLSX did not finish within an hour on prod; CORE's `Issue_Summary` keeps the true counts. CORE is forced onto its pandas implementation (`DATASET_SIZE_THRESHOLD`): by default it switches to Dask when the largest dataset is ≥ 25 % of free memory, which on the pilot was 3× slower **and reported different findings** (163k vs 293k issues), so the report would depend on the container. Workers = available CPUs (cgroup quota), at most one per 1.5 GB of usable memory (`CORE_POOL_SIZE` overrides; CORE's default 10 holds the large datasets 10× in memory). The result's `environment` records CPUs, memory, worker count and seconds per pass. Staging folders are emptied first, so a retried step starts clean. Timeout 120 min. |
+| `run-core` | script | sha256-verifies inputs, stages SAS V5 `.xpt`, runs CORE: published rules, then local rules (`-lr` replaces published rules, so it is a second pass). Issue rows are capped at 1,000 per rule × dataset (`-me 1000 true`): the real CDISC pilot raises 293k rows (CORE-000701 EPOCH missing on every QS/LB record), whose XLSX did not finish within an hour on prod; CORE's `Issue_Summary` keeps the true counts. The platform runs it in an 8 GB, 2-CPU container. CORE sizes its caches (and picks pandas vs Dask) from psutil's free memory, which in a container is the **host's**; `core_memory/sitecustomize.py` (on CORE's `PYTHONPATH`) makes every CORE process see half the container's usable memory instead. CORE is forced onto pandas (`DATASET_SIZE_THRESHOLD`): its Dask path was 3× slower on the pilot **and reported different findings** (163k vs 293k issues). Workers = available CPUs (cgroup quota), at most one per 4 GB left after the caches (`CORE_POOL_SIZE` overrides) — one worker plus caches peaked at 6.7 GB on the pilot (CORE-002123 on QS); a worker killed by the kernel makes CORE's pool hang (locally); on prod v4–v6 `run-core` died with "job stalled" after ~5 min. **CORE-000206 is replaced** by the carried `rules/sdtmig/CORE-000206.yml`: CORE v1.0.0 publishes it matching SUPP/CO/RELREC to the parent on USUBJID only, a per-subject cross join that raised 8,408 false issues on the pilot's clean SUPPAE and needed >14 GB on SUPPLB. The carried file is CDISC's corrected definition (keys USUBJID, IDVAR, IDVARVAL, as in later CORE releases): 0 issues on the clean pilot, exactly the 2 seeded bad IDVARVALs. Generally, a local rule whose `Core.Id` is a published `CORE-*` id replaces that rule (`-er` on the published pass, noted in the result). The result's `environment` records CPUs, memory, worker count and seconds per pass. Staging folders are emptied first, so a retried step starts clean. Timeout 120 min. |
 | `build-report` | script | `core-report.html`, `core-issue-index-<std>.json`, one review row per rule × dataset. Issue counts come from CORE's summary; a capped group shows subjects as `≥n` and no new/fixed change (only its first 1,000 rows are known). |
 | `review-dispositions` | human (`standards-reviewer`) | table-editor: Fix required (default) / Justified / False positive + justification. |
 | `decide` | script | Any `fix` → `rejected`, else `accepted`. Merges dispositions, returns `{outcome, onReject, files, package}`. |
@@ -71,6 +71,15 @@ with "No rules were selected"). `artifacts/rules/adamig/MF-ADAM-*.yml` fill the
 gap; regenerate with `python3 tools/generate_adam_rules.py`. Each was checked:
 SUCCESS on clean pilot ADaM, fires on a seeded defect. Sponsors add rules by
 uploading `.yml` or putting `kind: core-rules` files in the package.
+
+## SDTMIG rule fixes
+
+`artifacts/rules/sdtmig/CORE-000206.yml` replaces CORE v1.0.0's published
+CORE-000206 (IDVARVAL must be a value of IDVAR in RDOMAIN). v1.0.0 matches the
+parent on USUBJID only: 8,408 false issues on the pilot's clean SUPPAE, and the
+cross join with LB needs >14 GB for SUPPLB. The carried file is CDISC's later
+definition (keys USUBJID, IDVAR, IDVARVAL). Checked with v1.0.0: SUCCESS on the
+clean pilot SUPPAE/SUPPDS/SUPPDM, exactly 2 issues for 2 seeded bad IDVARVALs.
 
 ## Known CORE behaviour
 
