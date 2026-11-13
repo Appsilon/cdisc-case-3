@@ -1,0 +1,514 @@
+{
+ "usdmVersion": "4.0.0",
+ "study": {
+  "id": null,
+  "name": "CDISC PILOT - LZZT",
+  "versions": [
+   {
+    "id": "StudyVersion_1",
+    "titles": [
+     {
+      "id": "StudyTitle_1",
+      "extensionAttributes": [],
+      "text": "LZZT",
+      "type": {
+       "id": "Code_7",
+       "extensionAttributes": [],
+       "code": "C94108",
+       "codeSystem": "http://www.cdisc.org",
+       "codeSystemVersion": "2024-09-27",
+       "decode": "Study Acronym",
+       "instanceType": "Code"
+      },
+      "instanceType": "StudyTitle"
+     },
+     {
+      "id": "StudyTitle_2",
+      "extensionAttributes": [],
+      "text": "Xanomeline (LY246708)",
+      "type": {
+       "id": "Code_9",
+       "extensionAttributes": [],
+       "code": "C99905x1",
+       "codeSystem": "http://www.cdisc.org",
+       "codeSystemVersion": "2024-09-27",
+       "decode": "Brief Study Title",
+       "instanceType": "Code"
+      },
+      "instanceType": "StudyTitle"
+     },
+     {
+      "id": "StudyTitle_3",
+      "extensionAttributes": [],
+      "text": "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease",
+      "type": {
+       "id": "Code_10",
+       "extensionAttributes": [],
+       "code": "C99905x2",
+       "codeSystem": "http://www.cdisc.org",
+       "codeSystemVersion": "2024-09-27",
+       "decode": "Official Study Title",
+       "instanceType": "Code"
+      },
+      "instanceType": "StudyTitle"
+     },
+     {
+      "id": "StudyTitle_4",
+      "extensionAttributes": [],
+      "text": "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease",
+      "type": {
+       "id": "Code_11",
+       "extensionAttributes": [],
+       "code": "C99905x3",
+       "codeSystem": "http://www.cdisc.org",
+       "codeSystemVersion": "2024-09-27",
+       "decode": "Public Study Title",
+       "instanceType": "Code"
+      },
+      "instanceType": "StudyTitle"
+     }
+    ],
+    "studyIdentifiers": [
+     {
+      "id": "StudyIdentifier_1",
+      "extensionAttributes": [],
+      "text": "H2Q-MC-LZZT",
+      "scopeId": "Organization_1",
+      "instanceType": "StudyIdentifier"
+     },
+     {
+      "id": "StudyIdentifier_2",
+      "extensionAttributes": [],
+      "text": "NCT12345678",
+      "scopeId": "Organization_2",
+      "instanceType": "StudyIdentifier"
+     }
+    ],
+    "studyDesigns": [
+     {
+      "id": "InterventionalStudyDesign_1",
+      "name": "Study Design 1",
+      "studyPhase": {
+       "id": "AliasCode_24",
+       "extensionAttributes": [],
+       "standardCode": {
+        "id": "Code_160",
+        "extensionAttributes": [],
+        "code": "C15601",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2024-09-27",
+        "decode": "Phase II Trial",
+        "instanceType": "Code"
+       },
+       "standardCodeAliases": [],
+       "instanceType": "AliasCode"
+      },
+      "arms": [
+       {
+        "id": "StudyArm_1",
+        "name": "Placebo",
+        "label": "Placebo",
+        "description": "Placebo",
+        "instanceType": "StudyArm"
+       },
+       {
+        "id": "StudyArm_2",
+        "name": "Xanomeline Low Dose",
+        "label": "Xanomeline Low Dose",
+        "description": "Active Substance",
+        "instanceType": "StudyArm"
+       },
+       {
+        "id": "StudyArm_3",
+        "name": "Xanomeline High Dose",
+        "label": "Xanomeline High Dose",
+        "description": "Active Substance",
+        "instanceType": "StudyArm"
+       }
+      ],
+      "population": {
+       "id": "StudyDesignPopulation_1",
+       "name": "POP1",
+       "plannedEnrollmentNumber": {
+        "id": "Quantity_8",
+        "extensionAttributes": [],
+        "value": 300.0,
+        "unit": null,
+        "instanceType": "Quantity"
+       },
+       "instanceType": "StudyDesignPopulation"
+      },
+      "objectives": [
+       {
+        "id": "Objective_1",
+        "extensionAttributes": [],
+        "name": "OBJ1",
+        "label": "",
+        "description": "Main objective",
+        "text": "To determine if there is a statistically significant relationship (overall Type 1 erroralpha=0.05) between the change in both the ADAS-Cog (11) and CIBIC+ scores, and drug dose (0, 50 cm2 [54 mg], and 75 cm2 [81 mg]).",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_622",
+         "extensionAttributes": [],
+         "code": "C85826",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Primary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_1",
+          "extensionAttributes": [],
+          "name": "END1",
+          "label": "",
+          "description": "",
+          "text": "Alzheimer's Disease Assessment Scale - Cognitive Subscale, total of 11 items [ADAS-Cog (11)] at Week 24",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_621",
+           "extensionAttributes": [],
+           "code": "C94496",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Primary Endpoint",
+           "instanceType": "Code"
+          }
+         },
+         {
+          "id": "Endpoint_2",
+          "extensionAttributes": [],
+          "name": "END2",
+          "label": "",
+          "description": "",
+          "text": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Week 24",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_623",
+           "extensionAttributes": [],
+           "code": "C94496",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Primary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       },
+       {
+        "id": "Objective_2",
+        "extensionAttributes": [],
+        "name": "OBJ2",
+        "label": "",
+        "description": "Safety",
+        "text": "To document the safety profile of the xanomeline TTS.",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_625",
+         "extensionAttributes": [],
+         "code": "C85826",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Primary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_3",
+          "extensionAttributes": [],
+          "name": "END3",
+          "label": "",
+          "description": "",
+          "text": "Adverse events",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_624",
+           "extensionAttributes": [],
+           "code": "C94496",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Primary Endpoint",
+           "instanceType": "Code"
+          }
+         },
+         {
+          "id": "Endpoint_4",
+          "extensionAttributes": [],
+          "name": "END4",
+          "label": "",
+          "description": "",
+          "text": "Vital signs (weight, standing and supine blood pressure, heart rate)",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_626",
+           "extensionAttributes": [],
+           "code": "C94496",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Primary Endpoint",
+           "instanceType": "Code"
+          }
+         },
+         {
+          "id": "Endpoint_5",
+          "extensionAttributes": [],
+          "name": "END5",
+          "label": "",
+          "description": "The change from baseline laboratory value will be  calculated as the difference between the baseline lab value and the endpoint value (i.e., the value at the specified visit) or the end of treatment observation",
+          "text": "Laboratory evaluations (Change from Baseline)",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_627",
+           "extensionAttributes": [],
+           "code": "C94496",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Primary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       },
+       {
+        "id": "Objective_3",
+        "extensionAttributes": [],
+        "name": "OBJ3",
+        "label": "",
+        "description": "Behaviour",
+        "text": "To assess the dose-dependent improvement in behavior. Improved scores on the Revised Neuropsychiatric Inventory (NPI-X) will indicate improvement in these\nareas.",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_629",
+         "extensionAttributes": [],
+         "code": "C85827",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Secondary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_6",
+          "extensionAttributes": [],
+          "name": "END6",
+          "label": "",
+          "description": "",
+          "text": "Alzheimer's Disease Assessment Scale - Cognitive Subscale, total of 11 items [ADAS-Cog (11)] at Weeks 8 and 16",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_628",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         },
+         {
+          "id": "Endpoint_7",
+          "extensionAttributes": [],
+          "name": "END7",
+          "label": "",
+          "description": "",
+          "text": "Video-referenced Clinician\u2019s Interview-based Impression of Change (CIBIC+) at Weeks 8 and 16",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_630",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         },
+         {
+          "id": "Endpoint_8",
+          "extensionAttributes": [],
+          "name": "END8",
+          "label": "",
+          "description": "",
+          "text": "Mean Revised Neuropsychiatric Inventory (NPI-X) from Week 4 to Week 24",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_631",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       },
+       {
+        "id": "Objective_4",
+        "extensionAttributes": [],
+        "name": "OBJ4",
+        "label": "",
+        "description": "",
+        "text": "To assess the dose-dependent improvements in activities of daily living. Improved scores on the Disability Assessment for Dementia (DAD) will indicate improvement in these areas (see Attachment LZZT.5).",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_633",
+         "extensionAttributes": [],
+         "code": "C85827",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Secondary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_9",
+          "extensionAttributes": [],
+          "name": "END9",
+          "label": "",
+          "description": "",
+          "text": "*** To be determined from protocol ***",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_632",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       },
+       {
+        "id": "Objective_5",
+        "extensionAttributes": [],
+        "name": "OBJ5",
+        "label": "",
+        "description": "",
+        "text": "To assess the dose-dependent improvements in an extended assessment of cognition that integrates attention/concentration tasks. The Alzheimer's Disease Assessment Scale-14 item Cognitive Subscale, hereafter referred to as ADAS-Cog (14), will be used for this assessment (see Attachment LZZT.2).",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_635",
+         "extensionAttributes": [],
+         "code": "C85827",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Secondary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_10",
+          "extensionAttributes": [],
+          "name": "END10",
+          "label": "",
+          "description": "",
+          "text": "*** To be determined from protocol ***",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_634",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       },
+       {
+        "id": "Objective_6",
+        "extensionAttributes": [],
+        "name": "OBJ6",
+        "label": "",
+        "description": "",
+        "text": "To assess the treatment response as a function of Apo E genotype.",
+        "dictionaryId": null,
+        "notes": [],
+        "instanceType": "Objective",
+        "level": {
+         "id": "Code_637",
+         "extensionAttributes": [],
+         "code": "C85827",
+         "codeSystem": "http://www.cdisc.org",
+         "codeSystemVersion": "2024-09-27",
+         "decode": "Secondary Objective",
+         "instanceType": "Code"
+        },
+        "endpoints": [
+         {
+          "id": "Endpoint_11",
+          "extensionAttributes": [],
+          "name": "END11",
+          "label": "",
+          "description": "",
+          "text": "*** To be determined from protocol ***",
+          "dictionaryId": null,
+          "notes": [],
+          "instanceType": "Endpoint",
+          "purpose": "",
+          "level": {
+           "id": "Code_636",
+           "extensionAttributes": [],
+           "code": "C139173",
+           "codeSystem": "http://www.cdisc.org",
+           "codeSystemVersion": "2024-09-27",
+           "decode": "Secondary Endpoint",
+           "instanceType": "Code"
+          }
+         }
+        ]
+       }
+      ],
+      "instanceType": "InterventionalStudyDesign"
+     }
+    ],
+    "instanceType": "StudyVersion"
+   }
+  ],
+  "instanceType": "Study"
+ }
+}

@@ -1,0 +1,9 @@
+{
+  "validate-with-core": 1,
+  "derive-adam": 1,
+  "digitize-protocol": 2,
+  "plan-tlfs": 1,
+  "specify-analyses": 1,
+  "generate-ard-tlfs": 1,
+  "derive-and-validate-adam": 2
+}

@@ -1,0 +1,182 @@
+{
+  "name": "derive-and-validate-adam",
+  "title": "Derive and validate ADaM",
+  "description": "Derive ADaM with derive-adam, validate it with validate-with-core (ADaMIG), and loop: when the standards reviewer marks a CORE finding 'fix', the derivation runs again in fix mode and changes only the program lines behind that finding, then CORE validates again (at most three derivation rounds). Start with a study package of SDTM + ADaM spec, or with existing ADaM + programs + lineage to validate them first (start = validate).",
+  "preamble": "CDISC terms (SDTM, ADaM, ADaMIG, CORE rule IDs, Define-XML, USUBJID) are technical workflow content.",
+  "roles": [
+    "adam-programmer",
+    "standards-reviewer"
+  ],
+  "triggerInput": [
+    {
+      "name": "package",
+      "type": "object",
+      "required": false,
+      "description": "Study package: { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kinds sdtm + adam-spec, or adam + adam-program + lineage for start = validate.",
+      "default": {}
+    },
+    {
+      "name": "start",
+      "type": "select",
+      "required": false,
+      "default": "derive",
+      "options": [
+        "derive",
+        "validate"
+      ],
+      "description": "derive: derive ADaM first. validate: validate the package's existing ADaM first and derive only to fix what the reviewer rejects."
+    }
+  ],
+  "steps": [
+    {
+      "id": "route",
+      "name": "Route",
+      "type": "creation",
+      "description": "Deterministic. Decides the next move (derive, validate, or stop after three derivation rounds) and hands on the current study package.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/route.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      },
+      "stepParams": {
+        "package": "${triggerPayload.package}",
+        "start": "${triggerPayload.start}"
+      }
+    },
+    {
+      "id": "derive-adam",
+      "name": "Derive ADaM",
+      "type": "creation",
+      "description": "Child run of derive-adam: the AI writes the programs, scripts execute and trace them. In a fix round it changes only the code behind the findings marked 'fix'.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "derive-adam",
+          "definitionVersion": 1,
+          "payload": {
+            "package": "${steps.route.package}"
+          },
+          "timeout": "P7D",
+          "step": "return-result"
+        }
+      }
+    },
+    {
+      "id": "validate-with-core",
+      "name": "Validate with CDISC CORE (ADaM)",
+      "type": "creation",
+      "description": "Child run of validate-with-core against ADaMIG; the standards reviewer records a disposition per finding. Any 'fix' sends the delivery back to derivation.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "validate-with-core",
+          "definitionVersion": 3,
+          "payload": {
+            "package": "${steps.route.package}",
+            "standard": "adamig",
+            "version": "",
+            "ct": "",
+            "onReject": "return"
+          },
+          "timeout": "P30D",
+          "step": "decide"
+        }
+      }
+    },
+    {
+      "id": "finish",
+      "name": "Return the accepted package",
+      "type": "creation",
+      "description": "Deterministic. Returns the validated study package (ADaM, programs, lineage, define, CORE reports and dispositions).",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/finish.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "done",
+      "name": "Accepted",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "derivation-failed",
+      "name": "Derivation failed its gates",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "exhausted",
+      "name": "Still rejected after three rounds",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "child-failed",
+      "name": "Child run failed",
+      "type": "terminal",
+      "executor": "human"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "route",
+      "to": "derive-adam",
+      "when": "output.target == \"derive\""
+    },
+    {
+      "from": "route",
+      "to": "validate-with-core",
+      "when": "output.target == \"validate\""
+    },
+    {
+      "from": "route",
+      "to": "exhausted",
+      "when": "else"
+    },
+    {
+      "from": "derive-adam",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "derive-adam",
+      "to": "derivation-failed",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "derive-adam",
+      "to": "route",
+      "when": "else"
+    },
+    {
+      "from": "validate-with-core",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "validate-with-core",
+      "to": "route",
+      "when": "output.status == \"completed\" && output.output.outcome == \"rejected\""
+    },
+    {
+      "from": "validate-with-core",
+      "to": "finish",
+      "when": "else"
+    },
+    {
+      "from": "finish",
+      "to": "done"
+    }
+  ],
+  "metadata": {
+    "displayName": "ADaM + CORE Loop"
+  }
+}

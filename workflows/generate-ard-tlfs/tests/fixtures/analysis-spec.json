@@ -1,0 +1,54 @@
+[
+ {
+  "id": "AN.T-14-2.01",
+  "table_id": "T-14-2.01",
+  "title": "Age by Treatment",
+  "analysisSet": {
+   "condition": "SAFFL = 'Y'"
+  },
+  "dataSubset": {
+   "dataset": "ADSL",
+   "condition": "(all)"
+  },
+  "analysisVariables": {
+   "value": {
+    "variable": "AGE"
+   }
+  },
+  "groupingFactor": {
+   "variable": "TRT01P"
+  },
+  "methods": [
+   {
+    "id": "MTH.DESC",
+    "type": "Descriptive"
+   }
+  ]
+ },
+ {
+  "id": "AN.F-14-1",
+  "table_id": "F-14-1",
+  "title": "Subjects with TEAEs",
+  "analysisSet": {
+   "condition": "SAFFL = 'Y'"
+  },
+  "dataSubset": {
+   "dataset": "ADAE",
+   "condition": "TRTEMFL = 'Y'"
+  },
+  "analysisVariables": {
+   "term": {
+    "variable": "AEDECOD"
+   }
+  },
+  "groupingFactor": {
+   "variable": "TRT01P"
+  },
+  "methods": [
+   {
+    "id": "MTH.INC",
+    "type": "Incidence"
+   }
+  ]
+ }
+]

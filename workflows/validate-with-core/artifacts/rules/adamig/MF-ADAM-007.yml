@@ -1,0 +1,81 @@
+Authorities:
+- Organization: Mediforce
+  Standards:
+  - Name: ADaMIG
+    Version: '1.3'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-007
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.1/3.3.1: STUDYID and USUBJID are required
+          in ADSL and BDS.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.1/3.3.1
+  - Name: ADaMIG
+    Version: '1.2'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-007
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.1/3.3.1: STUDYID and USUBJID are required
+          in ADSL and BDS.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.1/3.3.1
+  - Name: ADaMIG
+    Version: '1.1'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-007
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.1/3.3.1: STUDYID and USUBJID are required
+          in ADSL and BDS.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.1/3.3.1
+  - Name: ADaMIG
+    Version: '1.0'
+    References:
+    - Origin: Mediforce ADaM checks
+      Rule Identifier:
+        Id: MF-ADAM-007
+        Version: '1'
+      Version: '1.0'
+      Citations:
+      - Cited Guidance: 'ADaMIG 1.3 Section 3.1/3.3.1: STUDYID and USUBJID are required
+          in ADSL and BDS.'
+        Document: ADaMIG
+        Section: ADaMIG 1.3 Section 3.1/3.3.1
+Check:
+  any:
+  - name: STUDYID
+    operator: empty
+  - name: USUBJID
+    operator: empty
+Core:
+  Id: MF-ADAM-007
+  Status: Draft
+  Version: '1'
+Description: Every analysis record identifies its study and subject.
+Executability: Fully Executable
+Outcome:
+  Message: STUDYID or USUBJID is missing.
+  Output Variables:
+  - STUDYID
+  - USUBJID
+Rule Type: Record Data
+Scope:
+  Classes:
+    Include:
+    - ALL
+  Domains:
+    Include:
+    - ALL
+Sensitivity: Record

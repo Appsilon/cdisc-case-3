@@ -1,0 +1,358 @@
+{
+  "name": "protocol-to-tlfs",
+  "title": "Protocol to TLFs",
+  "description": "Take a study from its protocol (or its USDM study definition) and SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order, each as its own run with its own reviewers: digitize-protocol when the package has a protocol but no USDM (clinical scientist + standards reviewer) -> plan-tlfs (statistician) -> validate-with-core of the SDTM (standards reviewer) -> specify-analyses (statistician) -> derive-and-validate-adam: derive-adam gated by CORE ADaMIG validation (ADaM programmer + standards reviewer) -> generate-ard-tlfs (statistical programmer + statistician); when the TLF review finds the analysis itself wrong, its request goes back to specify-analyses and the ADaM and TLFs are regenerated (at most two rounds). The sub-workflows hand each other a study package of files by download URL; nothing is copied by hand. The AI writes plans, specs and code; scripts execute the code, validate, and produce every number; humans approve at every hand-off. Each sub-workflow also runs on its own, so a sponsor can adopt any one of them.",
+  "preamble": "CDISC terms (USDM, SDTM, ADaM, ARS, ARD, TLF, CORE rule IDs, Define-XML, adverse events, deaths) are technical workflow content.",
+  "roles": [
+    "statistician"
+  ],
+  "triggerInput": [
+    {
+      "name": "package",
+      "type": "object",
+      "required": false,
+      "default": {},
+      "description": "Optional study package { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with kinds usdm or protocol (a protocol without a USDM is digitized first), sdtm (+ sdtm-define, sap). Leave empty: the statistician uploads the USDM, SDTM and define.xml in the planning run."
+    }
+  ],
+  "steps": [
+    {
+      "id": "route-input",
+      "name": "Route the input",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. A package with a USDM goes straight to planning; a package with a protocol but no USDM is digitized first (and comes back here with the USDM); an empty package goes to planning, where the statistician uploads the inputs.",
+      "script": {
+        "command": "python3 /artifacts/scripts/route_input.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      },
+      "stepParams": {
+        "package": "${triggerPayload.package}"
+      }
+    },
+    {
+      "id": "digitize-protocol",
+      "name": "Digitize the protocol",
+      "type": "creation",
+      "executor": "action",
+      "description": "Child run of digitize-protocol: the AI turns the protocol PDF into a USDM 4.0 study definition with a page citation for every entity; a gate checks the schema, references and quotes; CDISC CORE validates it; the clinical scientist approves.",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "digitize-protocol",
+          "definitionVersion": 3,
+          "payload": {
+            "package": "${steps.route-input.package}"
+          },
+          "timeout": "P30D",
+          "step": "return-result"
+        }
+      }
+    },
+    {
+      "id": "plan-tlfs",
+      "name": "Plan the TLFs",
+      "type": "creation",
+      "description": "Child run of plan-tlfs: a deterministic data check first compares the SDTM with the USDM (arms, enrollment, exposure; a mismatch stops the run at data-mismatch); the AI plans every output from the USDM and checks feasibility against the SDTM; a gate checks every trace; an independent AI critic audits it; the statistician approves. Uploads happen here when no package was given.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "plan-tlfs",
+          "definitionVersion": 4,
+          "payload": {
+            "package": "${steps.route-input.package}"
+          },
+          "timeout": "P30D",
+          "step": "return-result"
+        }
+      }
+    },
+    {
+      "id": "validate-with-core",
+      "name": "Validate with CDISC CORE (SDTM)",
+      "type": "creation",
+      "description": "Child run of validate-with-core against SDTMIG: the standards reviewer records a disposition per finding; a 'fix' asks for corrected SDTM inside that run.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "validate-with-core",
+          "definitionVersion": 3,
+          "payload": {
+            "package": "${steps.plan-tlfs.output.package}",
+            "standard": "sdtmig",
+            "version": "",
+            "ct": "",
+            "onReject": "reupload"
+          },
+          "timeout": "P30D",
+          "step": "decide"
+        }
+      }
+    },
+    {
+      "id": "route-spec",
+      "name": "Route to specification",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Hands specify-analyses the validated package; when the TLF review asks for a spec change, sends the package back with the reviewer's request (at most two rounds, then a human takes over).",
+      "script": {
+        "command": "python3 /artifacts/scripts/route_spec.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "specify-analyses",
+      "name": "Specify the analyses",
+      "type": "creation",
+      "description": "Child run of specify-analyses: ARS-aligned analysis specs, the ADaM spec and an ARS ReportingEvent, gated against the ARS schema and every cross-reference; the statistician approves.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "specify-analyses",
+          "definitionVersion": 4,
+          "payload": {
+            "package": "${steps.route-spec.package}",
+            "request": "${steps.route-spec.request}"
+          },
+          "timeout": "P30D",
+          "step": "return-result"
+        }
+      }
+    },
+    {
+      "id": "derive-and-validate-adam",
+      "name": "Derive and validate ADaM",
+      "type": "creation",
+      "description": "Child run of derive-and-validate-adam: derive-adam (the AI writes traced programs, scripts run them) gated by CORE ADaMIG validation, looping on findings marked 'fix' (at most three derivation rounds).",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "derive-and-validate-adam",
+          "definitionVersion": 3,
+          "payload": {
+            "package": "${steps.specify-analyses.output.package}",
+            "start": "derive"
+          },
+          "timeout": "P30D",
+          "step": "finish"
+        }
+      }
+    },
+    {
+      "id": "generate-ard-tlfs",
+      "name": "Generate ARD and TLFs",
+      "type": "creation",
+      "description": "Child run of generate-ard-tlfs: the AI writes one program per output, scripts run them and reconcile every displayed number with the ARD; the reviewer approves in the TLF viewer.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "generate-ard-tlfs",
+          "definitionVersion": 4,
+          "payload": {
+            "package": "${steps.derive-and-validate-adam.output.package}"
+          },
+          "timeout": "P30D",
+          "step": "return-result"
+        }
+      }
+    },
+    {
+      "id": "collect-deliverables",
+      "name": "Collect the deliverables to show",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Hands the files worth opening (TLF viewer, reconciliation, USDM / plan / spec review pages, CORE reports per standard, ADaM define.xml) out of the final study package on as downloaded files, so finish can show them in this run.",
+      "script": {
+        "command": "python3 /artifacts/scripts/collect_deliverables.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "finish",
+      "name": "Assemble the deliverables",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Shows the deliverables in this run - the TLF viewer (displays + ARD + programs + trace), reconciliation, the USDM, plan and spec review pages, the CORE reports and the ADaM define.xml, each sha256-verified - and lists every file of every sub-workflow with the run that produced it in manifest.json.",
+      "script": {
+        "command": "python3 /artifacts/scripts/finish.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "done",
+      "name": "TLFs delivered",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "specs-change-requested",
+      "name": "TLF review still asks for a spec change after two rounds",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "data-mismatch",
+      "name": "The SDTM is not the protocol's study, or cannot answer a primary objective",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "stopped",
+      "name": "A sub-workflow ended without a result",
+      "type": "terminal",
+      "executor": "human"
+    },
+    {
+      "id": "child-failed",
+      "name": "A sub-workflow run failed",
+      "type": "terminal",
+      "executor": "human"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "route-input",
+      "to": "digitize-protocol",
+      "when": "output.target == \"digitize\""
+    },
+    {
+      "from": "route-input",
+      "to": "plan-tlfs",
+      "when": "else"
+    },
+    {
+      "from": "digitize-protocol",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "digitize-protocol",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "digitize-protocol",
+      "to": "route-input",
+      "when": "else"
+    },
+    {
+      "from": "plan-tlfs",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "plan-tlfs",
+      "to": "data-mismatch",
+      "when": "output.status == \"completed\" && output.output.outcome == \"data-mismatch\""
+    },
+    {
+      "from": "plan-tlfs",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "plan-tlfs",
+      "to": "validate-with-core",
+      "when": "else"
+    },
+    {
+      "from": "validate-with-core",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "validate-with-core",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome != \"accepted\""
+    },
+    {
+      "from": "validate-with-core",
+      "to": "route-spec",
+      "when": "else"
+    },
+    {
+      "from": "route-spec",
+      "to": "specify-analyses",
+      "when": "output.target == \"specify\""
+    },
+    {
+      "from": "route-spec",
+      "to": "specs-change-requested",
+      "when": "else"
+    },
+    {
+      "from": "specify-analyses",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "specify-analyses",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "specify-analyses",
+      "to": "derive-and-validate-adam",
+      "when": "else"
+    },
+    {
+      "from": "derive-and-validate-adam",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "derive-and-validate-adam",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome != \"accepted\""
+    },
+    {
+      "from": "derive-and-validate-adam",
+      "to": "generate-ard-tlfs",
+      "when": "else"
+    },
+    {
+      "from": "generate-ard-tlfs",
+      "to": "child-failed",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "generate-ard-tlfs",
+      "to": "stopped",
+      "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
+    },
+    {
+      "from": "generate-ard-tlfs",
+      "to": "route-spec",
+      "when": "output.status == \"completed\" && output.output.outcome == \"upstream_change\""
+    },
+    {
+      "from": "generate-ard-tlfs",
+      "to": "collect-deliverables",
+      "when": "else"
+    },
+    {
+      "from": "collect-deliverables",
+      "to": "finish"
+    },
+    {
+      "from": "finish",
+      "to": "done"
+    }
+  ],
+  "metadata": {
+    "displayName": "Protocol to TLFs (modular)"
+  }
+}

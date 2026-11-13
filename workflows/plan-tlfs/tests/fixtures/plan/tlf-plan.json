@@ -1,0 +1,2039 @@
+[
+  {
+    "candidate_id": "reg-populations-summary",
+    "type": "Table",
+    "category": "disposition",
+    "title": "Summary of Populations",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.1"
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "All Subjects",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": null
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL"
+      ],
+      "sdtm_source": [
+        "DM",
+        "DS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-1.01",
+    "notes": [
+      "Defines analysis-set denominators (ITT/Safety/Efficacy/Completers) for all other tables.",
+      "Comparative study (3 arms): between-group column included; no inferential p-value on an accounting table."
+    ]
+  },
+  {
+    "candidate_id": "reg-disposition-eos",
+    "type": "Table",
+    "category": "disposition",
+    "title": "Summary of End of Study Data",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §10.1"
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Intent-to-Treat",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL"
+      ],
+      "sdtm_source": [
+        "DM",
+        "DS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-1.02",
+    "notes": [
+      "Completion vs early termination with reason. SDTM DS carries 7 DSDECOD reasons incl. 5 DEATH and 13 ADVERSE EVENT records."
+    ]
+  },
+  {
+    "candidate_id": "reg-subjects-by-site",
+    "type": "Table",
+    "category": "disposition",
+    "title": "Summary of Number of Subjects by Site",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §10.1"
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "All Subjects",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by site and treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL"
+      ],
+      "sdtm_source": [
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-1.03",
+    "notes": [
+      "Emitted because multi_site=true. 6 sites present in DM (701,704,708,710,711,718); with 17 randomized subjects site pooling (SITEGR1) is required."
+    ]
+  },
+  {
+    "candidate_id": "reg-demographics-baseline",
+    "type": "Table",
+    "category": "demographics",
+    "title": "Summary of Demographic and Baseline Characteristics",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Intent-to-Treat",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL"
+      ],
+      "sdtm_source": [
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-2.01",
+    "notes": [
+      "Age/sex/race/ethnicity/baseline weight & height; baseline comparability of arms."
+    ]
+  },
+  {
+    "candidate_id": "reg-exposure-planned",
+    "type": "Table",
+    "category": "exposure",
+    "title": "Summary of Planned Exposure to Study Drug",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §12.1"
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADEX"
+      ],
+      "sdtm_source": [
+        "EX",
+        "EC"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-4.01",
+    "notes": [
+      "EX has 1583 dosing records (EXTRT ZANOMALINE / PLACEBO); duration and cumulative dose derivable."
+    ]
+  },
+  {
+    "candidate_id": "reg-conmeds-summary",
+    "type": "Table",
+    "category": "conmeds",
+    "title": "Summary of Concomitant Medications",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADCM"
+      ],
+      "sdtm_source": [
+        "CM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-7.04",
+    "notes": [
+      "CM present, 68 records across 14 subjects. CM is not WHO-DD coded in this extract (no CMDECOD/CMCLAS) — summarize by verbatim CMTRT and note the absence of a coded therapeutic class."
+    ]
+  },
+  {
+    "candidate_id": "reg-medical-history",
+    "type": "Table",
+    "category": "disposition",
+    "title": "Summary of Medical History",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §11.2"
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Intent-to-Treat",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL"
+      ],
+      "sdtm_source": [
+        "MH"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "T-14-1.04",
+    "notes": [
+      "Gate medical_history_available satisfied: MH domain present (17 records).",
+      "MH is uncoded in this extract (MHTERM only, single term \"ALZHEIMER'S DISEASE\") — the table degenerates to a one-row baseline-condition count. Low information value; a reviewer may prune it."
+    ]
+  },
+  {
+    "candidate_id": "reg-protocol-deviations",
+    "type": "Table",
+    "category": "disposition",
+    "title": "Summary of Important Protocol Deviations",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §10.2"
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Intent-to-Treat",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [],
+      "sdtm_source": [
+        "DV"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: SDTM DV domain absent from inputs/sdtm/ and protocol deviations cannot be derived from any present domain.",
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": null,
+    "notes": [
+      "Emitted then blocked deliberately so the ICH E3 §10.2 gap is visible rather than silently omitted."
+    ]
+  },
+  {
+    "candidate_id": "reg-deaths-listing",
+    "type": "Listing",
+    "category": "safety-ae",
+    "title": "Listing of Deaths",
+    "traces_to": {
+      "objective_ids": [],
+      "endpoint_ids": [],
+      "regulatory_rule": "ICH E3 §12.3"
+    },
+    "analysis": {
+      "method": "none",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": null
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "DM",
+        "DS",
+        "DD",
+        "AE"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "regulatory-scaffolding-planner",
+    "final_id": "L-14-5.01",
+    "notes": [
+      "Emitted under the not_covered_by_safety gate: DD (Death Details) is present with 3 primary causes of death (SUDDEN DEATH, COMPLETED SUICIDE, MYOCARDIAL INFARCTION) that the AE incidence table cannot carry at subject level.",
+      "May be deduped at consolidation against the safety deaths table (ae-END3-deaths); kept because it adds cause-of-death detail."
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-ancova-wk24-locf",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Primary Endpoint Analysis: ADAS-Cog (11) - Change from Baseline to Week 24 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "primary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Model CHG ~ BASE + TRTP + SITEGR1; LS-means per arm, pairwise vs placebo, dose-response trend test.",
+      "LOCF from estimand EST1 intercurrent-event strategy 'Treatment Policy'.",
+      "expanded by analysis-variant-expander (imputation)",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-ancova-wk24-oc",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Change from Baseline to Week 24 - Completers, Observed Cases, Windowed",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Completers",
+      "timepoint": "Week 24",
+      "imputation": "OC",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "supportive",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Sensitivity analysis to LOCF.",
+      "expanded by analysis-variant-expander (imputation)",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-ancova-wk24-locf-male",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Change from Baseline to Week 24 - Male subjects - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": "Sex=Male",
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "supportive",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "expanded by analysis-variant-expander (subgroup by sex)",
+      "variant assumed — no SAP provided",
+      "Gated on needs_subgroup_by_sex=true; with 17 randomized subjects (12 F / 6 M in DM) this split is statistically vacuous."
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-ancova-wk24-locf-female",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Change from Baseline to Week 24 - Female subjects - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": "Sex=Female",
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "supportive",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "expanded by analysis-variant-expander (subgroup by sex)",
+      "variant assumed — no SAP provided",
+      "Gated on needs_subgroup_by_sex=true; statistically vacuous at this N."
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-descriptive-time",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Mean and Mean Change from Baseline Over Time",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Efficacy",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "supportive",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Descriptive companion — leaf, not expanded."
+    ]
+  },
+  {
+    "candidate_id": "eff-END1-mmrm",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Repeated Measures Analysis of ADAS-Cog (11) Change from Baseline to Week 24",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "MMRM",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "supportive",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Unstructured covariance across all post-baseline visits under MAR; no imputation.",
+      "MMRM sensitivity model — leaf, not expanded."
+    ]
+  },
+  {
+    "candidate_id": "eff-END2-anova-wk24",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Primary Endpoint Analysis: CIBIC+ - Summary at Week 24 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_2"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSCIBC"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no CIBIC+ data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "primary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "CIBIC+ is a 7-point clinician global rating; the score is itself the change, so ANOVA (no baseline covariate).",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END2-cmh",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "CIBIC+ - Categorical Analysis - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_2"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "CMH",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSCIBC"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no CIBIC+ data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "primary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "CMH row-mean-score across the ordered improvement/worsening categories, stratified by pooled site. Leaf — no sex fan-out."
+    ]
+  },
+  {
+    "candidate_id": "eff-END6-ancova-wk8",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Change from Baseline to Week 8 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_6"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 8",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Timepoint explicitly named by the endpoint text — split at the efficacy planner, not the expander.",
+      "Secondary endpoint: single analysis, no imputation/subgroup fan-out.",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END6-ancova-wk16",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "ADAS-Cog (11) - Change from Baseline to Week 16 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_6"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 16",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSADAS"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no ADAS-Cog (11) data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Timepoint explicitly named by the endpoint text — split at the efficacy planner, not the expander.",
+      "Secondary endpoint: single analysis, no imputation/subgroup fan-out.",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END7-descriptive-wk8",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "CIBIC+ - Summary at Week 8 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_7"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Efficacy",
+      "timepoint": "Week 8",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSCIBC"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no CIBIC+ data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Secondary global-impression endpoint: descriptive/ANOVA summary only, no CMH.",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END7-descriptive-wk16",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "CIBIC+ - Summary at Week 16 - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_7"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Efficacy",
+      "timepoint": "Week 16",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSCIBC"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no CIBIC+ data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Secondary global-impression endpoint: descriptive/ANOVA summary only, no CMH.",
+      "variant assumed — no SAP provided"
+    ]
+  },
+  {
+    "candidate_id": "eff-END8-descriptive-windowed",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Mean NPI-X Total Score, Week 4 to Week 24 (Windowed)",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_8"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Efficacy",
+      "timepoint": "Weeks 4-24 (windowed)",
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSNPIX"
+      ],
+      "sdtm_source": [
+        "QS",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: instrument absent from delivered SDTM. inputs/sdtm/ is the CDISC SDTM-MSG 'Zanomaline' sample (PHQ-9 / SWLS / HAMD 17 / AVLT-REY); it carries no NPI-X data. See study-model.json normalizer_notes (study-vs-data conflict).",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Endpoint text specifies a windowed mean across Weeks 4-24, not a single timepoint.",
+      "Descriptive leaf."
+    ]
+  },
+  {
+    "candidate_id": "clar-END9-placeholder",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Activities of Daily Living (DAD)",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_4"
+      ],
+      "endpoint_ids": [
+        "Endpoint_9"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "none",
+      "population": null,
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": null
+    },
+    "data_requirements": {
+      "adam": [],
+      "sdtm_source": []
+    },
+    "status": "needs-clarification",
+    "status_reason": "needs-clarification: traces to unresolved endpoint Endpoint_9 ('*** To be determined from protocol ***'); requires protocol/SAP clarification before an output can be planned. Independently, no DAD data exists in the delivered SDTM.",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Placeholder carried so the gap is auditable; the efficacy planner emitted no analysis for it.",
+      "Double gap: plan under-specified AND data absent."
+    ]
+  },
+  {
+    "candidate_id": "clar-END10-placeholder",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Extended Cognition - ADAS-Cog (14)",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_5"
+      ],
+      "endpoint_ids": [
+        "Endpoint_10"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "none",
+      "population": null,
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": null
+    },
+    "data_requirements": {
+      "adam": [],
+      "sdtm_source": []
+    },
+    "status": "needs-clarification",
+    "status_reason": "needs-clarification: traces to unresolved endpoint Endpoint_10 ('*** To be determined from protocol ***'); requires protocol/SAP clarification before an output can be planned. Independently, no ADAS-Cog (14) data exists in the delivered SDTM.",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Placeholder carried so the gap is auditable; the efficacy planner emitted no analysis for it.",
+      "Double gap: plan under-specified AND data absent."
+    ]
+  },
+  {
+    "candidate_id": "clar-END11-placeholder",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Treatment Response by Apo E Genotype",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_6"
+      ],
+      "endpoint_ids": [
+        "Endpoint_11"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "none",
+      "population": null,
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": null
+    },
+    "data_requirements": {
+      "adam": [],
+      "sdtm_source": []
+    },
+    "status": "needs-clarification",
+    "status_reason": "needs-clarification: traces to unresolved endpoint Endpoint_11 ('*** To be determined from protocol ***'); requires protocol/SAP clarification before an output can be planned. Independently, no Apo E genotype data exists in the delivered SDTM.",
+    "priority": "secondary",
+    "produced_by": "efficacy-statistics-planner",
+    "final_id": null,
+    "notes": [
+      "Placeholder carried so the gap is auditable; the efficacy planner emitted no analysis for it.",
+      "Double gap: plan under-specified AND data absent."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-teae-incidence-soc-pt",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Treatment-Emergent Adverse Events by System Organ Class and Preferred Term",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.01",
+    "notes": [
+      "Core AE table. AE has 74 records; AEDECOD/AEPTCD/AESOC/AESOCCD populated (AEBODSYS is blank — use AESOC).",
+      "n(%) subjects and event counts."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-sae-incidence",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Treatment-Emergent Serious Adverse Events by System Organ Class and Preferred Term",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.02",
+    "notes": [
+      "Core AE table. AESER='Y' on 4 records."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-ae-discontinuation",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Adverse Events Leading to Study Drug Discontinuation",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE",
+        "DS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.03",
+    "notes": [
+      "AEACN='DRUG WITHDRAWN' present in AE; corroborated by 13 DS records with DSDECOD='ADVERSE EVENT'."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-deaths",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Adverse Events with a Fatal Outcome (Deaths)",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE",
+        "DD",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.04",
+    "notes": [
+      "AEOUT='FATAL' present; DM DTHFL set on 3 subjects; DD carries primary cause of death.",
+      "Companion subject-level detail is in the Listing of Deaths (reg-deaths-listing)."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-severity",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Treatment-Emergent Adverse Events by Maximum Severity",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "secondary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.05",
+    "notes": [
+      "AESEV populated with MILD/MODERATE/SEVERE."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-relationship",
+    "type": "Table",
+    "category": "safety-ae",
+    "title": "Incidence of Treatment-Emergent Adverse Events by Relationship to Study Drug",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Incidence",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "secondary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-5.06",
+    "notes": [
+      "AEREL populated with RELATED / POSSIBLY RELATED / UNLIKELY RELATED / NOT RELATED."
+    ]
+  },
+  {
+    "candidate_id": "ae-END3-km-time-to-injection-site-event",
+    "type": "Figure",
+    "category": "safety-ae",
+    "title": "Time to First Injection-Site Reaction by Treatment Group (Kaplan-Meier)",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "KaplanMeier",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "log-rank, by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADTTE",
+        "ADAE"
+      ],
+      "sdtm_source": [
+        "AE",
+        "FA",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "F-14-1",
+    "notes": [
+      "Emitted because study_profile.flags.needs_tte_safety_figure=true.",
+      "The USDM names a transdermal (TTS) application-site signal; the delivered SDTM realizes this as a subcutaneous injection with an FA domain of category 'INJECTION SITE REACTION' (78 records). Title adapted to the delivered route — recorded as an intentional deviation from the USDM wording."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-continuous-summary",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Summary Statistics for Continuous Laboratory Values and Change from Baseline",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.01",
+    "notes": [
+      "Mean (SD), median, range by lab parameter and visit, plus change from baseline. LB has 3488 records across CHEMISTRY/HEMATOLOGY/URINALYSIS/OTHER (40 LBTESTCDs)."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-freq-normal-abnormal-range",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Frequency of Normal and Abnormal (Beyond Normal Range) Laboratory Values During Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ShiftTable",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.02",
+    "notes": [
+      "Uses LBNRIND (NORMAL/LOW/HIGH/ABNORMAL) against LBSTNRLO/LBSTNRHI."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-freq-normal-abnormal-csc",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Frequency of Normal and Abnormal (Clinically Significant Change from Previous Visit) Laboratory Values During Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ShiftTable",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.03",
+    "notes": [
+      "No SDTM flag for clinical significance in this extract — the CSC rule must be defined in the SAP/spec and derived in ADLB. Flagged as a specification dependency, not a data gap."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-shift-threshold-byvisit",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges, by Visit",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ShiftTable",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "Cochran-Mantel-Haenszel"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.04",
+    "notes": [
+      "CMH test across the ordered shift categories, stratified. LB visits run SCREENING 1 through WEEK 26 incl. unscheduled."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-shift-threshold-overall",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Shifts of Laboratory Values During Treatment, Categorized Based on Threshold Ranges",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ShiftTable",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "Cochran-Mantel-Haenszel"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.05",
+    "notes": [
+      "Overall (worst post-baseline) counterpart of the by-visit shift table."
+    ]
+  },
+  {
+    "candidate_id": "lab-END5-shift-hys-law",
+    "type": "Table",
+    "category": "safety-lab",
+    "title": "Shifts of Hy's Law Values During Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_5"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ShiftTable",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADLB"
+      ],
+      "sdtm_source": [
+        "LB"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-6.06",
+    "notes": [
+      "ALT, AST, BILI and ALP all present in LB, so the Hy's Law criterion (ALT or AST >=3xULN with BILI >=2xULN) is derivable."
+    ]
+  },
+  {
+    "candidate_id": "vs-END4-baseline-eot",
+    "type": "Table",
+    "category": "safety-vs",
+    "title": "Summary of Vital Signs at Baseline and End of Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADVS"
+      ],
+      "sdtm_source": [
+        "VS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-7.01",
+    "notes": [
+      "VS carries SBP, DBP, Pulse Rate, Temperature, Weight, Height (1414 records).",
+      "USDM END4 names 'standing and supine' BP; VSPOS is present in the data and should drive the position split."
+    ]
+  },
+  {
+    "candidate_id": "vs-END4-cfb-eot",
+    "type": "Table",
+    "category": "safety-vs",
+    "title": "Summary of Vital Signs Change from Baseline at End of Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADVS"
+      ],
+      "sdtm_source": [
+        "VS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-7.02",
+    "notes": [
+      "End of Treatment = last non-missing on-treatment record (Week 24 nominal); LOCF at the endpoint visit per the mandatory ADaM rule."
+    ]
+  },
+  {
+    "candidate_id": "vs-END4-weight-cfb-eot",
+    "type": "Table",
+    "category": "safety-vs",
+    "title": "Summary of Weight Change from Baseline at End of Treatment",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_4"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Safety",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "by treatment group"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADVS"
+      ],
+      "sdtm_source": [
+        "VS"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "safety-analysis-planner",
+    "final_id": "T-14-7.03",
+    "notes": [
+      "Weight is called out explicitly in END4 and gets its own display."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-ancova-wk24",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "primary",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-3.01",
+    "notes": [
+      "SDTM TS OUTMSPRI: 'To assess the dose-dependent improvement in subject depression ... Patient Health Questionnaire (PHQ-9) ...'.",
+      "QSPH has a 'PHQ01-Total Score' record; visits BASELINE, WEEK 12/16/20/24 + EARLY DISCONTINUATION RETRIEVAL. Fully producible.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "FEASIBILITY: only 2 subjects have an observed WEEK 24 PHQ-9 total (13 have BASELINE, 6 have an EARLY DISCONTINUATION RETRIEVAL record). The Week-24 endpoint is therefore produced almost entirely by the mandatory LOCF rule (DTYPE='LOCF', ANL01FL='Y' at the endpoint visit) carrying ED/unscheduled records forward. Expected analysis n is approximately 13, not 17. Results are illustrative only.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-mmrm",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Repeated Measures Analysis of Change from Baseline to Week 24 in PHQ-9 Total Score",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "MMRM",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-3.04",
+    "notes": [
+      "Unstructured covariance over all observed post-baseline visits under MAR; no imputation.",
+      "MMRM sensitivity model — leaf, not further expanded.",
+      "Uses every observed record (BASELINE + WEEK 12/16/20/24 + ED), so it is the analysis least damaged by the visit sparsity that forces LOCF on the ANCOVA.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-ancova-wk24-oc",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - Completers, Observed Cases, Windowed",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Completers",
+      "timepoint": "Week 24",
+      "imputation": "OC",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: analysis-set N too small to compute. Delivered study has 17 randomized subjects (Placebo 5 / Zanomaline Low 5 / Zanomaline High 7); only 2 subjects have an observed (non-imputed) Week 24 PHQ-9 total, so the observed-cases/completers sensitivity analysis has no estimable treatment contrast.",
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": null,
+    "notes": [
+      "Sensitivity companion to the LOCF primary; blocked on N, not on missing data domains.",
+      "variant assumed — no SAP provided",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-ancova-wk24-locf-male",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - Male subjects - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": "Sex=Male",
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: analysis-set N too small to compute. Delivered study has 17 randomized subjects (Placebo 5 / Zanomaline Low 5 / Zanomaline High 7); the male subgroup is 6 subjects overall (Placebo 2 / Low 1 / High 3); no estimable dose-response contrast.",
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": null,
+    "notes": [
+      "expanded by analysis-variant-expander (subgroup by sex)",
+      "variant assumed — no SAP provided",
+      "Emitted because needs_subgroup_by_sex=true, then blocked by the N-gate. Kept so the reviewer can see the subgroup was considered rather than silently dropped.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-ancova-wk24-locf-female",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in PHQ-9 Total Score - Female subjects - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": "Sex=Female",
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "blocked",
+    "status_reason": "blocked: analysis-set N too small to compute. Delivered study has 17 randomized subjects (Placebo 5 / Zanomaline Low 5 / Zanomaline High 7); the female subgroup is 12 subjects overall (Placebo 3 / Low 4 / High 4); with LOCF-derived endpoints this yields cells too small for an interpretable contrast.",
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": null,
+    "notes": [
+      "expanded by analysis-variant-expander (subgroup by sex)",
+      "variant assumed — no SAP provided",
+      "Emitted then blocked by the N-gate; see the male counterpart.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-phq9-descriptive-time",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "PHQ-9 Total Score - Mean and Mean Change from Baseline Over Time",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS1"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Efficacy",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSPHQ"
+      ],
+      "sdtm_source": [
+        "QSPH",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-3.05",
+    "notes": [
+      "Descriptive companion to da-phq9-ancova-wk24.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-swls-ancova-wk24",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in Satisfaction With Life Scale (SWLS) Total Score - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS2"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS3"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADQSSWL"
+      ],
+      "sdtm_source": [
+        "QSSL",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "secondary",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-3.02",
+    "notes": [
+      "SDTM TS OUTMSPRI: 'To assess the dose-dependent improvements in satisfaction with subjects' lives as a whole ... (SWLS) ...'.",
+      "QSSL carries the 5 SWLS items but NO total-score record — the total must be derived in ADaM (sum of the 5 items, with a completeness rule). Specification dependency.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "FEASIBILITY: same visit sparsity as PHQ-9 (13 subjects at BASELINE, 2 at WEEK 24); endpoint depends on LOCF.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-avlt-ancova-wk24",
+    "type": "Table",
+    "category": "efficacy",
+    "title": "Change from Baseline to Week 24 in AVLT-REY List A Total Score - LOCF",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS3"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS4"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "ANCOVA",
+      "population": "Efficacy",
+      "timepoint": "Week 24",
+      "imputation": "LOCF",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADFTAVLT"
+      ],
+      "sdtm_source": [
+        "FT",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "secondary",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-3.03",
+    "notes": [
+      "SDTM TS OUTMSPRI: 'To assess the dose-dependent improvements in subject memory and learning ... (AVLT-REY) ...'.",
+      "FT has 'AVL02-List A Total'; visits SCREENING 2, WEEK 4/8/12/16/24 + ED. NOTE: there is no BASELINE visit for AVLT — SCREENING 2 must serve as baseline (FTLOBXFL should be checked). Specification dependency.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "FEASIBILITY: 14 subjects have an observed WEEK 24 AVLT List A Total and 21 have an ED record — the best-populated of the three endpoints. Baseline must come from SCREENING 2 (no BASELINE visit for AVLT).",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes."
+    ]
+  },
+  {
+    "candidate_id": "da-hamd17-baseline-descriptive",
+    "type": "Table",
+    "category": "demographics",
+    "title": "Summary of HAMD 17 Total Score at Baseline",
+    "traces_to": {
+      "objective_ids": [
+        "Objective_TS1"
+      ],
+      "endpoint_ids": [
+        "Endpoint_TS2"
+      ],
+      "regulatory_rule": null
+    },
+    "analysis": {
+      "method": "Descriptive",
+      "population": "Intent-to-Treat",
+      "timepoint": null,
+      "imputation": "none",
+      "subgroup": null,
+      "comparison": "dose-response"
+    },
+    "data_requirements": {
+      "adam": [
+        "ADSL",
+        "ADRSHAMD"
+      ],
+      "sdtm_source": [
+        "RS",
+        "DM"
+      ]
+    },
+    "status": "planned",
+    "status_reason": null,
+    "priority": "supportive",
+    "produced_by": "data-aligned-planner",
+    "final_id": "T-14-2.02",
+    "notes": [
+      "SDTM TS OUTMSPRI names HAMD 17 alongside PHQ-9 for the depression objective.",
+      "DATA LIMITATION: RS (HAMD 17) exists only at BASELINE and EARLY DISCONTINUATION RETRIEVAL — there are no scheduled post-baseline visits, so no change-from-baseline or Week-24 analysis is possible. Descriptive baseline summary only.",
+      "promoted to 'planned' by human review 2026-07-29: the delivered SDTM, not the supplied USDM, defines this study's efficacy. Provenance remains the SDTM TS OBJPRIM/OUTMSPRI declaration; no USDM objective/endpoint traces to it.",
+      "B-1 resolved (human review 2026-07-29): traces_to now points at source-tagged SDTM TS objectives/endpoints in study-model.json; the placeholder regulatory_rule 'Delivered-data objective (SDTM TS OBJPRIM / OUTMSPRI)' was cleared. Provenance is SDTM TS, not USDM — see study-model.json normalizer_notes.",
+      "R-3 resolved (human review 2026-07-29): recategorized efficacy -> demographics (14-3 -> 14-2). RS has no scheduled post-baseline HAMD 17 visit, so this is a baseline characteristic, not an efficacy analysis. Population moved from Efficacy to Intent-to-Treat to match the section.",
+      "analysis.timepoint set to null (the single baseline assessment is named in the title); this also restores T-14-2.01 to the demographics anchor table."
+    ]
+  }
+]

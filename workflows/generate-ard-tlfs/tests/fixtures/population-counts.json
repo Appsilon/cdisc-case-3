@@ -1,0 +1,5 @@
+{
+ "datasets": {"ADSL": {"records": 12}},
+ "armVariable": "TRT01P",
+ "populations": {"SAFFL": {"total": 12, "byArm": {"Placebo": 4, "Drug Low": 4, "Drug High": 4}}}
+}
