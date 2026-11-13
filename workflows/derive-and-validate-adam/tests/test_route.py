@@ -60,12 +60,12 @@ def test_derive_reject_fix_accept(work: Path) -> None:
     loop.steps["derive-adam"] = child({"outcome": "derived", "package": package("sdtm", "adam", tag="-1")})
     second = loop.run("route", "route.py")
     assert (second["target"], second["round"]) == ("validate", 1) and second["package"]["files"][1]["name"] == "adam-1"
-    loop.steps["validate-adam"] = child({"outcome": "rejected", "package": package("adam", "core-dispositions-adamig", tag="-r1")})
+    loop.steps["validate-with-core"] = child({"outcome": "rejected", "package": package("adam", "core-dispositions-adamig", tag="-r1")})
     third = loop.run("route", "route.py")
     assert (third["target"], third["round"]) == ("derive", 2) and third["package"]["files"][1]["kind"] == "core-dispositions-adamig"
     loop.steps["derive-adam"] = child({"outcome": "derived", "package": package("adam", tag="-2")})
     assert loop.run("route", "route.py")["target"] == "validate"
-    loop.steps["validate-adam"] = child({"outcome": "accepted", "summary": "ACCEPTED", "package": package("adam", "core-report-adamig", tag="-ok")})
+    loop.steps["validate-with-core"] = child({"outcome": "accepted", "summary": "ACCEPTED", "package": package("adam", "core-report-adamig", tag="-ok")})
     finished = loop.run("finish", "finish.py")
     assert finished["outcome"] == "accepted" and finished["rounds"] == 2 and [entry["kind"] for entry in finished["files"]] == ["core-report-adamig"]
     print("  derive -> reject -> fix -> accept:", finished["summary"])
@@ -75,12 +75,12 @@ def test_validate_first_then_exhausted(work: Path) -> None:
     loop = Loop(work / "validate", {"package": package("adam", "adam-program", "lineage"), "start": "validate"})
     assert loop.run("route", "route.py")["target"] == "validate"
     for expected_round in (1, 2, 3):
-        loop.steps["validate-adam"] = child({"outcome": "rejected", "package": package("adam")})
+        loop.steps["validate-with-core"] = child({"outcome": "rejected", "package": package("adam")})
         decision = loop.run("route", "route.py")
         assert (decision["target"], decision["round"]) == ("derive", expected_round), decision
         loop.steps["derive-adam"] = child({"outcome": "derived", "package": package("adam")})
         assert loop.run("route", "route.py")["target"] == "validate"
-    loop.steps["validate-adam"] = child({"outcome": "rejected", "package": package("adam")})
+    loop.steps["validate-with-core"] = child({"outcome": "rejected", "package": package("adam")})
     assert loop.run("route", "route.py")["target"] == "exhausted"
     print("  validate first, rejected three times -> exhausted")
 

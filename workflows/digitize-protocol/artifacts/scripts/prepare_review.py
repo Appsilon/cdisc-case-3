@@ -121,7 +121,7 @@ def render(document: dict, citations: dict, counts: dict, core_summary: str) -> 
 def main() -> None:
     step_input = read_input()
     counts = step_output(step_input, "check-usdm").get("counts") or {}
-    core_summary = str((step_output(step_input, "validate-usdm").get("output") or {}).get("summary") or "")
+    core_summary = str((step_output(step_input, "validate-with-core").get("output") or {}).get("summary") or "")
     checked = STEP_OUTPUTS_DIR / "check-usdm"
     document = json.loads((checked / USDM).read_text(encoding="utf-8"))
     citations = json.loads((checked / CITATIONS).read_text(encoding="utf-8"))

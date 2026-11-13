@@ -50,17 +50,17 @@ def downloaded(files: list[dict], data: Path) -> list[dict]:
 def main() -> None:
     files = [entry("tlf-viewer.html", "tfl", "gen"), entry("T-14-2.01.html", "tfl", "gen"), entry("T-14-2.01.json", "ard", "gen"),
              entry("adsl.xpt", "adam", "derive"), entry("core-report.html", "core-report-adamig", "core"),
-             entry("core-report.html", "core-report-sdtmig", "core-sdtm"), entry("usdm.json", "usdm", "plan"),
-             entry("usdm-citations.json", "usdm-citations", "digitize")]
-    package = {"study": {"id": "CDISCPILOT01"}, "files": files, "history": [{"workflow": "plan-tlfs", "runId": "plan", "outcome": "planned"}]}
-    generated = {"steps": {"generate": {"status": "completed", "output": {"outcome": "generated", "package": package}}}}
+             entry("core-report.html", "core-report-sdtmig", "core-sdtm"), entry("usdm.json", "usdm", "plan-tlfs"),
+             entry("usdm-citations.json", "usdm-citations", "digitize-protocol")]
+    package = {"study": {"id": "CDISCPILOT01"}, "files": files, "history": [{"workflow": "plan-tlfs", "runId": "plan-tlfs", "outcome": "planned"}]}
+    generated = {"steps": {"generate-ard-tlfs": {"status": "completed", "output": {"outcome": "generated", "package": package}}}}
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         code, collected, _ = run_script("collect_deliverables.py", work / "collect", generated)
         assert code == 0, collected
         assert [item["showAs"] for item in collected["files"]] == ["tlf-viewer.html", "core-report-sdtmig.html", "core-report-adamig.html"], collected
         assert all(item["downloadUrl"] for item in collected["files"]) and collected["package"] == package
-        code, result, _ = run_script("collect_deliverables.py", work / "collect-empty", {"steps": {"generate": {"status": "completed", "output": {}}}})
+        code, result, _ = run_script("collect_deliverables.py", work / "collect-empty", {"steps": {"generate-ard-tlfs": {"status": "completed", "output": {}}}})
         assert code != 0 and "no study package" in result["error"], result
 
         finish_input = {**generated, "package": collected["package"], "files": downloaded(collected["files"], work / "data")}

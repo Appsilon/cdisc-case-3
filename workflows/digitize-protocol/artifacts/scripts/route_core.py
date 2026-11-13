@@ -25,7 +25,7 @@ ROUNDS_PATH = WORK_DIR / "core-rounds.json"  # also cleared by record_review.py
 
 
 def main() -> None:
-    child = step_output(read_input(), "validate-usdm").get("output") or {}
+    child = step_output(read_input(), "validate-with-core").get("output") or {}
     package = child.get("package") or {}
     rejections = (json.loads(ROUNDS_PATH.read_text(encoding="utf-8")).get("rejections", 0) if ROUNDS_PATH.is_file() else 0) + 1
     ROUNDS_PATH.write_text(json.dumps({"rejections": rejections}), encoding="utf-8")

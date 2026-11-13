@@ -1,13 +1,13 @@
 """Decide the next move of the ADaM <-> CORE loop and hand on the current study package.
 
-Runs at the start and after every child: derive-adam and validate-adam each
+Runs at the start and after every child: derive-adam and validate-with-core each
 return to `route`, which reads its own previous decision to know which child
 just finished.
 
   start                    -> `start` input: derive (default) or validate (bring
                               existing ADaM + programs, derive only on reject)
   after derive-adam        -> validate the derived package
-  after validate-adam      -> rejected: derive again (a fix loop: the package now
+  after validate-with-core      -> rejected: derive again (a fix loop: the package now
                               carries the findings marked 'fix') while rounds remain,
                               else exhausted
 
@@ -56,7 +56,7 @@ def main() -> None:
         target, round_number = "validate", int(previous.get("round", 1))
         summary = f"Round {round_number}: validating the derived ADaM against ADaMIG."
     elif last_target == "validate":
-        package = child_package(step_output(step_input, "validate-adam"), "validate-adam")
+        package = child_package(step_output(step_input, "validate-with-core"), "validate-with-core")
         round_number = int(previous.get("round", 0)) + 1
         target = "derive" if round_number <= MAX_ROUNDS else "exhausted"
         summary = (f"Round {round_number}: CORE rejected the delivery; fixing the programs behind the findings marked 'fix'."

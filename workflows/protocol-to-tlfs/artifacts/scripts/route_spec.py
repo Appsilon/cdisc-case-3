@@ -1,10 +1,10 @@
 """Hand the specification child its package, and loop back when the TLF review asks for a spec change.
 
-Runs after validate-sdtm and after every generate that ends in upstream_change.
+Runs after validate-with-core and after every generate-ard-tlfs that ends in upstream_change.
 It reads its own previous decision to know which of the two just finished.
 
-  after validate-sdtm            -> specify from the validated package, no request
-  after generate (spec change)   -> specify again from generate's package with the
+  after validate-with-core       -> specify-analyses from the validated package, no request
+  after generate-ard-tlfs        -> (spec change) specify-analyses again from its package with the
                                     reviewer's request, while rounds remain,
                                     else exhausted (a human takes over); a request
                                     without a comment also stops for a human
@@ -41,12 +41,12 @@ def main() -> None:
     previous = step_output(step_input, "route-spec")
 
     if previous.get("round") is None:
-        output = child_output(step_input, "validate-sdtm")
-        write_result({"target": "specify", "round": 0, "package": output["package"], "request": "",
+        output = child_output(step_input, "validate-with-core")
+        write_result({"target": "specify-analyses", "round": 0, "package": output["package"], "request": "",
                       "summary": "Specifying the analyses from the validated SDTM and the approved plan."})
         return
 
-    output = child_output(step_input, "generate")
+    output = child_output(step_input, "generate-ard-tlfs")
     request = str(output.get("request") or "").strip()
     round_number = int(previous["round"]) + 1
     if not request:
@@ -57,7 +57,7 @@ def main() -> None:
         write_result({"target": "exhausted", "round": round_number, "package": output["package"], "request": request,
                       "summary": f"The TLF review asked for a spec change again after {MAX_CHANGE_ROUNDS} round(s); stopping for a human: {request[:200]}"})
         return
-    write_result({"target": "specify", "round": round_number, "package": output["package"], "request": request,
+    write_result({"target": "specify-analyses", "round": round_number, "package": output["package"], "request": request,
                   "summary": f"Spec change round {round_number}: {request[:200]}"})
 
 

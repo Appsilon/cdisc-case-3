@@ -1,7 +1,7 @@
 """Lift the deliverables to show from the final study package into top-level `files`.
 
 The package generate-ard-tlfs returned sits inside its result
-(`steps.generate.output.package`); the runtime downloads only a step's top-level
+(`steps.generate-ard-tlfs.output.package`); the runtime downloads only a step's top-level
 `files`, and a step's viewer shows only what that step wrote to its /output. So
 this step hands the files worth opening on as `files`, each tagged with `showAs`
 (the name finish publishes it under - CORE reports of different standards share
@@ -46,7 +46,7 @@ def shown_files(package: dict) -> list[dict]:
 
 
 def main() -> None:
-    generated = step_output(read_input(), "generate").get("output") or {}
+    generated = step_output(read_input(), "generate-ard-tlfs").get("output") or {}
     package = generated.get("package")
     if isinstance(package, dict) is False or not package.get("files"):
         raise StepFailure("generate-ard-tlfs returned no study package.")

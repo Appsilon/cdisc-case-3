@@ -17,10 +17,10 @@ WORKFLOW = "derive-and-validate-adam"
 
 def main() -> None:
     step_input = read_input()
-    validated = step_output(step_input, "validate-adam").get("output") or {}
+    validated = step_output(step_input, "validate-with-core").get("output") or {}
     package = validated.get("package")
     if isinstance(package, dict) is False or not package.get("files"):
-        raise StepFailure("validate-adam returned no study package.")
+        raise StepFailure("validate-with-core returned no study package.")
     rounds = int(step_output(step_input, "route").get("round", 0))
     write_result({
         "outcome": "accepted",

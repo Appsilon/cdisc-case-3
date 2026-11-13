@@ -65,7 +65,7 @@
       }
     },
     {
-      "id": "validate-adam",
+      "id": "validate-with-core",
       "name": "Validate with CDISC CORE (ADaM)",
       "type": "creation",
       "description": "Child run of validate-with-core against ADaMIG; the standards reviewer records a disposition per finding. Any 'fix' sends the delivery back to derivation.",
@@ -133,7 +133,7 @@
     },
     {
       "from": "route",
-      "to": "validate-adam",
+      "to": "validate-with-core",
       "when": "output.target == \"validate\""
     },
     {
@@ -157,17 +157,17 @@
       "when": "else"
     },
     {
-      "from": "validate-adam",
+      "from": "validate-with-core",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "validate-adam",
+      "from": "validate-with-core",
       "to": "route",
       "when": "output.status == \"completed\" && output.output.outcome == \"rejected\""
     },
     {
-      "from": "validate-adam",
+      "from": "validate-with-core",
       "to": "finish",
       "when": "else"
     },

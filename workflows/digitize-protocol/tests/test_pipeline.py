@@ -128,7 +128,7 @@ class Run:
         package["files"] = [item for item in package["files"]
                             if item["kind"] not in ("core-report-usdm", "core-dispositions-usdm", "core-issue-index-usdm")] + without_local(files)
         package["history"] = list(package.get("history") or []) + [{"workflow": "validate-with-core", "runId": core_run, "outcome": outcome}]
-        self.output("validate-usdm", {"status": "completed", "output": {"outcome": outcome, "summary": f"{outcome.upper()}: usdm 4-0",
+        self.output("validate-with-core", {"status": "completed", "output": {"outcome": outcome, "summary": f"{outcome.upper()}: usdm 4-0",
                                                                        "files": without_local(files), "package": package}})
         return {item["name"]: item["localPath"] for item in files}
 

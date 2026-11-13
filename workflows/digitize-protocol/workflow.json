@@ -100,7 +100,7 @@
       }
     },
     {
-      "id": "validate-usdm",
+      "id": "validate-with-core",
       "name": "Validate with CDISC CORE (USDM)",
       "type": "creation",
       "description": "Child run of validate-with-core with standard usdm 4-0: CORE's USDM rules, then the standards reviewer records a disposition per finding. Any finding marked fix sends the USDM back to the AI.",
@@ -263,21 +263,21 @@
     },
     {
       "from": "check-usdm",
-      "to": "validate-usdm",
+      "to": "validate-with-core",
       "when": "else"
     },
     {
-      "from": "validate-usdm",
+      "from": "validate-with-core",
       "to": "return-result",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "validate-usdm",
+      "from": "validate-with-core",
       "to": "route-core",
       "when": "output.status == \"completed\" && output.output.outcome == \"rejected\""
     },
     {
-      "from": "validate-usdm",
+      "from": "validate-with-core",
       "to": "prepare-review",
       "when": "else"
     },

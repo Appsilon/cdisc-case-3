@@ -36,7 +36,7 @@ def failed(package: dict, counts: dict, files: list[dict], summary: str) -> None
 def main() -> None:
     step_input = read_input()
     gate = step_output(step_input, "check-usdm")
-    core = step_output(step_input, "validate-usdm")
+    core = step_output(step_input, "validate-with-core")
     child = core.get("output") or {}
     counts = gate.get("counts") or {}
     package = base_package(step_input)

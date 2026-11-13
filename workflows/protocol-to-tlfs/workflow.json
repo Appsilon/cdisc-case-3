@@ -33,7 +33,7 @@
       }
     },
     {
-      "id": "digitize",
+      "id": "digitize-protocol",
       "name": "Digitize the protocol",
       "type": "creation",
       "executor": "action",
@@ -52,7 +52,7 @@
       }
     },
     {
-      "id": "plan",
+      "id": "plan-tlfs",
       "name": "Plan the TLFs",
       "type": "creation",
       "description": "Child run of plan-tlfs: a deterministic data check first compares the SDTM with the USDM (arms, enrollment, exposure; a mismatch stops the run at data-mismatch); the AI plans every output from the USDM and checks feasibility against the SDTM; a gate checks every trace; an independent AI critic audits it; the statistician approves. Uploads happen here when no package was given.",
@@ -71,7 +71,7 @@
       }
     },
     {
-      "id": "validate-sdtm",
+      "id": "validate-with-core",
       "name": "Validate with CDISC CORE (SDTM)",
       "type": "creation",
       "description": "Child run of validate-with-core against SDTMIG: the standards reviewer records a disposition per finding; a 'fix' asks for corrected SDTM inside that run.",
@@ -82,7 +82,7 @@
           "definitionName": "validate-with-core",
           "definitionVersion": 3,
           "payload": {
-            "package": "${steps.plan.output.package}",
+            "package": "${steps.plan-tlfs.output.package}",
             "standard": "sdtmig",
             "version": "",
             "ct": "",
@@ -107,7 +107,7 @@
       }
     },
     {
-      "id": "specify",
+      "id": "specify-analyses",
       "name": "Specify the analyses",
       "type": "creation",
       "description": "Child run of specify-analyses: ARS-aligned analysis specs, the ADaM spec and an ARS ReportingEvent, gated against the ARS schema and every cross-reference; the statistician approves.",
@@ -127,7 +127,7 @@
       }
     },
     {
-      "id": "derive-adam",
+      "id": "derive-and-validate-adam",
       "name": "Derive and validate ADaM",
       "type": "creation",
       "description": "Child run of derive-and-validate-adam: derive-adam (the AI writes traced programs, scripts run them) gated by CORE ADaMIG validation, looping on findings marked 'fix' (at most three derivation rounds).",
@@ -138,7 +138,7 @@
           "definitionName": "derive-and-validate-adam",
           "definitionVersion": 3,
           "payload": {
-            "package": "${steps.specify.output.package}",
+            "package": "${steps.specify-analyses.output.package}",
             "start": "derive"
           },
           "timeout": "P30D",
@@ -147,7 +147,7 @@
       }
     },
     {
-      "id": "generate",
+      "id": "generate-ard-tlfs",
       "name": "Generate ARD and TLFs",
       "type": "creation",
       "description": "Child run of generate-ard-tlfs: the AI writes one program per output, scripts run them and reconcile every displayed number with the ARD; the reviewer approves in the TLF viewer.",
@@ -158,7 +158,7 @@
           "definitionName": "generate-ard-tlfs",
           "definitionVersion": 4,
           "payload": {
-            "package": "${steps.derive-adam.output.package}"
+            "package": "${steps.derive-and-validate-adam.output.package}"
           },
           "timeout": "P30D",
           "step": "return-result"
@@ -225,67 +225,67 @@
   "transitions": [
     {
       "from": "route-input",
-      "to": "digitize",
+      "to": "digitize-protocol",
       "when": "output.target == \"digitize\""
     },
     {
       "from": "route-input",
-      "to": "plan",
+      "to": "plan-tlfs",
       "when": "else"
     },
     {
-      "from": "digitize",
+      "from": "digitize-protocol",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "digitize",
+      "from": "digitize-protocol",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
     },
     {
-      "from": "digitize",
+      "from": "digitize-protocol",
       "to": "route-input",
       "when": "else"
     },
     {
-      "from": "plan",
+      "from": "plan-tlfs",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "plan",
+      "from": "plan-tlfs",
       "to": "data-mismatch",
       "when": "output.status == \"completed\" && output.output.outcome == \"data-mismatch\""
     },
     {
-      "from": "plan",
+      "from": "plan-tlfs",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
     },
     {
-      "from": "plan",
-      "to": "validate-sdtm",
+      "from": "plan-tlfs",
+      "to": "validate-with-core",
       "when": "else"
     },
     {
-      "from": "validate-sdtm",
+      "from": "validate-with-core",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "validate-sdtm",
+      "from": "validate-with-core",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome != \"accepted\""
     },
     {
-      "from": "validate-sdtm",
+      "from": "validate-with-core",
       "to": "route-spec",
       "when": "else"
     },
     {
       "from": "route-spec",
-      "to": "specify",
+      "to": "specify-analyses",
       "when": "output.target == \"specify\""
     },
     {
@@ -294,52 +294,52 @@
       "when": "else"
     },
     {
-      "from": "specify",
+      "from": "specify-analyses",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "specify",
+      "from": "specify-analyses",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
     },
     {
-      "from": "specify",
-      "to": "derive-adam",
+      "from": "specify-analyses",
+      "to": "derive-and-validate-adam",
       "when": "else"
     },
     {
-      "from": "derive-adam",
+      "from": "derive-and-validate-adam",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "derive-adam",
+      "from": "derive-and-validate-adam",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome != \"accepted\""
     },
     {
-      "from": "derive-adam",
-      "to": "generate",
+      "from": "derive-and-validate-adam",
+      "to": "generate-ard-tlfs",
       "when": "else"
     },
     {
-      "from": "generate",
+      "from": "generate-ard-tlfs",
       "to": "child-failed",
       "when": "output.status != \"completed\""
     },
     {
-      "from": "generate",
+      "from": "generate-ard-tlfs",
       "to": "stopped",
       "when": "output.status == \"completed\" && output.output.outcome == \"failed\""
     },
     {
-      "from": "generate",
+      "from": "generate-ard-tlfs",
       "to": "route-spec",
       "when": "output.status == \"completed\" && output.output.outcome == \"upstream_change\""
     },
     {
-      "from": "generate",
+      "from": "generate-ard-tlfs",
       "to": "collect-deliverables",
       "when": "else"
     },

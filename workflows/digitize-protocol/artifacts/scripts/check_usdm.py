@@ -39,7 +39,7 @@ def main() -> None:
         shutil.copyfile(USDM_DIR / name, OUTPUT_DIR / name)
 
     checked = [published_file(OUTPUT_DIR / USDM, "usdm", WORKFLOW), published_file(OUTPUT_DIR / CITATIONS, "usdm-citations", WORKFLOW)]
-    previous_core = (step_output(step_input, "validate-usdm").get("output") or {}).get("package") or {}
+    previous_core = (step_output(step_input, "validate-with-core").get("output") or {}).get("package") or {}
     package = replace_files(base_package(step_input), checked + files_of_kind(previous_core, "core-dispositions-usdm", "core-issue-index-usdm"))
     write_result({
         **routing, "counts": counts, "package": package,

@@ -1,4 +1,4 @@
-"""route_input.py: plan from a USDM, digitize a protocol first, plan from what digitize returned.
+"""route_input.py: plan-tlfs from a USDM, digitize-protocol a protocol first, plan-tlfs from what it returned.
 
   python3 tests/test_route_input.py
 """
@@ -41,21 +41,21 @@ def main() -> None:
         work = Path(temporary)
         with_usdm = {"files": [USDM, PROTOCOL, SDTM]}
         code, result = route(work, {"package": with_usdm, "steps": {}})
-        assert code == 0 and result["target"] == "plan" and result["package"] == with_usdm, result
+        assert code == 0 and result["target"] == "plan-tlfs" and result["package"] == with_usdm, result
 
         with_protocol = {"files": [PROTOCOL, SDTM]}
         code, result = route(work, {"package": with_protocol, "steps": {}})
-        assert code == 0 and result["target"] == "digitize" and result["package"] == with_protocol, result
+        assert code == 0 and result["target"] == "digitize-protocol" and result["package"] == with_protocol, result
 
         code, result = route(work, {"package": {}, "steps": {}})
-        assert code == 0 and result["target"] == "plan" and result["package"] == {}, result
+        assert code == 0 and result["target"] == "plan-tlfs" and result["package"] == {}, result
 
         digitized = {"files": [PROTOCOL, SDTM, USDM]}
-        back = {"route-input": result, "digitize": {"status": "completed", "output": {"outcome": "digitized", "package": digitized}}}
+        back = {"route-input": result, "digitize-protocol": {"status": "completed", "output": {"outcome": "digitized", "package": digitized}}}
         code, result = route(work, {"package": with_protocol, "steps": back})
-        assert code == 0 and result["target"] == "plan" and result["package"] == digitized, result
+        assert code == 0 and result["target"] == "plan-tlfs" and result["package"] == digitized, result
 
-        empty = {"digitize": {"status": "completed", "output": {"outcome": "digitized", "package": with_protocol}}}
+        empty = {"digitize-protocol": {"status": "completed", "output": {"outcome": "digitized", "package": with_protocol}}}
         code, result = route(work, {"package": with_protocol, "steps": empty})
         assert code != 0 and "returned no USDM" in result["error"], result
     print("ok  test_route_input")
