@@ -121,7 +121,11 @@
       "script": {
         "command": "python3 /artifacts/scripts/run_core.py",
         "dockerfile": "Dockerfile",
-        "timeoutMinutes": 120
+        "timeoutMinutes": 120,
+        "resources": {
+          "memory": "16g",
+          "cpus": 4
+        }
       }
     },
     {

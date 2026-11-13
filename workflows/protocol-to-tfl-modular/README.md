@@ -6,7 +6,7 @@ sub-workflows in order.
 Each child is its own run with its own reviewers and runs standalone too, so a
 sponsor can adopt any single piece. (The name `protocol-to-tfl` is taken on
 staging `vedha` by the old monolithic v6.) Registered on staging `vedha` (v8) and prod
-`appsilon` (v1, proven by run `d5644f28`); prod pins live in `pins/prod-appsilon.json`.
+`appsilon` (v1, proven by run `d5644f28`); prod pins live in `pins/prod-appsilon.json`, staging `vedha` pins in `pins/staging-vedha.json` (2026-11-13: master v9 on staging).
 
 ```
 route-input ─protocol, no usdm─► digitize (protocol-digitization) ─► route-input ─► plan
