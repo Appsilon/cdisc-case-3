@@ -7,8 +7,8 @@ it publishes the plan files and tlf-plan.html - the plan as a table a
 statistician can review, with the trace of every output and the flagged items
 - for the critic and the human review.
 
-A plan that leaves a primary endpoint of the USDM without a planned output is
-not sent back (the planner cannot add data): dataBlocked stops the run in
+A plan that leaves every primary endpoint of a USDM objective with only blocked
+outputs is not sent back (the planner cannot add data): dataBlocked stops the run in
 return-result (outcome data-mismatch). The page also shows the data checks
 (check-study) so the statistician sees any warning.
 
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from mfpkg import OUTPUT_DIR, run_main, write_result  # noqa: E402
 from gate import MAX_ATTEMPTS  # noqa: E402
 from planlib import (LOOP, PLAN_CHECK_PATH, PLAN_DIR, PLAN_FILES, STUDY_CHECK_PATH, STUDY_MODEL, TLF_PLAN,  # noqa: E402
-                     check_plan, staged_primary_endpoints)
+                     check_plan, staged_primary_endpoints, staged_primary_objectives)
 
 STYLE = """
 :root { color-scheme: light dark; --fg:#1d2433; --muted:#5b6475; --line:#d9dee7; --bg:#fff; --chip:#eef2f8; --warn:#9a5b00; }
@@ -80,8 +80,9 @@ def render(model: dict, plan: list[dict], counts: dict) -> str:
         f"<td>{trace_text(item)}</td></tr>"
         for item in flagged
     )
+    blocked_primary = set(counts.get("blockedPrimary") or [])
     blocked = "".join(
-        f"<li><code>{html.escape(key)}</code> {html.escape(str(endpoints.get(key, {}).get('text', ''))[:160])}</li>"
+        f"<li><code>{html.escape(key)}</code>{' <b>(primary)</b>' if key in blocked_primary else ''} {html.escape(str(endpoints.get(key, {}).get('text', ''))[:160])}</li>"
         for key in counts.get("blockedEndpoints") or []
     )
     title = html.escape(f"{model.get('study_id', '')} TLF plan")
@@ -101,7 +102,7 @@ def render(model: dict, plan: list[dict], counts: dict) -> str:
 
 def main() -> None:
     attempt = LOOP.count()
-    result = check_plan(primary=staged_primary_endpoints())
+    result = check_plan(primary=staged_primary_endpoints(), objectives=staged_primary_objectives())
     problems = result["problems"]
     PLAN_CHECK_PATH.write_text(json.dumps(result, indent=2), encoding="utf-8")
     routing = LOOP.route("check-plan", problems)
@@ -109,11 +110,12 @@ def main() -> None:
         write_result({**routing, "dataBlocked": False, "counts": result["counts"],
                       "summary": f"Plan gate FAILED (attempt {attempt}/{MAX_ATTEMPTS}): {len(problems)} problem(s), first: {problems[0]}"})
         return
-    blocked_primary = result["counts"]["blockedPrimary"]
-    if blocked_primary:
+    unanswerable = result["counts"]["unanswerableObjectives"]
+    if len(unanswerable) > 0:
         write_result({**routing, "dataBlocked": True, "counts": result["counts"],
-                      "summary": f"STOP: primary endpoint(s) {', '.join(blocked_primary)} have no producible output - the delivered "
-                                 "SDTM cannot answer the study's primary question (see the planner's status_reason)."})
+                      "summary": f"STOP: objective(s) {', '.join(unanswerable)} - every primary endpoint ({', '.join(result['counts']['blockedPrimary'])}) "
+                                 "has no producible output; the delivered SDTM cannot answer the study's primary question "
+                                 "(see the planner's status_reason)."})
         return
 
     for name in PLAN_FILES:
@@ -127,7 +129,9 @@ def main() -> None:
         "summary": f"Plan gate passed: {counts['tables']} tables, {counts['listings']} listings, {counts['figures']} figures planned, "
                    f"{counts['flagged']} flagged; every resolved endpoint traced"
                    + (f" ({len(counts['blockedEndpoints'])} with no producible output: {', '.join(counts['blockedEndpoints'])})."
-                      if counts["blockedEndpoints"] else "."),
+                      if counts["blockedEndpoints"] else ".")
+                   + (f" PRIMARY endpoint(s) {', '.join(counts['blockedPrimary'])} have no producible output - their objective is "
+                      "still answered by its other primary endpoints; the statistician decides." if counts["blockedPrimary"] else ""),
     })
 
 

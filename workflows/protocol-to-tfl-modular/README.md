@@ -16,7 +16,7 @@ plan (tlf-planning) ─► validate-sdtm (cdisc-core-validation, sdtmig, onRejec
 generate: outcome upstream_change ─► route-spec ─► specify (with the reviewer's request) ─► derive-adam ─► generate   (≤ 2 rounds)
 route-spec: a third spec-change request ─► specs-change-requested
 each child: run failed ─► child-failed · ended without its result (failed / not accepted) ─► stopped
-plan: outcome data-mismatch (the SDTM is not the USDM's study, or cannot answer a primary endpoint) ─► data-mismatch
+plan: outcome data-mismatch (the SDTM is not the USDM's study, or cannot answer any primary endpoint of an objective) ─► data-mismatch
 ```
 
 The SDTM is validated before specification, so a spec-change round does not

@@ -115,11 +115,19 @@ def staged_primary_endpoints() -> dict[str, str]:
     return primary_endpoint_ids(json.loads(usdm_path.read_text(encoding="utf-8"))) if usdm_path.is_file() else {}
 
 
-def check_plan(plan_dir: Path = PLAN_DIR, primary: dict[str, str] | None = None) -> dict:
-    """Run the gate over the plan files; primary = the USDM's primary endpoints {id: text}.
+def staged_primary_objectives() -> dict[str, list[str]]:
+    from studycheck import primary_objectives
+    usdm_path = INPUTS_DIR / "usdm.json"
+    return primary_objectives(json.loads(usdm_path.read_text(encoding="utf-8"))) if usdm_path.is_file() else {}
+
+
+def check_plan(plan_dir: Path = PLAN_DIR, primary: dict[str, str] | None = None,
+               objectives: dict[str, list[str]] | None = None) -> dict:
+    """Run the gate over the plan files; primary = the USDM's primary endpoints {id: text}, objectives = objective id ->
+    its primary endpoint ids.
 
     Result: {problems, counts}; counts.blockedPrimary lists primary endpoints whose every output is blocked (needs-clarification goes to the
-    statistician, not here) - the data
+    statistician, not here); counts.unanswerableObjectives lists objectives whose every primary endpoint is in blockedPrimary - the data
     cannot answer the study's primary question, which the planner cannot fix, so the run stops."""
     problems: list[str] = []
     model = load_json(plan_dir / STUDY_MODEL, problems)
@@ -196,4 +204,6 @@ def check_plan(plan_dir: Path = PLAN_DIR, primary: dict[str, str] | None = None)
                     if all(item.get("status") == "blocked" for item in plan if isinstance(item, dict)
                            and endpoint in ((item.get("traces_to") or {}).get("endpoint_ids") or []))}
     counts["blockedPrimary"] = [key for key in counts["blockedEndpoints"] if key in (primary or {}) and key in only_blocked]
+    counts["unanswerableObjectives"] = sorted(objective for objective, endpoint_ids in (objectives or {}).items()
+                                              if all(endpoint in counts["blockedPrimary"] for endpoint in endpoint_ids))
     return {"problems": problems, "counts": counts}

@@ -6,7 +6,7 @@ outcome:
            output): study-model, tlf-plan (json), tlf-plan-view (index md + html),
            plus the critic's coverage-report and the review feedback.
   data-mismatch  the SDTM is not the study the USDM describes (check-study), or it
-           cannot answer a primary endpoint (check-plan dataBlocked); publishes the
+           cannot answer any primary endpoint of an objective (check-plan dataBlocked); publishes the
            data-check page (and the plan drafts) and leaves the package's plan as it was.
   failed   the gate still failed after the last attempt; publishes what the
            planner wrote, for a human to pick up, and leaves the package's plan as it was.

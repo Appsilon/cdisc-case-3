@@ -270,9 +270,10 @@ def test_primary_blocked(work: Path) -> None:
     run.step("stage-inputs", "stage_inputs.py", files=with_local(resolved["files"], files))
     assert run.step("check-study", "check_study.py")["failed"] is False
     run.planner(FIXTURES / "plan")
-    assert "WARNING: primary endpoint(s) Endpoint_1, Endpoint_2" in run.self_check().stdout
+    assert "Objective(s) Objective_1 would have no primary endpoint left" in run.self_check().stdout
     gate = run.step("check-plan", "check_plan.py")
     assert gate["needsFix"] is False and gate["dataBlocked"] is True and gate["counts"]["blockedPrimary"] == ["Endpoint_1", "Endpoint_2"], gate
+    assert gate["counts"]["unanswerableObjectives"] == ["Objective_1"], gate
     assert (run.workspace / "tlf-planning" / "feedback.json").is_file() is False, "the planner cannot add data: not sent back"
     result = run.step("return-result", "return_result.py")
     assert result["outcome"] == "data-mismatch" and "Endpoint_1" in result["summary"], result
@@ -289,6 +290,8 @@ def test_primary_blocked(work: Path) -> None:
     run.planner(clarify)
     gate = run.step("check-plan", "check_plan.py")
     assert gate["counts"]["blockedPrimary"] == ["Endpoint_2"], "a clarification item goes to the statistician, not to data-mismatch"
+    assert gate["dataBlocked"] is False and "PRIMARY endpoint(s) Endpoint_2" in gate["summary"], \
+        "an objective with a primary endpoint left (here one in clarification) goes to the statistician"
 
 
 def main() -> None:

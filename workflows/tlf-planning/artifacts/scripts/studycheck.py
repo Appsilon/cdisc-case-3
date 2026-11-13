@@ -211,3 +211,15 @@ def primary_endpoint_ids(usdm: dict) -> dict[str, str]:
             if level.get("code") == "C94496" or "primary" in str(level.get("decode", "")).lower():
                 primary[str(endpoint.get("id"))] = str(endpoint.get("text") or endpoint.get("name") or "")
     return primary
+
+
+def primary_objectives(usdm: dict) -> dict[str, list[str]]:
+    """Each objective -> its primary endpoint ids (objectives without a primary endpoint are left out)."""
+    primary = primary_endpoint_ids(usdm)
+    _, design = design_of(usdm)
+    grouped: dict[str, list[str]] = {}
+    for objective in design.get("objectives") or []:
+        endpoints = [str(endpoint.get("id")) for endpoint in objective.get("endpoints") or [] if str(endpoint.get("id")) in primary]
+        if len(endpoints) > 0:
+            grouped[str(objective.get("id"))] = endpoints
+    return grouped

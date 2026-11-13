@@ -205,7 +205,7 @@
     },
     {
       "id": "data-mismatch",
-      "name": "The SDTM is not the protocol's study, or cannot answer a primary endpoint",
+      "name": "The SDTM is not the protocol's study, or cannot answer a primary objective",
       "type": "terminal",
       "executor": "human"
     },

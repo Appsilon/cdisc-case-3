@@ -117,7 +117,7 @@
       "id": "check-plan",
       "name": "Check the plan",
       "type": "creation",
-      "description": "Deterministic gate: both files parse, every candidate follows the schema, every trace resolves into the study model, final_ids are unique and match the type, flagged outputs carry a reason and stay unnumbered, every resolved endpoint is traced by a candidate, and the index lists every planned output. Failures go back to the planner (three attempts per review round). On pass publishes the plan and tlf-plan.html. A primary endpoint of the USDM whose every output is blocked stops the run (dataBlocked -> outcome data-mismatch): the planner cannot add data.",
+      "description": "Deterministic gate: both files parse, every candidate follows the schema, every trace resolves into the study model, final_ids are unique and match the type, flagged outputs carry a reason and stay unnumbered, every resolved endpoint is traced by a candidate, and the index lists every planned output. Failures go back to the planner (three attempts per review round). On pass publishes the plan and tlf-plan.html. A USDM objective whose every primary endpoint has only blocked outputs stops the run (dataBlocked -> outcome data-mismatch): the planner cannot add data.",
       "executor": "script",
       "plugin": "script-container",
       "script": {
