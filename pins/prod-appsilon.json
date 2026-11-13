@@ -1,9 +1,9 @@
 {
-  "cdisc-core-validation": 3,
+  "cdisc-core-validation": 4,
   "adam-derivation": 2,
   "protocol-digitization": 1,
   "tlf-planning": 3,
   "analysis-specification": 1,
   "ard-tfl-generation": 2,
-  "adam-core-loop": 2
+  "adam-core-loop": 3
 }

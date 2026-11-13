@@ -127,6 +127,9 @@ def source_records(dataset: str, rows: list[int]) -> dict[int, dict]:
 
 def build_groups(report: dict, policy: dict, previous_index: set[str], previous_dispositions: dict, lineage: Lineage) -> tuple[list[dict], set[str]]:
     rules = {rule.get("core_id"): rule for rule in report.get("Rules_Report") or []}
+    totals: dict[str, int] = defaultdict(int)
+    for item in report.get("Issue_Summary") or []:
+        totals[group_id(item.get("core_id"), item.get("dataset"))] += int(item.get("issues") or 0)
     grouped: dict[str, list[dict]] = defaultdict(list)
     for issue in report.get("Issue_Details") or []:
         grouped[group_id(issue.get("core_id"), issue.get("dataset"))].append(issue)
@@ -136,6 +139,8 @@ def build_groups(report: dict, policy: dict, previous_index: set[str], previous_
     for identifier, issues in grouped.items():
         core_id, dataset = identifier.split("|", 1)
         keys = {issue_key(issue) for issue in issues}
+        total = max(totals.get(identifier, 0), len(issues))
+        truncated = total > len(issues)
         current_keys |= keys
         previous_in_group = {key for key in previous_index if key.startswith(identifier + "|")}
         severity = str((policy.get("rules") or {}).get(core_id, {}).get("severity") or "error")
@@ -154,11 +159,13 @@ def build_groups(report: dict, policy: dict, previous_index: set[str], previous_
             "fdaRuleId": rule.get("fda_rule_id") or "",
             "ruleSource": rule.get("source") or "published",
             "severity": severity,
-            "issues": len(issues),
+            "issues": total,
+            "detailedIssues": len(issues),
             "subjects": len({issue.get("USUBJID") for issue in issues if issue.get("USUBJID")}),
+            "subjectsAtLeast": truncated,
             "variables": variables,
-            "new": len(keys - previous_index) if previous_index else None,
-            "fixed": len(previous_in_group - keys) if previous_index else None,
+            "new": len(keys - previous_index) if previous_index and truncated is False else None,
+            "fixed": len(previous_in_group - keys) if previous_index and truncated is False else None,
             "previous": previous_dispositions.get(identifier),
             "examples": [
                 {"USUBJID": issue.get("USUBJID"), "row": issue.get("row"), "SEQ": issue.get("SEQ"),
@@ -197,7 +204,7 @@ def review_rows(groups: list[dict], unchecked: list[dict], intake: list[dict]) -
             "dataset": group["dataset"],
             "severity": group["severity"],
             "issues": str(group["issues"]),
-            "subjects": str(group["subjects"]),
+            "subjects": "" if group["subjects"] == 0 else f"≥{group['subjects']}" if group["subjectsAtLeast"] is True else str(group["subjects"]),
             "change": change,
             "previously": f"{previous.get('disposition')}: {previous.get('justification') or ''}".strip(": ") if previous else "",
             "message": group["message"][:160],

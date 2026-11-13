@@ -146,7 +146,7 @@ function examplesHtml(group) {
   const rows = group.examples.map((example) => `<tr><td class="mono">${esc(example.USUBJID)}</td><td>${esc(example.row)}</td><td>${esc(example.SEQ)}</td>
     <td class="mono">${example.variables.map((name, index) => `${esc(name)}=${esc(example.values[index])}`).join('<br>')}</td>
     ${hasSource ? `<td class="mono">${example.source ? esc(`${example.source.SRCDOM || ''}.${example.source.SRCVAR || ''} seq ${example.source.SRCSEQ || ''}`) : ''}</td>` : ''}</tr>`).join('');
-  const more = group.issues > group.examples.length ? `<div class="sub">Showing ${group.examples.length} of ${group.issues}; all records are in core-report.xlsx / core-report.json.</div>` : '';
+  const more = group.issues > group.examples.length ? `<div class="sub">Showing ${group.examples.length} of ${group.issues}; ${group.detailedIssues < group.issues ? `core-report.xlsx / core-report.json list the first ${group.detailedIssues} (CORE caps issue rows per rule and dataset; the count is CORE's total).` : 'all records are in core-report.xlsx / core-report.json.'}</div>` : '';
   return `<h3>Records</h3><div class="scroll"><table><tr><th>USUBJID</th><th>Row</th><th>SEQ</th><th>Values</th>${hasSource ? '<th>Source record</th>' : ''}</tr>${rows}</table></div>${more}`;
 }
 function card(group) {
@@ -154,7 +154,7 @@ function card(group) {
   const previous = group.previous ? `<span>previously: ${esc(group.previous.disposition)}${group.previous.justification ? ` — ${esc(group.previous.justification)}` : ''}</span>` : '';
   return `<div class="card" data-id="${esc(group.id)}"><div class="head"><span class="caret">▸</span><span class="rid">${esc(group.coreId)}</span><span class="ds">${esc(group.dataset)}</span>
     <span class="msg" title="${esc(group.message)}">${esc(group.message)}</span>
-    <span class="nums"><span class="pill ${esc(group.severity)}">${esc(group.severity)}</span><span class="pill">${group.issues} issue${group.issues === 1 ? '' : 's'}</span>${group.subjects ? `<span class="pill">${group.subjects} subj</span>` : ''}${change}</span></div>
+    <span class="nums"><span class="pill ${esc(group.severity)}">${esc(group.severity)}</span><span class="pill">${group.issues} issue${group.issues === 1 ? '' : 's'}</span>${group.subjects ? `<span class="pill">${group.subjectsAtLeast ? '≥' : ''}${group.subjects} subj</span>` : ''}${change}</span></div>
     <div class="body"><div>${esc(group.message)}</div><div class="meta">
       ${group.cdiscRuleId ? `<span>CDISC ${esc(group.cdiscRuleId)}</span>` : ''}${group.fdaRuleId ? `<span>FDA ${esc(group.fdaRuleId)}</span>` : ''}
       <span>${esc(group.ruleSource)} rule</span><span>${esc(group.executability)}</span><span>variables: ${esc(group.variables.join(', '))}</span>${previous}</div>

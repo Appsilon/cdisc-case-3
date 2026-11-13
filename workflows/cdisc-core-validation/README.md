@@ -16,8 +16,8 @@ resolve-inputs ─needsUpload─► upload-datasets ─► run-core ─► build
 |---|---|---|
 | `resolve-inputs` | script | Package mode: picks files by `kind`. Standalone: routes to the upload. Fixes standard, version, CT, `onReject`. |
 | `upload-datasets` | human (`data-manager`) | `.xpt`, `.sas7bdat`, Dataset-JSON, CSV, one `define.xml`, optional `lineage.json` + programs, sponsor rules `.yml`, `core-policy.json`. |
-| `run-core` | script | sha256-verifies inputs, stages SAS V5 `.xpt`, runs CORE: published rules, then local rules (`-lr` replaces published rules, so it is a second pass). |
-| `build-report` | script | `core-report.html`, `core-issue-index-<std>.json`, one review row per rule × dataset. |
+| `run-core` | script | sha256-verifies inputs, stages SAS V5 `.xpt`, runs CORE: published rules, then local rules (`-lr` replaces published rules, so it is a second pass). Issue rows are capped at 1,000 per rule × dataset (`-me 1000 true`): the real CDISC pilot raises 293k rows (CORE-000701 EPOCH missing on every QS/LB record), whose XLSX did not finish within an hour on prod; CORE's `Issue_Summary` keeps the true counts. Timeout 120 min. |
+| `build-report` | script | `core-report.html`, `core-issue-index-<std>.json`, one review row per rule × dataset. Issue counts come from CORE's summary; a capped group shows subjects as `≥n` and no new/fixed change (only its first 1,000 rows are known). |
 | `review-dispositions` | human (`standards-reviewer`) | table-editor: Fix required (default) / Justified / False positive + justification. |
 | `decide` | script | Any `fix` → `rejected`, else `accepted`. Merges dispositions, returns `{outcome, onReject, files, package}`. |
 

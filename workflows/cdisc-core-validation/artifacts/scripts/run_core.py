@@ -11,6 +11,10 @@ adding to them:
   2. the local rules — carried in /artifacts/rules/<standard>/ plus any the
      sponsor supplied — when there are any.
 The two JSON reports are merged into core-report.json; each pass keeps its XLSX.
+Issue rows are capped at MAX_ISSUE_ROWS per rule and dataset (CORE `-me <n> true`):
+real studies raise hundreds of thousands of rows for one rule (EPOCH missing on
+every QS/LB record of the CDISC pilot - 293k rows, a 113 MB report, an XLSX that
+did not finish in an hour). CORE's Issue_Summary keeps the true counts.
 
 Result: { config, coreVersion, datasets, ruleStatusCounts, issueCount, notes,
           notChecked, inputFiles, reports }
@@ -38,6 +42,7 @@ INPUTS_DIR = OUTPUT_DIR / "inputs"
 WORK_DIR = Path(os.environ.get("CORE_WORK_DIR", "/tmp/core-work"))
 DATASET_NAME = re.compile(r"^[a-z][a-z0-9]{1,7}$")
 NO_RULES_MESSAGE = "No rules were selected"
+MAX_ISSUE_ROWS = 1000
 DATA_KINDS = {"sdtm", "send", "adam", "usdm"}
 DEFINE_SUFFIX = "-define"
 
@@ -162,7 +167,8 @@ def core_version() -> str:
 def run_engine(arguments: list[str], label: str, notes: list[str]) -> dict | None:
     """One CORE pass. Returns its parsed JSON report, or None when the pass selected no rules."""
     stem = WORK_DIR / f"report-{label}"
-    command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "disabled"]
+    command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "disabled",
+               "-me", str(MAX_ISSUE_ROWS), "true"]
     print(f"[{label}] {' '.join(command)}", flush=True)
     completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True)
     output = (completed.stdout or "") + (completed.stderr or "")
@@ -288,6 +294,7 @@ def main() -> None:
     (OUTPUT_DIR / "core-report.json").write_text(json.dumps(merged), encoding="utf-8")
 
     statuses = Counter(rule.get("status") for rule in merged["Rules_Report"])
+    issue_count = sum(int(item.get("issues") or 0) for item in merged["Issue_Summary"]) or len(merged["Issue_Details"])
     input_files = [
         {"name": entry["name"], "downloadUrl": entry["downloadUrl"], "sha256": sha256_of(Path(entry["localPath"])), "role": roles[entry["name"]]}
         for entry in files
@@ -298,13 +305,13 @@ def main() -> None:
         "coreVersion": core_version(),
         "datasets": datasets,
         "ruleStatusCounts": dict(statuses),
-        "issueCount": len(merged["Issue_Details"]),
+        "issueCount": issue_count,
         "rulesWithIssues": len({(issue.get("core_id"), issue.get("dataset")) for issue in merged["Issue_Details"]}),
         "notes": notes,
         "intakeFindings": findings,
         "inputFiles": input_files,
         "summary": (
-            f"CORE {standard} {version}: {len(merged['Issue_Details'])} issue(s) across "
+            f"CORE {standard} {version}: {issue_count} issue(s) across "
             f"{statuses.get('ISSUE REPORTED', 0)} rule(s); {statuses.get('EXECUTION ERROR', 0)} rule(s) could not execute."
         ),
     })
