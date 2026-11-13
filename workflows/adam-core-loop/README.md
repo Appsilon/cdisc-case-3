@@ -26,9 +26,10 @@ Inputs (both defaulted, see the platform rule on `stepParams`):
 - `start` — `derive` (default) or `validate`.
 
 Child versions are pinned in `workflow.json` (`definitionVersion`). Versions are
-per namespace: the pins are those of **staging `vedha`** (adam-derivation v1,
-cdisc-core-validation v3). Bump them when a child is re-registered, and change
-them before registering into another namespace.
+per namespace: `workflow.json` pins those of **staging `vedha`** (adam-derivation v1,
+cdisc-core-validation v3); other instances are built with a pins file
+(`tools/build_workflows.py --pins pins/prod-appsilon.json` — prod `appsilon`: adam-derivation 1,
+cdisc-core-validation 3). Bump the pins when a child is re-registered.
 
 ## Test
 

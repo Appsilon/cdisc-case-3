@@ -83,8 +83,8 @@ pypdf 7.0.1, jsonschema 4.26.0, `USDM_API.json` from DDF-RA
 `aa303cb3`); the agent runs in the catalog image `mediforce-built:5d4c205d6727`
 (agent-capable, has jsonschema) and its self-check reads the schema copy that
 `stage-inputs` put in the workspace, so both validate against the same bytes.
-`validate-usdm` pins `cdisc-core-validation` **v3 of staging `vedha`** — bump it
-when that child is re-registered, change it before registering elsewhere.
+`validate-usdm` pins `cdisc-core-validation` **v3** (staging `vedha` in `workflow.json`; prod
+`appsilon` via `pins/prod-appsilon.json`, also v3) — bump the pin when that child is re-registered.
 
 ## Not yet
 

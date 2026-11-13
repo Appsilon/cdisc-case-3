@@ -5,7 +5,8 @@ SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned
 sub-workflows in order.
 Each child is its own run with its own reviewers and runs standalone too, so a
 sponsor can adopt any single piece. (The name `protocol-to-tfl` is taken on
-staging `vedha` by the old monolithic v6.)
+staging `vedha` by the old monolithic v6.) Registered on staging `vedha` (v8) and prod
+`appsilon` (v1, proven by run `d5644f28`); prod pins live in `pins/prod-appsilon.json`.
 
 ```
 route-input ─protocol, no usdm─► digitize (protocol-digitization) ─► route-input ─► plan
@@ -23,16 +24,16 @@ changed. Replacing the specs drops the ADaM, ARD and TLFs derived from them
 from the package (`mfpkg.DOWNSTREAM`), so the round re-derives and re-validates
 the ADaM, then regenerates the TLFs.
 
-| Step | Child (pinned version, staging `vedha`) | Hand-off |
+| Step | Child (pinned version: staging `vedha` / prod `appsilon`) | Hand-off |
 |---|---|---|
 | `route-input` | script | Package with a `usdm` → `plan`; with a `protocol` but no `usdm` → `digitize`, then back here with digitize's package → `plan`; empty → `plan` (uploads happen there). |
-| `digitize` | `protocol-digitization` v3 | `${steps.route-input.package}`; protocol PDF → USDM 4.0 with page citations, gated, CORE-validated (usdm 4-0), approved by the clinical scientist |
-| `plan` | `tlf-planning` v4 | `${steps.route-input.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
-| `validate-sdtm` | `cdisc-core-validation` v3 | `${steps.plan.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
+| `digitize` | `protocol-digitization` v3 / v1 | `${steps.route-input.package}`; protocol PDF → USDM 4.0 with page citations, gated, CORE-validated (usdm 4-0), approved by the clinical scientist |
+| `plan` | `tlf-planning` v4 / v1 | `${steps.route-input.package}`; empty → the statistician uploads USDM, SDTM, define.xml (+ SAP) in the child |
+| `validate-sdtm` | `cdisc-core-validation` v3 / v3 | `${steps.plan.output.package}`, `standard=sdtmig`, `onReject=reupload` (corrected SDTM is uploaded inside the child) |
 | `route-spec` | script | First pass: validate-sdtm's package, no request. After `upstream_change`: generate's package and its `request`; a third request → `specs-change-requested`. |
-| `specify` | `analysis-specification` v4 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
-| `derive-adam` | `adam-core-loop` v3 | `${steps.specify.output.package}`, `start=derive` |
-| `generate` | `ard-tfl-generation` v4 | `${steps.derive-adam.output.package}` |
+| `specify` | `analysis-specification` v4 / v1 | `${steps.route-spec.package}`, `request` = `${steps.route-spec.request}` (the child revises its previous specs when set) |
+| `derive-adam` | `adam-core-loop` v3 / v1 | `${steps.specify.output.package}`, `start=derive` |
+| `generate` | `ard-tfl-generation` v4 / v1 | `${steps.derive-adam.output.package}` |
 | `collect-deliverables` | script | Lifts the files worth opening out of generate's package into top-level `files` (the runtime downloads only those), each tagged `showAs`: `tlf-viewer.html`, `reconciliation.json`, `usdm-review.html`, `tlf-plan.html`, `specs.html`, `core-report-<usdm\|sdtmig\|adamig>.html`, `adam-define.xml` |
 | `finish` | script | Copies those files, sha256-verified, into its `/output` — the master run shows the TLF viewer and review pages directly; `manifest.json`: every file of the package with the run that produced it, and the package history |
 
