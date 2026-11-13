@@ -15,12 +15,16 @@ Issue rows are capped at MAX_ISSUE_ROWS per rule and dataset (CORE `-me <n> true
 real studies raise hundreds of thousands of rows for one rule (EPOCH missing on
 every QS/LB record of the CDISC pilot - 293k rows, a 113 MB report, an XLSX that
 did not finish in an hour). CORE's Issue_Summary keeps the true counts.
-CORE runs CORE_POOL_SIZE (default 4) worker processes, not its default 10: each
-holds the large datasets in memory. The staging folders are emptied first, so a
-retried step never sees the previous attempt's datasets.
+CORE always runs on its pandas implementation: by default it switches to Dask
+when the largest dataset is >= 25 % of the container's free memory, which on the
+CDISC pilot is 3x slower and reports different findings (163k vs 293k issues) -
+the report must not depend on the machine. CORE runs one worker per available
+CPU (cgroup quota), bounded by memory at WORKER_MEMORY_BYTES each; CORE_POOL_SIZE
+overrides it. The staging folders are emptied first, so a retried step never
+sees the previous attempt's datasets.
 
-Result: { config, coreVersion, datasets, ruleStatusCounts, issueCount, notes,
-          notChecked, inputFiles, reports }
+Result: { config, coreVersion, environment, datasets, ruleStatusCounts,
+          issueCount, notes, notChecked, inputFiles, reports }
 """
 
 from __future__ import annotations
@@ -31,6 +35,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from collections import Counter
 from pathlib import Path
 
@@ -46,7 +51,8 @@ WORK_DIR = Path(os.environ.get("CORE_WORK_DIR", "/tmp/core-work"))
 DATASET_NAME = re.compile(r"^[a-z][a-z0-9]{1,7}$")
 NO_RULES_MESSAGE = "No rules were selected"
 MAX_ISSUE_ROWS = 1000
-POOL_SIZE = os.environ.get("CORE_POOL_SIZE", "4")
+WORKER_MEMORY_BYTES = 3 * 1024 ** 3 // 2
+PANDAS_THRESHOLD_BYTES = str(10 ** 15)
 DATA_KINDS = {"sdtm", "send", "adam", "usdm"}
 DEFINE_SUFFIX = "-define"
 
@@ -163,18 +169,59 @@ def stage_dataset(entry: dict, findings: list[dict]) -> dict | None:
     return {"name": stem, "source": entry["name"], "records": len(frame), "variables": len(frame.columns)}
 
 
+def read_cgroup(name: str) -> str:
+    try:
+        return Path("/sys/fs/cgroup", name).read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+
+
+def available_cpus() -> float:
+    cpus = float(len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1))
+    quota = read_cgroup("cpu.max").split()
+    if len(quota) == 2 and quota[0] != "max":
+        cpus = min(cpus, int(quota[0]) / int(quota[1]))
+    return cpus
+
+
+def runtime_environment(largest_dataset_bytes: int) -> dict:
+    """CPUs, memory and the CORE worker count for this container."""
+    import psutil
+
+    memory = psutil.virtual_memory()
+    limit_text, usage_text = read_cgroup("memory.max"), read_cgroup("memory.current")
+    memory_limit = int(limit_text) if limit_text.isdigit() else memory.total
+    usable_memory = memory_limit - int(usage_text) if limit_text.isdigit() and usage_text.isdigit() else memory.available
+    cpus = available_cpus()
+    pool_size = int(os.environ.get("CORE_POOL_SIZE") or max(1, min(int(cpus), usable_memory // WORKER_MEMORY_BYTES)))
+    return {
+        "cpus": round(cpus, 2),
+        "memoryTotal": memory.total,
+        "memoryLimit": memory_limit,
+        "memoryUsable": usable_memory,
+        "largestDatasetBytes": largest_dataset_bytes,
+        "datasetImplementation": "pandas",
+        "poolSize": pool_size,
+        "passSeconds": {},
+    }
+
+
 def core_version() -> str:
     completed = subprocess.run(["./core", "version"], cwd=CORE_HOME, capture_output=True, text=True)
     return (completed.stdout or completed.stderr).strip().splitlines()[-1] if completed.returncode == 0 else "unknown"
 
 
-def run_engine(arguments: list[str], label: str, notes: list[str]) -> dict | None:
+def run_engine(arguments: list[str], label: str, notes: list[str], environment: dict) -> dict | None:
     """One CORE pass. Returns its parsed JSON report, or None when the pass selected no rules."""
     stem = WORK_DIR / f"report-{label}"
     command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "disabled",
-               "-me", str(MAX_ISSUE_ROWS), "true", "-ps", POOL_SIZE]
+               "-me", str(MAX_ISSUE_ROWS), "true", "-ps", str(environment["poolSize"])]
     print(f"[{label}] {' '.join(command)}", flush=True)
-    completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True)
+    started = time.monotonic()
+    completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True,
+                               env={**os.environ, "DATASET_SIZE_THRESHOLD": PANDAS_THRESHOLD_BYTES})
+    environment["passSeconds"][label] = round(time.monotonic() - started)
+    print(f"[{label}] finished in {environment['passSeconds'][label]} s, exit code {completed.returncode}", flush=True)
     output = (completed.stdout or "") + (completed.stderr or "")
     for line in output.splitlines()[-25:]:
         print(f"[{label}] {line}")
@@ -277,13 +324,17 @@ def main() -> None:
         if config.get("ct"):
             base_arguments += ["-ct", config["ct"]]
 
+    inputs_validated = [usdm_path] if standard == "usdm" else list(DATASETS_DIR.glob("*.xpt"))
+    environment = runtime_environment(max(staged.stat().st_size for staged in inputs_validated))
+    print(f"environment: {json.dumps(environment)}", flush=True)
+
     passes: dict[str, dict] = {}
-    published = run_engine(base_arguments, "published", notes)
+    published = run_engine(base_arguments, "published", notes, environment)
     if published is not None:
         passes["published"] = published
     rules_dir = collect_rules(standard, uploaded_rules)
     if rules_dir is not None:
-        local = run_engine(base_arguments + ["-lr", str(rules_dir)], "local", notes)
+        local = run_engine(base_arguments + ["-lr", str(rules_dir)], "local", notes, environment)
         if local is not None:
             passes["local"] = local
     reports = list(passes.values())
@@ -308,6 +359,7 @@ def main() -> None:
     write_result({
         "config": config,
         "coreVersion": core_version(),
+        "environment": environment,
         "datasets": datasets,
         "ruleStatusCounts": dict(statuses),
         "issueCount": issue_count,
@@ -317,7 +369,8 @@ def main() -> None:
         "inputFiles": input_files,
         "summary": (
             f"CORE {standard} {version}: {issue_count} issue(s) across "
-            f"{statuses.get('ISSUE REPORTED', 0)} rule(s); {statuses.get('EXECUTION ERROR', 0)} rule(s) could not execute."
+            f"{statuses.get('ISSUE REPORTED', 0)} rule(s); {statuses.get('EXECUTION ERROR', 0)} rule(s) could not execute. "
+            f"{sum(environment['passSeconds'].values())} s on {environment['poolSize']} worker(s), {environment['cpus']} CPU(s)."
         ),
     })
 

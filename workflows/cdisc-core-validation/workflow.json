@@ -115,7 +115,7 @@
       "id": "run-core",
       "name": "Run CDISC CORE",
       "type": "creation",
-      "description": "Deterministic. Verifies each input's sha256, stages every dataset as SAS V5 (reporting, never truncating, what cannot be), then runs CORE v1.0.0 (issue rows capped at 1,000 per rule and dataset with -me; CORE's summary keeps the true counts): published rules, then local rules (carried ADaMIG library + sponsor rules). Writes core-report.json (merged), core-report.xlsx, core-report-local.xlsx and the staged datasets.",
+      "description": "Deterministic. Verifies each input's sha256, stages every dataset as SAS V5 (reporting, never truncating, what cannot be), then runs CORE v1.0.0 (issue rows capped at 1,000 per rule and dataset with -me; CORE's summary keeps the true counts): published rules, then local rules (carried ADaMIG library + sponsor rules). Always on CORE's pandas implementation (never Dask, whose findings differ), one worker per CPU bounded by memory; records CPUs, memory and seconds per pass. Writes core-report.json (merged), core-report.xlsx, core-report-local.xlsx and the staged datasets.",
       "executor": "script",
       "plugin": "script-container",
       "script": {
