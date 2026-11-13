@@ -6,11 +6,12 @@ artifacts read-only at /artifacts and builds the carried Dockerfile, so scripts
 version with the definition and no image or commit has to be pinned. Shared
 helpers in workflows/shared/ are copied into every workflow's scripts/.
 
-Child versions are per namespace. `workflow.json` pins the staging `vedha` versions;
-`--pins pins/<instance>-<namespace>.json` (child name -> version) rewrites every
+Child versions are per namespace. Pins live in `pins/<instance>-<namespace>.json`
+(prod `clinical-workflows` from 2026-11-13; the versions inside workflow.json are
+historical); `--pins pins/<instance>-<namespace>.json` (child name -> version) rewrites every
 run-workflow step's `definitionVersion` and writes to dist/<instance>-<namespace>/.
 
-Usage: python3 tools/build_workflows.py [--pins pins/prod-appsilon.json] [name ...]
+Usage: python3 tools/build_workflows.py [--pins pins/prod-clinical-workflows.json] [name ...]
 Then:  pnpm exec mediforce workflow register --file=dist/[<pins>/]<name>.wd.json --namespace=<ns>
 """
 

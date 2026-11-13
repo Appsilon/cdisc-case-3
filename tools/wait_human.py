@@ -19,7 +19,7 @@ from pathlib import Path
 
 INSTANCES = {"staging": ("https://staging.mediforce.ai", "staging-key"), "prod": ("https://prod.mediforce.ai", "phuse-key")}
 INSTANCE = "staging"
-CHILD_WORKFLOWS = ("protocol-digitization", "tlf-planning", "analysis-specification", "cdisc-core-validation", "adam-derivation", "ard-tfl-generation")
+CHILD_WORKFLOWS = ("digitize-protocol", "plan-tlfs", "specify-analyses", "validate-with-core", "derive-adam", "generate-ard-tlfs")
 MEDIFORCE_CHECKOUT = Path.home() / "Repo" / "mediforce"
 
 

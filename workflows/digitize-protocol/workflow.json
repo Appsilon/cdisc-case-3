@@ -1,0 +1,322 @@
+{
+  "name": "digitize-protocol",
+  "title": "Digitize the protocol",
+  "description": "Turn a clinical study protocol (PDF) into a USDM 4.0 study definition where every extracted entity cites the page and the verbatim quote it came from. The AI reads the protocol page by page and writes usdm.json plus usdm-citations.json (scope: study identity, objectives, endpoints, estimands, arms/epochs/elements, population with inclusion/exclusion criteria, encounters and the schedule of activities); a deterministic gate validates the official USDM 4.0 schema, every reference, the required entities and that each quote is on its cited page (failures go back to the AI, three attempts); CDISC CORE runs its USDM 4.0 rules in a child run (findings marked fix go back to the AI); the clinical scientist reviews every entity next to its source and approves or sends it back with a comment. Runs standalone (upload the protocol) or inside a parent workflow (study package with the protocol).",
+  "preamble": "Clinical protocol and CDISC terms (USDM, DDF, objectives, endpoints, estimands, intercurrent events, schedule of activities, inclusion/exclusion criteria, CORE rule IDs) are technical workflow content.",
+  "roles": [
+    "clinical-scientist"
+  ],
+  "triggerInput": [
+    {
+      "name": "package",
+      "type": "object",
+      "required": false,
+      "default": {},
+      "description": "Study package from a parent workflow: { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } with exactly one file of kind protocol (PDF) and optionally a sap. Leave empty to upload the protocol by hand."
+    }
+  ],
+  "steps": [
+    {
+      "id": "resolve-inputs",
+      "name": "Resolve inputs",
+      "type": "creation",
+      "description": "Deterministic. Picks the protocol (and SAP) from the study package, or routes to the upload step.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/resolve_inputs.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      },
+      "stepParams": {
+        "package": "${triggerPayload.package}"
+      }
+    },
+    {
+      "id": "upload-protocol",
+      "name": "Upload the protocol",
+      "type": "creation",
+      "description": "Upload the protocol PDF (a text PDF, not a scan). Optionally the SAP as a second PDF with 'sap' in its file name.",
+      "executor": "human",
+      "allowedRoles": [
+        "clinical-scientist"
+      ],
+      "ui": {
+        "component": "file-upload",
+        "config": {
+          "minFiles": 1,
+          "maxFiles": 2,
+          "acceptedTypes": [
+            ".pdf",
+            "application/pdf"
+          ]
+        }
+      }
+    },
+    {
+      "id": "stage-inputs",
+      "name": "Stage the protocol text",
+      "type": "creation",
+      "description": "Deterministic. sha256-verifies the PDFs and extracts their text layer one file per physical page (the page numbers citations use), plus the USDM 4.0 schema for the gate and the agent's self-check.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/stage_inputs.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "extract-usdm",
+      "name": "Extract the USDM",
+      "type": "creation",
+      "description": "AI. Runs the protocol-to-usdm skill: reads the protocol and writes usdm.json (USDM 4.0) and usdm-citations.json (entity id -> page + verbatim quote). On a gate retry it fixes the listed problems; on a review or CORE round it changes only what was asked.",
+      "executor": "agent",
+      "autonomyLevel": "L4",
+      "plugin": "claude-code-agent",
+      "agent": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "timeoutMinutes": 60,
+        "image": "mediforce-built:5d4c205d6727",
+        "prompt": "You are the clinical data standards specialist digitizing this protocol. Read /artifacts/skills/protocol-to-usdm/SKILL.md now and follow it exactly; its references are in /artifacts/skills/protocol-to-usdm/references/. Inputs are under /workspace/digitize-protocol/inputs/ (read-only); write to /workspace/digitize-protocol/usdm/. If /workspace/digitize-protocol/feedback.json exists, the deterministic gate rejected your last output: fix exactly the problems it lists. If /workspace/digitize-protocol/review-feedback.jsonl exists, its LAST line is the change request to act on (from the clinical scientist, or from CDISC CORE when it has \"source\": \"core\" - then read /workspace/digitize-protocol/core-feedback.json): change only what it asks and keep the ids of untouched entities stable. Finish only when `python3 /artifacts/scripts/self_check.py` prints PASS, then write /output/result.json as the skill describes."
+      },
+      "env": {
+        "ANTHROPIC_API_KEY": "",
+        "ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+        "ANTHROPIC_AUTH_TOKEN": "{{OPENROUTER_API_KEY}}"
+      }
+    },
+    {
+      "id": "check-usdm",
+      "name": "Check the USDM",
+      "type": "creation",
+      "description": "Deterministic gate: the official USDM 4.0 schema, unique ids and every reference resolving, the required entities wired together (objectives with endpoints, a cell per arm and epoch, inclusion and exclusion criteria, every encounter on the main timeline, every activity scheduled), and every citation's quote found on its page. Failures go back to the AI (three attempts per round). On pass publishes usdm.json and usdm-citations.json.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/check_usdm.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "validate-usdm",
+      "name": "Validate with CDISC CORE (USDM)",
+      "type": "creation",
+      "description": "Child run of validate-with-core with standard usdm 4-0: CORE's USDM rules, then the standards reviewer records a disposition per finding. Any finding marked fix sends the USDM back to the AI.",
+      "executor": "action",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "validate-with-core",
+          "definitionVersion": 3,
+          "payload": {
+            "package": "${steps.check-usdm.package}",
+            "standard": "usdm",
+            "version": "4-0",
+            "ct": "",
+            "onReject": "return"
+          },
+          "timeout": "P30D",
+          "step": "decide"
+        }
+      }
+    },
+    {
+      "id": "route-core",
+      "name": "Route the CORE findings",
+      "type": "creation",
+      "description": "Deterministic. Counts the CORE round and hands the CORE report and dispositions on as files; after the third rejection the run ends as failed.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/route_core.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "record-core",
+      "name": "Record the CORE findings",
+      "type": "creation",
+      "description": "Deterministic. Writes core-feedback.json (each finding marked fix with its instances, JSON paths and values) and appends a change request for the AI, with fresh gate attempts.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/record_core.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "prepare-review",
+      "name": "Prepare the review page",
+      "type": "creation",
+      "description": "Deterministic. Renders usdm-review.html from the USDM copy the gate checked: every entity with its page and quote, the arm x epoch element matrix, the criteria, the schedule of activities grid, and CORE's verdict.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/prepare_review.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "review-usdm",
+      "name": "Review the USDM",
+      "type": "review",
+      "executor": "human",
+      "allowedRoles": [
+        "clinical-scientist"
+      ],
+      "description": "Review usdm-review.html (shown below, from Prepare the review page): every objective, endpoint, estimand, arm, epoch, criterion and the schedule of activities, each with the page it came from (hover for the quote). CORE has already accepted it. Approve to publish the USDM, or request changes with a comment; the AI changes only what you ask.",
+      "params": [
+        {
+          "name": "comment",
+          "type": "string",
+          "required": false,
+          "requiredForVerdicts": [
+            "revise"
+          ],
+          "description": "What to change about the USDM (required when requesting changes)."
+        }
+      ],
+      "verdicts": {
+        "approve": {
+          "target": "return-result",
+          "label": "Approve USDM",
+          "intent": "success"
+        },
+        "revise": {
+          "target": "record-review",
+          "label": "Request changes",
+          "intent": "warning",
+          "requiresComment": true
+        }
+      }
+    },
+    {
+      "id": "record-review",
+      "name": "Record the change request",
+      "type": "creation",
+      "description": "Deterministic. Appends the reviewer's comment to review-feedback.jsonl for the AI (and later skill learning) and resets the gate's attempts.",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/record_review.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "return-result",
+      "name": "Return result",
+      "type": "creation",
+      "description": "Deterministic. outcome = digitized (publishes the gate-checked usdm.json and usdm-citations.json, the review page, the CORE files and the review feedback into the study package) or failed (gate attempts exhausted, CORE child not completed, or CORE still rejecting after three rounds; the AI's files are attached, the package's USDM is unchanged).",
+      "executor": "script",
+      "plugin": "script-container",
+      "script": {
+        "command": "python3 /artifacts/scripts/return_result.py",
+        "dockerfile": "Dockerfile",
+        "timeoutMinutes": 5
+      }
+    },
+    {
+      "id": "done",
+      "name": "Done",
+      "type": "terminal",
+      "executor": "human"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "resolve-inputs",
+      "to": "upload-protocol",
+      "when": "output.needsUpload == true"
+    },
+    {
+      "from": "resolve-inputs",
+      "to": "stage-inputs",
+      "when": "else"
+    },
+    {
+      "from": "upload-protocol",
+      "to": "stage-inputs"
+    },
+    {
+      "from": "stage-inputs",
+      "to": "extract-usdm"
+    },
+    {
+      "from": "extract-usdm",
+      "to": "check-usdm"
+    },
+    {
+      "from": "check-usdm",
+      "to": "extract-usdm",
+      "when": "output.needsFix == true && output.retry == true"
+    },
+    {
+      "from": "check-usdm",
+      "to": "return-result",
+      "when": "output.needsFix == true && output.retry == false"
+    },
+    {
+      "from": "check-usdm",
+      "to": "validate-usdm",
+      "when": "else"
+    },
+    {
+      "from": "validate-usdm",
+      "to": "return-result",
+      "when": "output.status != \"completed\""
+    },
+    {
+      "from": "validate-usdm",
+      "to": "route-core",
+      "when": "output.status == \"completed\" && output.output.outcome == \"rejected\""
+    },
+    {
+      "from": "validate-usdm",
+      "to": "prepare-review",
+      "when": "else"
+    },
+    {
+      "from": "prepare-review",
+      "to": "review-usdm"
+    },
+    {
+      "from": "route-core",
+      "to": "record-core",
+      "when": "output.retry == true"
+    },
+    {
+      "from": "route-core",
+      "to": "return-result",
+      "when": "else"
+    },
+    {
+      "from": "record-core",
+      "to": "extract-usdm"
+    },
+    {
+      "from": "review-usdm",
+      "to": "return-result"
+    },
+    {
+      "from": "review-usdm",
+      "to": "record-review"
+    },
+    {
+      "from": "record-review",
+      "to": "extract-usdm"
+    },
+    {
+      "from": "return-result",
+      "to": "done"
+    }
+  ],
+  "metadata": {
+    "displayName": "Protocol Digitization"
+  }
+}
