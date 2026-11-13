@@ -15,6 +15,9 @@ Issue rows are capped at MAX_ISSUE_ROWS per rule and dataset (CORE `-me <n> true
 real studies raise hundreds of thousands of rows for one rule (EPOCH missing on
 every QS/LB record of the CDISC pilot - 293k rows, a 113 MB report, an XLSX that
 did not finish in an hour). CORE's Issue_Summary keeps the true counts.
+CORE runs CORE_POOL_SIZE (default 4) worker processes, not its default 10: each
+holds the large datasets in memory. The staging folders are emptied first, so a
+retried step never sees the previous attempt's datasets.
 
 Result: { config, coreVersion, datasets, ruleStatusCounts, issueCount, notes,
           notChecked, inputFiles, reports }
@@ -43,6 +46,7 @@ WORK_DIR = Path(os.environ.get("CORE_WORK_DIR", "/tmp/core-work"))
 DATASET_NAME = re.compile(r"^[a-z][a-z0-9]{1,7}$")
 NO_RULES_MESSAGE = "No rules were selected"
 MAX_ISSUE_ROWS = 1000
+POOL_SIZE = os.environ.get("CORE_POOL_SIZE", "4")
 DATA_KINDS = {"sdtm", "send", "adam", "usdm"}
 DEFINE_SUFFIX = "-define"
 
@@ -168,7 +172,7 @@ def run_engine(arguments: list[str], label: str, notes: list[str]) -> dict | Non
     """One CORE pass. Returns its parsed JSON report, or None when the pass selected no rules."""
     stem = WORK_DIR / f"report-{label}"
     command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "disabled",
-               "-me", str(MAX_ISSUE_ROWS), "true"]
+               "-me", str(MAX_ISSUE_ROWS), "true", "-ps", POOL_SIZE]
     print(f"[{label}] {' '.join(command)}", flush=True)
     completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True)
     output = (completed.stdout or "") + (completed.stderr or "")
@@ -222,6 +226,7 @@ def main() -> None:
     verify_files(files)
 
     for folder in (DATASETS_DIR, INPUTS_DIR, WORK_DIR):
+        shutil.rmtree(folder, ignore_errors=True)
         folder.mkdir(parents=True, exist_ok=True)
 
     roles = {entry["name"]: classify(entry) for entry in files}
