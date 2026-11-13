@@ -21,8 +21,8 @@ every QS/LB record of the CDISC pilot - 293k rows, a 113 MB report, an XLSX that
 did not finish in an hour). CORE's Issue_Summary keeps the true counts.
 The platform runs this step in an 8 GB, 2-CPU container. CORE sizes its caches
 and picks pandas or Dask from psutil's available memory, which inside a container
-is the host's; core_memory/sitecustomize.py makes every CORE process see half the
-container's usable memory instead (CORE_MEMORY_BUDGET_BYTES). CORE always runs on
+is the host's; core_memory/sitecustomize.py makes every CORE process see a quarter
+of the container's usable memory instead (CORE_MEMORY_BUDGET_BYTES). CORE always runs on
 pandas: its Dask path was 3x slower on the pilot and reported different findings
 (163k vs 293k issues) - the report must not depend on the machine. Workers: one
 per available CPU (cgroup quota), bounded by the memory the caches leave at
@@ -62,6 +62,10 @@ MAX_ISSUE_ROWS = 1000
 WORKER_MEMORY_BYTES = 4 * 1024 ** 3
 PANDAS_THRESHOLD_BYTES = str(10 ** 15)
 CORE_MEMORY_DIR = Path(__file__).resolve().parent / "core_memory"
+RULE_FINISHED = re.compile(r"(CORE-\d+) validation complete")
+WATCH_SECONDS = 30
+STEP_BUDGET_SECONDS = 110 * 60
+STEP_DEADLINE = time.monotonic() + STEP_BUDGET_SECONDS
 CACHE_SHARE_OF_BUDGET = 0.75
 DATA_KINDS = {"sdtm", "send", "adam", "usdm"}
 DEFINE_SUFFIX = "-define"
@@ -204,7 +208,7 @@ def runtime_environment(largest_dataset_bytes: int) -> dict:
     memory_limit = min(int(limit_text), memory.total) if limit_text.isdigit() else memory.total
     usable_memory = min(memory.available, memory_limit - int(usage_text) if usage_text.isdigit() else memory_limit)
     cpus = available_cpus()
-    core_budget = usable_memory // 2
+    core_budget = usable_memory // 4
     worker_memory = usable_memory - int(core_budget * CACHE_SHARE_OF_BUDGET)
     pool_size = int(os.environ.get("CORE_POOL_SIZE") or max(1, min(int(cpus), worker_memory // WORKER_MEMORY_BYTES)))
     return {
@@ -235,18 +239,47 @@ def core_version() -> str:
     return (completed.stdout or completed.stderr).strip().splitlines()[-1] if completed.returncode == 0 else "unknown"
 
 
+def oom_kills() -> int:
+    """Processes the kernel has killed for memory in this container (cgroup v2, else v1)."""
+    events = read_cgroup("memory.events") or read_cgroup("memory/memory.oom_control")
+    match = re.search(r"oom_kill (\d+)", events)
+    return int(match.group(1)) if match else 0
+
+
 def run_engine(arguments: list[str], label: str, notes: list[str], environment: dict) -> dict | None:
-    """One CORE pass. Returns its parsed JSON report, or None when the pass selected no rules."""
+    """One CORE pass. Returns its parsed JSON report, or None when the pass selected no rules.
+
+    CORE's pool waits forever for a worker the kernel killed, and the platform shows
+    no output of a running step, so the pass is watched: an OOM kill or the step's
+    time budget stops CORE and fails the step with how far it got."""
     stem = WORK_DIR / f"report-{label}"
-    command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "disabled",
+    log_path = WORK_DIR / f"core-{label}.log"
+    command = ["./core", "validate", *arguments, "-o", str(stem), "-of", "JSON", "-of", "XLSX", "-p", "verbose_output",
                "-me", str(MAX_ISSUE_ROWS), "true", "-ps", str(environment["poolSize"])]
     print(f"[{label}] {' '.join(command)}", flush=True)
     started = time.monotonic()
-    completed = subprocess.run(command, cwd=CORE_HOME, capture_output=True, text=True,
-                               env=core_environment(environment))
+    kills_before = oom_kills()
+    with log_path.open("w", encoding="utf-8") as log:
+        process = subprocess.Popen(command, cwd=CORE_HOME, stdout=log, stderr=subprocess.STDOUT, text=True,
+                                   env=core_environment(environment), start_new_session=True)
+        while process.poll() is None:
+            time.sleep(WATCH_SECONDS)
+            elapsed = round(time.monotonic() - started)
+            progress = core_progress(log_path)
+            print(f"[{label}] {elapsed} s, {progress}, memory {read_cgroup('memory.current') or '?'} B", flush=True)
+            problem = ""
+            if oom_kills() > kills_before:
+                problem = "the kernel killed a CORE process for memory (the container limit)"
+            elif time.monotonic() > STEP_DEADLINE:
+                problem = f"the step's time budget ({STEP_BUDGET_SECONDS // 60} min) ran out"
+            if problem:
+                os.killpg(process.pid, 9)
+                process.wait()
+                raise StepFailure(f"CORE ({label} rules) stopped after {elapsed} s: {problem}. Progress: {progress}. "
+                                  f"{environment['poolSize']} worker(s), {environment['cpus']} CPU(s), memory limit {environment['memoryLimit']} B.")
     environment["passSeconds"][label] = round(time.monotonic() - started)
-    print(f"[{label}] finished in {environment['passSeconds'][label]} s, exit code {completed.returncode}", flush=True)
-    output = (completed.stdout or "") + (completed.stderr or "")
+    output = log_path.read_text(encoding="utf-8", errors="replace")
+    print(f"[{label}] finished in {environment['passSeconds'][label]} s, exit code {process.returncode}, {core_progress(log_path)}", flush=True)
     for line in output.splitlines()[-25:]:
         print(f"[{label}] {line}")
     if NO_RULES_MESSAGE in output:
@@ -254,7 +287,7 @@ def run_engine(arguments: list[str], label: str, notes: list[str], environment: 
         return None
     report_path = stem.with_suffix(".json")
     if report_path.exists() is False:
-        raise StepFailure(f"CORE ({label} rules) produced no report, exit code {completed.returncode}: {output.strip()[-600:]}")
+        raise StepFailure(f"CORE ({label} rules) produced no report, exit code {process.returncode}: {output.strip()[-600:]}")
     xlsx = stem.with_suffix(".xlsx")
     if xlsx.exists():
         shutil.copyfile(xlsx, OUTPUT_DIR / ("core-report.xlsx" if label == "published" else f"core-report-{label}.xlsx"))
@@ -262,6 +295,11 @@ def run_engine(arguments: list[str], label: str, notes: list[str], environment: 
     for rule in report.get("Rules_Report") or []:
         rule["source"] = label
     return report
+
+
+def core_progress(log_path: Path) -> str:
+    finished = RULE_FINISHED.findall(log_path.read_text(encoding="utf-8", errors="replace"))
+    return f"{len(finished)} rule(s) finished, last {finished[-1]}" if finished else "no rule finished yet"
 
 
 def merge_reports(reports: list[dict]) -> dict:
