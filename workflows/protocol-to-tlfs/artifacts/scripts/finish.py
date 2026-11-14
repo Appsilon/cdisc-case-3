@@ -1,7 +1,7 @@
 """Assemble the deliverables of a protocol-to-TFL run into one manifest.
 
 Follows collect-deliverables, which hands on the final study package and, as
-downloaded `files`, the deliverables worth opening (TLF viewer, reconciliation,
+downloaded `files`, the deliverables worth opening (traceability explorer, reconciliation,
 review pages, CORE reports, ADaM define.xml). Each is sha256-verified and copied
 into this step's /output under its `showAs` name, so the master run shows them.
 manifest.json lists, by deliverable, every file in the package with the
@@ -24,7 +24,8 @@ from mfpkg import OUTPUT_DIR, StepFailure, read_input, run_main, verify_files, w
 
 WORKFLOW = "protocol-to-tlfs"
 DELIVERABLES = (
-    ("TLF viewer (displays + ARD + programs + trace)", ("tfl",), ("tlf-viewer.html", "reconciliation.json")),
+    ("Traceability explorer (outputs, ARD, ADaM lineage, protocol, CORE, checks)", ("traceability",), None),
+    ("TLF viewer and reconciliation", ("tfl",), ("tlf-viewer.html", "reconciliation.json", "accuracy.json")),
     ("Rendered tables and figures", ("tfl",), None),
     ("Analysis Results Data", ("ard",), None),
     ("TLF programs and logs", ("tfl-program", "tfl-log"), None),
@@ -75,7 +76,7 @@ def main() -> None:
     counts = ", ".join(f"{len(group['files'])} {group['title'].split(' (')[0].lower()}" for group in groups[:3])
     write_result({
         "outcome": "complete", "shown": shown, "deliverables": groups, "history": history,
-        "summary": f"COMPLETE: {counts}; {len(history)} sub-workflow run(s) in the history. Start with tlf-viewer.html; manifest.json lists every file.",
+        "summary": f"COMPLETE: {counts}; {len(history)} sub-workflow run(s) in the history. Start with traceability-explorer.html; manifest.json lists every file.",
         "package": with_history(package, WORKFLOW, "complete"),
     })
 
