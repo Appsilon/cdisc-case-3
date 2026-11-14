@@ -35,7 +35,18 @@ def route(work: Path, steps: dict) -> tuple[int, dict]:
     return completed.returncode, json.loads((output / "result.json").read_text())
 
 
+def next_step(step_id: str, target: str) -> str:
+    """Where workflow.json sends `step_id` for this result `target` (the first matching `when`, else the `else`)."""
+    transitions = [transition for transition in json.loads((HERE.parent / "workflow.json").read_text())["transitions"] if transition["from"] == step_id]
+    for transition in transitions:
+        if transition.get("when") == f'output.target == "{target}"':
+            return transition["to"]
+    return next(transition["to"] for transition in transitions if transition.get("when") == "else")
+
+
 def main() -> None:
+    assert next_step("route-spec", "specify-analyses") == "specify-analyses", "workflow.json routes specify-analyses elsewhere"
+    assert next_step("route-spec", "exhausted") == "specs-change-requested", "workflow.json routes exhausted elsewhere"
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         validated = {"validate-with-core": {"status": "completed", "output": {"outcome": "accepted", "package": VALIDATED}}}

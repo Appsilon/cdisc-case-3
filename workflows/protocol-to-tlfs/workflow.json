@@ -245,7 +245,7 @@
     {
       "from": "route-input",
       "to": "digitize-protocol",
-      "when": "output.target == \"digitize\""
+      "when": "output.target == \"digitize-protocol\""
     },
     {
       "from": "route-input",
@@ -305,7 +305,7 @@
     {
       "from": "route-spec",
       "to": "specify-analyses",
-      "when": "output.target == \"specify\""
+      "when": "output.target == \"specify-analyses\""
     },
     {
       "from": "route-spec",
