@@ -1,4 +1,4 @@
-"""Approve every human task of a prod master run and its child runs, until the master ends.
+"""Approve every human task of a prod master run and its descendant runs, until the master ends.
 
 For automated end-to-end runs Vedha asks for (first used 2026-11-13, run a48c3201):
 CORE dispositions are recorded "justified" with a note saying they were not
@@ -19,8 +19,6 @@ from pathlib import Path
 BASE_URL = "https://prod.mediforce.ai"
 KEY = (Path.home() / ".config/mediforce/phuse-key").read_text().strip()
 CHECKOUT = Path.home() / "Repo" / "mediforce"
-CHILD_WORKFLOWS = ("digitize-protocol", "plan-tlfs", "specify-analyses", "validate-with-core",
-                   "derive-adam", "derive-and-validate-adam", "generate-ard-tlfs")
 NOTE = "Auto-approved via the mediforce CLI for the automated end-to-end run Vedha requested (2026-11-13); not individually reviewed."
 
 
@@ -28,6 +26,20 @@ def cli(*arguments: str) -> str:
     completed = subprocess.run(["pnpm", "-s", "exec", "mediforce", *arguments, f"--base-url={BASE_URL}"], cwd=CHECKOUT,
                                env={**os.environ, "MEDIFORCE_API_KEY": KEY}, capture_output=True, text=True)
     return completed.stdout + (completed.stderr if completed.returncode != 0 else "")
+
+
+def paused_descendants(run_id: str) -> list[str]:
+    """Paused runs anywhere below run_id (children, grandchildren, ...) - never another run's tasks."""
+    found: list[str] = []
+    for line in cli("run", "list", f"--parent={run_id}").splitlines():
+        fields = line.split()
+        if len(fields) < 3 or fields[1] not in ("running", "paused"):
+            continue
+        child = fields[2]
+        if fields[1] == "paused":
+            found.append(child)
+        found.extend(paused_descendants(child))
+    return found
 
 
 def open_tasks(run_id: str) -> list[dict]:
@@ -72,9 +84,7 @@ def main() -> None:
             print(f"{time.strftime('%H:%M:%S')} master status unreadable, retrying: {state.strip()[:200]}", flush=True)
             time.sleep(30)
             continue
-        paused = [line.split()[2] for line in cli("run", "list", "--limit", "40").splitlines()
-                  if "paused" in line and any(name in line for name in CHILD_WORKFLOWS)]
-        for run_id in [master, *paused]:
+        for run_id in [master, *paused_descendants(master)]:
             if any(run_id.startswith(prefix) for prefix in ignored):
                 continue
             for summary in open_tasks(run_id):
