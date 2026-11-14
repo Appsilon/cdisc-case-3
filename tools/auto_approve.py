@@ -65,9 +65,13 @@ def main() -> None:
     handled: set[str] = set()
     while True:
         state = cli("run", "get", master)
-        if "status:       running" not in state and "status:       paused" not in state:
+        if "status:       completed" in state or "status:       failed" in state:
             print(state, flush=True)
             return
+        if "status:       running" not in state and "status:       paused" not in state:
+            print(f"{time.strftime('%H:%M:%S')} master status unreadable, retrying: {state.strip()[:200]}", flush=True)
+            time.sleep(30)
+            continue
         paused = [line.split()[2] for line in cli("run", "list", "--limit", "40").splitlines()
                   if "paused" in line and any(name in line for name in CHILD_WORKFLOWS)]
         for run_id in [master, *paused]:
@@ -76,7 +80,10 @@ def main() -> None:
             for summary in open_tasks(run_id):
                 if summary["id"] in handled:
                     continue
-                task = json.loads(cli("task", "get", summary["id"], "--json"))
+                try:
+                    task = json.loads(cli("task", "get", summary["id"], "--json"))
+                except json.JSONDecodeError:
+                    continue
                 payload = payload_for(task)
                 if payload is None:
                     print(f"STOP: no automatic answer for task {task['id']} (run {run_id}, step {task.get('stepId')}):", flush=True)
