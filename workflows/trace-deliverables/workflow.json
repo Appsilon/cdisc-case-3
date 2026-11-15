@@ -1,0 +1,68 @@
+{
+  "name": "trace-deliverables",
+  "title": "Trace the deliverables",
+  "description": "Build one self-contained traceability explorer page (traceability-explorer.html, with its model traceability.json) from a protocol-to-TFL study package, deterministically - no AI. Every number in a table traces to its ARD rows, the ARS analysis, the ADaM variables, flags and groups it reads, the program lines that derive them (including the intermediate data frames, traced back to read_sdtm) and the SDTM columns; every ADaM variable shows its lineage, code, data profile by arm and the outputs, endpoints and objectives it feeds; every output traces back to the protocol objective / endpoint and the protocol page it was read from; every CDISC CORE finding shows its disposition and the ADaM variables and outputs it touches; the reconciliation, big-N and recompute checks per output. Links that should exist and do not are listed as gaps. Runs inside protocol-to-tlfs after generate-ard-tlfs, or on its own with any study package in the trigger.",
+  "preamble": "CDISC terms (USDM, SDTM, ADaM, ARS, ARD, TLF, CORE rule IDs, Define-XML, adverse events, deaths) are technical workflow content.",
+  "roles": [
+    "statistician"
+  ],
+  "triggerInput": [
+    {
+      "name": "package",
+      "type": "object",
+      "required": false,
+      "default": {},
+      "description": "Study package { study, profile, files: [{ name, downloadUrl, kind, sha256 }] } from a protocol-to-tlfs or generate-ard-tlfs run: needs lineage, ard, tfl and tfl-program; uses adam, adam-program, the specs, plan, ARS, USDM + citations, CORE reports + dispositions and the SDTM define.xml when present."
+    }
+  ],
+  "metadata": {
+    "displayName": "Traceability Explorer"
+  },
+  "steps": [
+    {
+      "id": "resolve-inputs",
+      "name": "Resolve inputs",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. Lists the package files the explorer reads (everything but the SDTM datasets, PDFs, CORE spreadsheets and the TLF viewer) as top-level files so the next step gets them downloaded. Fails when the package has no lineage, ARD, displays or TLF programs.",
+      "script": {
+        "command": "python3 /artifacts/scripts/resolve_inputs.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 5
+      },
+      "stepParams": {
+        "package": "${triggerPayload.package}"
+      }
+    },
+    {
+      "id": "build-explorer",
+      "name": "Build the traceability explorer",
+      "type": "creation",
+      "executor": "script",
+      "plugin": "script-container",
+      "description": "Deterministic. sha256-verifies the files, profiles the ADaM data (R haven), links outputs, ARD, ARS, ADaM lineage and code, SDTM, USDM, the TLF plan, CORE findings and the checks, and writes traceability-explorer.html + traceability.json; both are added to the study package (kind traceability). Gaps are listed in the page, not fatal.",
+      "script": {
+        "command": "python3 /artifacts/scripts/build_step.py",
+        "image": "mediforce-built:5d4c205d6727",
+        "timeoutMinutes": 30
+      }
+    },
+    {
+      "id": "done",
+      "name": "Explorer built",
+      "type": "terminal",
+      "executor": "human"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "resolve-inputs",
+      "to": "build-explorer"
+    },
+    {
+      "from": "build-explorer",
+      "to": "done"
+    }
+  ]
+}

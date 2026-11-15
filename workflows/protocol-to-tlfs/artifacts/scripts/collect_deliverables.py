@@ -1,8 +1,12 @@
 """Lift the deliverables to show from the final study package into top-level `files`.
 
-The package generate-ard-tlfs returned sits inside its result
-(`steps.generate-ard-tlfs.output.package`); the runtime downloads only a step's top-level
-`files`, and a step's viewer shows only what that step wrote to its /output. So
+The package trace-deliverables returned (generate-ard-tlfs's package plus the
+traceability explorer) sits inside its result
+(`steps.trace-deliverables.output.package`). The explorer is not a gate: when
+trace-deliverables did not finish, generate-ard-tlfs's package is used and its
+TLF viewer shown instead, and the summary says so. The runtime downloads only a
+step's top-level `files`, and a step's viewer shows only what that step wrote to
+its /output. So
 this step hands the files worth opening on as `files`, each tagged with `showAs`
 (the name finish publishes it under - CORE reports of different standards share
 a name), and finish, which follows, copies them into its /output.
@@ -19,9 +23,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mfpkg import StepFailure, read_input, run_main, step_output, write_result  # noqa: E402
 
-# (kind, name in the package, name shown in the master run), in viewer order
+EXPLORER = ("traceability", "traceability-explorer.html", "traceability-explorer.html")
+VIEWER = ("tfl", "tlf-viewer.html", "tlf-viewer.html")
+# (kind, name in the package, name shown in the master run), in viewer order, after the explorer (or the viewer)
 SHOWN = (
-    ("tfl", "tlf-viewer.html", "tlf-viewer.html"),
     ("tfl", "reconciliation.json", "reconciliation.json"),
     ("tfl", "accuracy.json", "accuracy.json"),
     ("tlf-plan-view", "study-check.html", "data-check-sdtm-vs-protocol.html"),
@@ -35,10 +40,10 @@ SHOWN = (
 )
 
 
-def shown_files(package: dict) -> list[dict]:
+def shown_files(package: dict, first: tuple[str, str, str]) -> list[dict]:
     files = package.get("files") or []
     chosen = []
-    for kind, name, show_as in SHOWN:
+    for kind, name, show_as in (first,) + SHOWN:
         match = next((entry for entry in files if entry.get("kind") == kind and entry.get("name") == name and entry.get("downloadUrl")), None)
         if match is not None:
             chosen.append({**match, "showAs": show_as})
@@ -46,15 +51,20 @@ def shown_files(package: dict) -> list[dict]:
 
 
 def main() -> None:
-    generated = step_output(read_input(), "generate-ard-tlfs").get("output") or {}
-    package = generated.get("package")
-    if isinstance(package, dict) is False or not package.get("files"):
-        raise StepFailure("generate-ard-tlfs returned no study package.")
-    files = shown_files(package)
-    if not files:
-        raise StepFailure("The study package has none of the deliverables to show (no TLF viewer).")
+    step_input = read_input()
+    traced = step_output(step_input, "trace-deliverables").get("output") or {}
+    package, first, note = traced.get("package"), EXPLORER, ""
+    if isinstance(package, dict) is False or len(package.get("files") or []) == 0:
+        package = (step_output(step_input, "generate-ard-tlfs").get("output") or {}).get("package")
+        error = step_output(step_input, "trace-deliverables").get("error") or "it returned no study package"
+        first, note = VIEWER, f" No traceability explorer: trace-deliverables did not finish ({error}); showing the TLF viewer instead."
+    if isinstance(package, dict) is False or len(package.get("files") or []) == 0:
+        raise StepFailure("Neither trace-deliverables nor generate-ard-tlfs returned a study package.")
+    files = shown_files(package, first)
+    if len(files) == 0 or files[0]["showAs"] != first[2]:
+        raise StepFailure(f"The study package has no {first[2]} to show.")
     write_result({"files": files, "package": package,
-                  "summary": f"Showing {len(files)} deliverable(s): " + ", ".join(entry["showAs"] for entry in files) + "."})
+                  "summary": f"Showing {len(files)} deliverable(s): " + ", ".join(entry["showAs"] for entry in files) + "." + note})
 
 
 if __name__ == "__main__":

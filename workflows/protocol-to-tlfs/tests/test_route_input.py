@@ -36,7 +36,18 @@ def route(work: Path, step_input: dict) -> tuple[int, dict]:
     return completed.returncode, json.loads((output / "result.json").read_text())
 
 
+def next_step(step_id: str, target: str) -> str:
+    """Where workflow.json sends `step_id` for this result `target` (the first matching `when`, else the `else`)."""
+    transitions = [transition for transition in json.loads((HERE.parent / "workflow.json").read_text())["transitions"] if transition["from"] == step_id]
+    for transition in transitions:
+        if transition.get("when") == f'output.target == "{target}"':
+            return transition["to"]
+    return next(transition["to"] for transition in transitions if transition.get("when") == "else")
+
+
 def main() -> None:
+    assert next_step("route-input", "plan-tlfs") == "plan-tlfs", "workflow.json routes plan-tlfs elsewhere"
+    assert next_step("route-input", "digitize-protocol") == "digitize-protocol", "workflow.json routes digitize-protocol elsewhere"
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         with_usdm = {"files": [USDM, PROTOCOL, SDTM]}

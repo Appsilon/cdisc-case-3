@@ -48,29 +48,38 @@ def downloaded(files: list[dict], data: Path) -> list[dict]:
 
 
 def main() -> None:
-    files = [entry("tlf-viewer.html", "tfl", "gen"), entry("T-14-2.01.html", "tfl", "gen"), entry("T-14-2.01.json", "ard", "gen"),
+    files = [entry("traceability-explorer.html", "traceability", "trace"), entry("traceability.json", "traceability", "trace"),
+             entry("tlf-viewer.html", "tfl", "gen"), entry("T-14-2.01.html", "tfl", "gen"), entry("T-14-2.01.json", "ard", "gen"),
              entry("adsl.xpt", "adam", "derive"), entry("core-report.html", "core-report-adamig", "core"),
              entry("core-report.html", "core-report-sdtmig", "core-sdtm"), entry("usdm.json", "usdm", "plan-tlfs"),
              entry("usdm-citations.json", "usdm-citations", "digitize-protocol")]
     package = {"study": {"id": "CDISCPILOT01"}, "files": files, "history": [{"workflow": "plan-tlfs", "runId": "plan-tlfs", "outcome": "planned"}]}
-    generated = {"steps": {"generate-ard-tlfs": {"status": "completed", "output": {"outcome": "generated", "package": package}}}}
+    generated = {"steps": {"trace-deliverables": {"status": "completed", "output": {"outcome": "traced", "package": package}}}}
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         code, collected, _ = run_script("collect_deliverables.py", work / "collect", generated)
         assert code == 0, collected
-        assert [item["showAs"] for item in collected["files"]] == ["tlf-viewer.html", "core-report-sdtmig.html", "core-report-adamig.html"], collected
+        assert [item["showAs"] for item in collected["files"]] == ["traceability-explorer.html", "core-report-sdtmig.html", "core-report-adamig.html"], collected
         assert all(item["downloadUrl"] for item in collected["files"]) and collected["package"] == package
-        code, result, _ = run_script("collect_deliverables.py", work / "collect-empty", {"steps": {"generate-ard-tlfs": {"status": "completed", "output": {}}}})
-        assert code != 0 and "no study package" in result["error"], result
+        code, result, _ = run_script("collect_deliverables.py", work / "collect-empty", {"steps": {"trace-deliverables": {"status": "completed", "output": {}}}})
+        assert code != 0 and "Neither trace-deliverables nor generate-ard-tlfs" in result["error"], result
+        untraced = {**package, "files": [item for item in files if item["kind"] != "traceability"]}
+        failed_trace = {"steps": {"trace-deliverables": {"status": "failed", "error": "boom", "output": None},
+                                  "generate-ard-tlfs": {"status": "completed", "output": {"outcome": "generated", "package": untraced}}}}
+        code, fallback, _ = run_script("collect_deliverables.py", work / "collect-fallback", failed_trace)
+        assert code == 0 and fallback["files"][0]["showAs"] == "tlf-viewer.html" and "boom" in fallback["summary"], fallback
+        assert fallback["package"] == untraced
 
         finish_input = {**generated, "package": collected["package"], "files": downloaded(collected["files"], work / "data")}
         code, result, output = run_script("finish.py", work / "ok", finish_input)
         assert code == 0 and result["outcome"] == "complete", result
-        assert result["shown"] == ["tlf-viewer.html", "core-report-sdtmig.html", "core-report-adamig.html"], result
+        assert result["shown"] == ["traceability-explorer.html", "core-report-sdtmig.html", "core-report-adamig.html"], result
         assert (output / "core-report-sdtmig.html").read_text() == "core-report-sdtmig core-report.html", "each standard's report under its own name"
         assert (output / "manifest.json").is_file()
         titles = [group["title"] for group in result["deliverables"]]
-        assert titles[0].startswith("TLF viewer") and [item["name"] for item in result["deliverables"][0]["files"]] == ["tlf-viewer.html"], result
+        assert titles[0].startswith("Traceability explorer") and [item["name"] for item in result["deliverables"][0]["files"]] == [
+            "traceability-explorer.html", "traceability.json"], result
+        assert [item["name"] for item in result["deliverables"][1]["files"]] == ["tlf-viewer.html"], result
         names = [item["name"] for group in result["deliverables"] for item in group["files"]]
         assert sorted(names) == sorted(item["name"] for item in files), "every file listed exactly once"
         assert result["package"]["history"][-1]["workflow"] == "protocol-to-tlfs"

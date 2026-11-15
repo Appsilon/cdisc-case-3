@@ -1,4 +1,4 @@
-"""Approve every human task of a prod master run and its child runs, until the master ends.
+"""Approve every human task of a prod master run and its descendant runs, until the master ends.
 
 For automated end-to-end runs Vedha asks for (first used 2026-11-13, run a48c3201):
 CORE dispositions are recorded "justified" with a note saying they were not
@@ -7,6 +7,7 @@ individually reviewed; review verdicts get their approve option. Any other task
 Only for runs where Vedha explicitly asked for automatic approval.
 
   python3 tools/auto_approve.py <master-run-id> [run-id-prefix-to-ignore ...]
+  (prod by default; MEDIFORCE_BASE_URL + MEDIFORCE_API_KEY target another instance, e.g. staging)
 """
 
 import json
@@ -16,11 +17,9 @@ import sys
 import time
 from pathlib import Path
 
-BASE_URL = "https://prod.mediforce.ai"
-KEY = (Path.home() / ".config/mediforce/phuse-key").read_text().strip()
+BASE_URL = os.environ.get("MEDIFORCE_BASE_URL", "https://prod.mediforce.ai")
+KEY = os.environ.get("MEDIFORCE_API_KEY") or (Path.home() / ".config/mediforce/phuse-key").read_text().strip()
 CHECKOUT = Path.home() / "Repo" / "mediforce"
-CHILD_WORKFLOWS = ("digitize-protocol", "plan-tlfs", "specify-analyses", "validate-with-core",
-                   "derive-adam", "derive-and-validate-adam", "generate-ard-tlfs")
 NOTE = "Auto-approved via the mediforce CLI for the automated end-to-end run Vedha requested (2026-11-13); not individually reviewed."
 
 
@@ -28,6 +27,20 @@ def cli(*arguments: str) -> str:
     completed = subprocess.run(["pnpm", "-s", "exec", "mediforce", *arguments, f"--base-url={BASE_URL}"], cwd=CHECKOUT,
                                env={**os.environ, "MEDIFORCE_API_KEY": KEY}, capture_output=True, text=True)
     return completed.stdout + (completed.stderr if completed.returncode != 0 else "")
+
+
+def paused_descendants(run_id: str) -> list[str]:
+    """Paused runs anywhere below run_id (children, grandchildren, ...) - never another run's tasks."""
+    found: list[str] = []
+    for line in cli("run", "list", f"--parent={run_id}").splitlines():
+        fields = line.split()
+        if len(fields) < 3 or fields[1] not in ("running", "paused"):
+            continue
+        child = fields[2]
+        if fields[1] == "paused":
+            found.append(child)
+        found.extend(paused_descendants(child))
+    return found
 
 
 def open_tasks(run_id: str) -> list[dict]:
@@ -65,18 +78,23 @@ def main() -> None:
     handled: set[str] = set()
     while True:
         state = cli("run", "get", master)
-        if "status:       running" not in state and "status:       paused" not in state:
+        if "status:       completed" in state or "status:       failed" in state:
             print(state, flush=True)
             return
-        paused = [line.split()[2] for line in cli("run", "list", "--limit", "40").splitlines()
-                  if "paused" in line and any(name in line for name in CHILD_WORKFLOWS)]
-        for run_id in [master, *paused]:
+        if "status:       running" not in state and "status:       paused" not in state:
+            print(f"{time.strftime('%H:%M:%S')} master status unreadable, retrying: {state.strip()[:200]}", flush=True)
+            time.sleep(30)
+            continue
+        for run_id in [master, *paused_descendants(master)]:
             if any(run_id.startswith(prefix) for prefix in ignored):
                 continue
             for summary in open_tasks(run_id):
                 if summary["id"] in handled:
                     continue
-                task = json.loads(cli("task", "get", summary["id"], "--json"))
+                try:
+                    task = json.loads(cli("task", "get", summary["id"], "--json"))
+                except json.JSONDecodeError:
+                    continue
                 payload = payload_for(task)
                 if payload is None:
                     print(f"STOP: no automatic answer for task {task['id']} (run {run_id}, step {task.get('stepId')}):", flush=True)

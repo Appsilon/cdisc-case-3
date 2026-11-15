@@ -47,6 +47,8 @@ DOWNSTREAM: dict[str, tuple[str, ...]] = {
     "sdtm": ("adam", "adam-define", "adam-program", "adam-log", "lineage", "core-report-adamig"),
     "sdtm-define": ("core-report-sdtmig",),
     "adam": ("ard", "tfl", "tfl-program", "tfl-log", "core-report-adamig"),
+    "tfl": ("traceability",),
+    **{f"core-{part}-{standard}": ("traceability",) for part in ("report", "dispositions") for standard in ("usdm", "sdtmig", "adamig")},
 }
 
 

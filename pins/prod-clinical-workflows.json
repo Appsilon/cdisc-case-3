@@ -5,5 +5,6 @@
   "plan-tlfs": 1,
   "specify-analyses": 1,
   "generate-ard-tlfs": 1,
-  "derive-and-validate-adam": 2
+  "derive-and-validate-adam": 2,
+  "trace-deliverables": 1
 }

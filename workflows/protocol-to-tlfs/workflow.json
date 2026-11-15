@@ -1,7 +1,7 @@
 {
   "name": "protocol-to-tlfs",
   "title": "Protocol to TLFs",
-  "description": "Take a study from its protocol (or its USDM study definition) and SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order, each as its own run with its own reviewers: digitize-protocol when the package has a protocol but no USDM (clinical scientist + standards reviewer) -> plan-tlfs (statistician) -> validate-with-core of the SDTM (standards reviewer) -> specify-analyses (statistician) -> derive-and-validate-adam: derive-adam gated by CORE ADaMIG validation (ADaM programmer + standards reviewer) -> generate-ard-tlfs (statistical programmer + statistician); when the TLF review finds the analysis itself wrong, its request goes back to specify-analyses and the ADaM and TLFs are regenerated (at most two rounds). The sub-workflows hand each other a study package of files by download URL; nothing is copied by hand. The AI writes plans, specs and code; scripts execute the code, validate, and produce every number; humans approve at every hand-off. Each sub-workflow also runs on its own, so a sponsor can adopt any one of them.",
+  "description": "Take a study from its protocol (or its USDM study definition) and SDTM to validated ADaM, ARD and rendered TLFs by running the team-owned sub-workflows in order, each as its own run with its own reviewers: digitize-protocol when the package has a protocol but no USDM (clinical scientist + standards reviewer) -> plan-tlfs (statistician) -> validate-with-core of the SDTM (standards reviewer) -> specify-analyses (statistician) -> derive-and-validate-adam: derive-adam gated by CORE ADaMIG validation (ADaM programmer + standards reviewer) -> generate-ard-tlfs (statistical programmer + statistician) -> trace-deliverables (no AI: one traceability explorer page linking every number back to SDTM and every output back to the protocol); when the TLF review finds the analysis itself wrong, its request goes back to specify-analyses and the ADaM and TLFs are regenerated (at most two rounds). The sub-workflows hand each other a study package of files by download URL; nothing is copied by hand. The AI writes plans, specs and code; scripts execute the code, validate, and produce every number; humans approve at every hand-off. Each sub-workflow also runs on its own, so a sponsor can adopt any one of them.",
   "preamble": "CDISC terms (USDM, SDTM, ADaM, ARS, ARD, TLF, CORE rule IDs, Define-XML, adverse events, deaths) are technical workflow content.",
   "roles": [
     "statistician"
@@ -166,12 +166,31 @@
       }
     },
     {
+      "id": "trace-deliverables",
+      "name": "Trace the deliverables",
+      "type": "creation",
+      "executor": "action",
+      "description": "Child run of trace-deliverables (deterministic, no AI): one traceability explorer page linking every TLF number to its ARD rows, ARS analysis, ADaM variables, derivation code and SDTM columns; every output to its protocol objective, endpoint and page; every CORE finding to the variables and outputs it touches; and the checks per output. Not a gate: if it fails, the run still delivers generate-ard-tlfs's package and the TLF viewer, and says so.",
+      "action": {
+        "kind": "run-workflow",
+        "config": {
+          "definitionName": "trace-deliverables",
+          "definitionVersion": 1,
+          "payload": {
+            "package": "${steps.generate-ard-tlfs.output.package}"
+          },
+          "timeout": "P1D",
+          "step": "build-explorer"
+        }
+      }
+    },
+    {
       "id": "collect-deliverables",
       "name": "Collect the deliverables to show",
       "type": "creation",
       "executor": "script",
       "plugin": "script-container",
-      "description": "Deterministic. Hands the files worth opening (TLF viewer, reconciliation, USDM / plan / spec review pages, CORE reports per standard, ADaM define.xml) out of the final study package on as downloaded files, so finish can show them in this run.",
+      "description": "Deterministic. Hands the files worth opening (traceability explorer - or the TLF viewer when trace-deliverables did not finish - reconciliation, USDM / plan / spec review pages, CORE reports per standard, ADaM define.xml) out of the final study package on as downloaded files, so finish can show them in this run.",
       "script": {
         "command": "python3 /artifacts/scripts/collect_deliverables.py",
         "image": "mediforce-built:5d4c205d6727",
@@ -184,7 +203,7 @@
       "type": "creation",
       "executor": "script",
       "plugin": "script-container",
-      "description": "Deterministic. Shows the deliverables in this run - the TLF viewer (displays + ARD + programs + trace), reconciliation, the USDM, plan and spec review pages, the CORE reports and the ADaM define.xml, each sha256-verified - and lists every file of every sub-workflow with the run that produced it in manifest.json.",
+      "description": "Deterministic. Shows the deliverables in this run - the traceability explorer (displays, ARD, programs, ADaM lineage, protocol, CORE and checks in one page), reconciliation, the USDM, plan and spec review pages, the CORE reports and the ADaM define.xml, each sha256-verified - and lists every file of every sub-workflow with the run that produced it in manifest.json.",
       "script": {
         "command": "python3 /artifacts/scripts/finish.py",
         "image": "mediforce-built:5d4c205d6727",
@@ -226,7 +245,7 @@
     {
       "from": "route-input",
       "to": "digitize-protocol",
-      "when": "output.target == \"digitize\""
+      "when": "output.target == \"digitize-protocol\""
     },
     {
       "from": "route-input",
@@ -286,7 +305,7 @@
     {
       "from": "route-spec",
       "to": "specify-analyses",
-      "when": "output.target == \"specify\""
+      "when": "output.target == \"specify-analyses\""
     },
     {
       "from": "route-spec",
@@ -340,8 +359,12 @@
     },
     {
       "from": "generate-ard-tlfs",
-      "to": "collect-deliverables",
+      "to": "trace-deliverables",
       "when": "else"
+    },
+    {
+      "from": "trace-deliverables",
+      "to": "collect-deliverables"
     },
     {
       "from": "collect-deliverables",
