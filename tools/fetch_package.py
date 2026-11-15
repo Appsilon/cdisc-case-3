@@ -8,7 +8,7 @@ handover/ copies when their sha256 matches. Files land in <folder>/<kind>/<name>
 """
 import hashlib, json, os, re, shutil, subprocess, sys
 from pathlib import Path
-target = Path(sys.argv[1])
+target = Path(sys.argv[1]).resolve()
 package = json.loads((target / "package.json").read_text())
 local_inputs = [Path.home() / "Repo/protocol-to-tfl/test-docs/cdiscpilot01/sdtm", Path.home() / "Repo/cdisc-case-3/handover"]
 environment = {**os.environ, "MEDIFORCE_API_KEY": (Path.home() / ".config/mediforce/phuse-key").read_text().strip()}
