@@ -7,6 +7,7 @@ individually reviewed; review verdicts get their approve option. Any other task
 Only for runs where Vedha explicitly asked for automatic approval.
 
   python3 tools/auto_approve.py <master-run-id> [run-id-prefix-to-ignore ...]
+  (prod by default; MEDIFORCE_BASE_URL + MEDIFORCE_API_KEY target another instance, e.g. staging)
 """
 
 import json
@@ -16,8 +17,8 @@ import sys
 import time
 from pathlib import Path
 
-BASE_URL = "https://prod.mediforce.ai"
-KEY = (Path.home() / ".config/mediforce/phuse-key").read_text().strip()
+BASE_URL = os.environ.get("MEDIFORCE_BASE_URL", "https://prod.mediforce.ai")
+KEY = os.environ.get("MEDIFORCE_API_KEY") or (Path.home() / ".config/mediforce/phuse-key").read_text().strip()
 CHECKOUT = Path.home() / "Repo" / "mediforce"
 NOTE = "Auto-approved via the mediforce CLI for the automated end-to-end run Vedha requested (2026-11-13); not individually reviewed."
 
